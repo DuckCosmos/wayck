@@ -29,4 +29,17 @@ if [[ ! -f Cargo.toml || ! -d qml ]]; then
     cd "$SRC_DIR"
 fi
 
-exec cargo run --release --bin wayck-setup -- "$@"
+if [[ -f src/bin/wayck-setup.rs ]]; then
+    exec cargo run --release --bin wayck-setup -- "$@"
+fi
+
+if [[ -f setup.rs ]]; then
+    TMP="$(mktemp -d)"
+    trap 'rm -rf "$TMP"' EXIT
+    CARGO_MANIFEST_DIR="$PWD" rustc --edition 2021 -O setup.rs -o "$TMP/wayck-setup"
+    "$TMP/wayck-setup" "$@"
+    exit
+fi
+
+echo "Installer not found (expected src/bin/wayck-setup.rs or setup.rs)."
+exit 1
