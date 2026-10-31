@@ -1,0 +1,15 @@
+/home/duck/waylaw/target/debug/deps/nom-26ad6d8006f7b476.d: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/util.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/internal.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/macros.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/methods.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bytes.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bits.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/nom.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/character.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/stream.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/str.rs
+
+/home/duck/waylaw/target/debug/deps/libnom-26ad6d8006f7b476.rmeta: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/util.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/internal.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/macros.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/methods.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bytes.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bits.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/nom.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/character.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/stream.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/str.rs
+
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/lib.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/util.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/internal.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/macros.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/methods.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bytes.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/bits.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/nom.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/character.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/stream.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nom-1.2.4/src/str.rs:
