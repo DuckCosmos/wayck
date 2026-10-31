@@ -25,22 +25,27 @@ A lightweight application launcher for Wayland, built with **Quickshell (QML)** 
 bash <(curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/master/install.sh)
 ```
 
-This uses `bash <(...)` instead of `curl | bash` because the installer asks questions, and those need your keyboard. As with any script downloaded from the internet, it's worth [reading `install.sh`](install.sh) before running it.
+This uses `bash <(...)` instead of `curl | bash` because the installer asks questions, and those need your keyboard. As with any script downloaded from the internet, it's worth reading [`install.sh`](install.sh) and [`src/bin/wayck-setup.rs`](src/bin/wayck-setup.rs) before running them.
 
-The installer:
+`install.sh` is a small bootstrap. It:
 
-1. installs the packages (with your confirmation)
+1. installs `git` and `cargo` if they're missing
 2. downloads the source to `~/.local/share/wayck-src`
-3. asks whether you want blur (first install only)
-4. builds the backend and copies everything to `~/.config/quickshell/wayck`
-5. creates and starts the `wayck.service` unit
+3. runs `wayck-setup`, the installer written in Rust, which:
+   - installs the packages (with your confirmation)
+   - asks whether you want blur (first install only)
+   - builds the backend and copies everything to `~/.config/quickshell/wayck`
+   - creates and starts the `wayck.service` unit
+   - checks whether Wayck will start on boot and offers to fix it (see [Autostart](#autostart))
+
+The installer language follows `$LANG`. To force one, pass `--lang pt` or `--lang en` (for example `./install.sh --lang en`).
 
 ### Manual installation
 
 ```bash
 git clone https://github.com/DuckCosmos/wayck.git
 cd wayck
-./install.sh
+./install.sh        # or: cargo run --release --bin wayck-setup
 ```
 
 On other distros, install the equivalent dependencies yourself, run `cargo build --release`, and copy `qml/*` and `target/release/wayck-backend` to `~/.config/quickshell/wayck/`.
@@ -119,17 +124,40 @@ systemctl --user stop wayck       # stop
 journalctl --user -u wayck -f     # live logs
 ```
 
+The unit uses `KillMode=process`, so restarting or stopping Wayck doesn't close the apps you opened through it.
+
 ### Autostart
 
-The service starts with the graphical session **if** your session activates `graphical-session.target` (this happens with `uwsm`, for example). If Wayck doesn't start on its own at login, or the service complains about Wayland, you have two options:
+The service starts on its own only if your session activates `graphical-session.target` (this happens with `uwsm`, GNOME, KDE...). If you start Hyprland straight from a TTY, the target is never activated: the service stays *enabled* but never starts, and `systemctl --user status wayck` shows `inactive (dead)` after boot.
 
-- start Hyprland through `uwsm`, or import the environment in your autostart (`systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE`)
-- or skip the service and put `quickshell -c wayck` in your `hyprland.lua` autostart
+The installer detects this and:
+
+- **`hyprland.conf` or sway config:** offers to add the autostart line for you
+- **`hyprland.lua`, niri and others:** prints the command so you can add it to your autostart:
+
+```bash
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE && systemctl --user start wayck.service
+```
+
+The first part exports the compositor variables to systemd, so the service can find Wayland. `systemctl --user start` does nothing if the service is already running, so it's safe alongside the `WantedBy` autostart.
+
+Alternatively, start Hyprland through `uwsm`, or skip the service and put `quickshell -c wayck` in your autostart.
+
+To check by hand:
+
+```bash
+systemctl --user is-active graphical-session.target
+```
+
+If it prints `inactive`, you need one of the options above.
 
 ## Troubleshooting
 
 **Nothing appears when pressing the keybind**
 Check that the service is running (`systemctl --user status wayck`) and look for errors in `journalctl --user -u wayck -n 50`.
+
+**Wayck doesn't start after boot (`inactive (dead)`)**
+See [Autostart](#autostart).
 
 **`MultiEffect is not a type` or a Qt version error**
 Quickshell uses private Qt APIs and must be built against the installed Qt version. Update your system (`sudo pacman -Syu`). If it persists, the Quickshell package is lagging behind Qt.
@@ -156,16 +184,21 @@ rm -rf ~/.config/quickshell/wayck ~/.config/wayck ~/.local/share/wayck-src
 systemctl --user daemon-reload
 ```
 
+If the installer added an autostart line to your Hyprland or sway config, remove the `# wayck autostart` block from it too.
+
 ## Project structure
 
 ```
 wayck/
-├── install.sh     # installer
-├── Cargo.toml     # Rust backend
-├── src/           # backend source
+├── install.sh              # bootstrap: git + cargo, then runs wayck-setup
+├── Cargo.toml
+├── src/
+│   ├── bin/
+│   │   └── wayck-setup.rs  # installer (Rust)
+│   └── ...                 # backend source
 └── qml/
-    ├── shell.qml      # root: config, blur, IPC
-    └── Launcher.qml   # launcher UI
+    ├── shell.qml           # root: config, blur, IPC
+    └── Launcher.qml        # launcher UI
 ```
 
 ## License
