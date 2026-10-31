@@ -131,7 +131,7 @@ PanelWindow {
                     anchors.fill: parent
                     anchors.margins: 10
                     verticalAlignment: TextInput.AlignVCenter
-                    font.family: "Montserrat"
+                    font.family: Qt.application.font.family
                     font.pixelSize: 16
                     color: root.cOnSurface
                     focus: true
@@ -217,7 +217,7 @@ PanelWindow {
 
                         Text {
                             text: modelData.nome
-                            font.family: "Montserrat"
+                            font.family: Qt.application.font.family
                             font.pixelSize: 15
                             color: isSelected ? root.cOnPrimary : root.cOnSurface
                             Layout.fillWidth: true
