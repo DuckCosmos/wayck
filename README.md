@@ -22,7 +22,7 @@ A lightweight application launcher for Wayland, built with **Quickshell (QML)** 
 ## Installation
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/wayck/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/main/install.sh)
 ```
 
 This uses `bash <(...)` instead of `curl | bash` because the installer asks questions, and those need your keyboard. As with any script downloaded from the internet, it's worth [reading `install.sh`](install.sh) before running it.
@@ -38,7 +38,7 @@ The installer:
 ### Manual installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/wayck.git
+git clone https://github.com/DuckCosmos/wayck.git
 cd wayck
 ./install.sh
 ```
