@@ -2,7 +2,7 @@
 
 A lightweight application launcher for Wayland, built with **Quickshell (QML)** and a **Rust** backend. Designed for **Hyprland**, with optional blur, dynamic colors and keybind activation.
 
-<!-- Add a screenshot here: ![Wayck](docs/screenshot.png) -->
+[Wayck](docs/screenshot.png)
 
 ## Features
 
