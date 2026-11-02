@@ -35,11 +35,7 @@ if [[ -f src/bin/wayck-setup.rs ]]; then
 fi
 
 if [[ -f setup.rs ]]; then
-    TMP="$(mktemp -d)"
-    trap 'rm -rf "$TMP"' EXIT
-    CARGO_MANIFEST_DIR="$PWD" rustc --edition 2021 -O setup.rs -o "$TMP/wayck-setup"
-    "$TMP/wayck-setup" "$@"
-    exit
+    exec cargo run --release --bin wayck-setup -- "$@"
 fi
 
 echo "Installer not found (expected src/bin/wayck-setup.rs or setup.rs)."

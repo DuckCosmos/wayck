@@ -1,7 +1,13 @@
+//@ pragma UseQApplication
+//@ pragma IconTheme Papirus
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import "services"
+import "ui/Bar" as BarUI
+import "ui/Clipboard" as ClipboardUI
+import "ui/Launcher" as LauncherUI
 
 ShellRoot {
     id: root
@@ -69,25 +75,29 @@ ShellRoot {
     // ---------- Loaders ----------
     LazyLoader {
         id: launcherLoader
-
         active: LauncherService.open
 
-        Launcher {
+        LauncherUI.Launcher {
             blurEnabled: cfg.blur
             onDismissed: LauncherService.hide()
         }
-
     }
 
     LazyLoader {
         id: clipboardLoader
-
         active: ClipboardService.open
 
-        Clipboard {
+        ClipboardUI.Clipboard {
             onDismissed: ClipboardService.hide()
         }
-
     }
 
+    LazyLoader {
+        id: barLoader
+        active: BarService.open
+
+        BarUI.Bar {
+            onDismissed: BarService.hide()
+        }
+    }
 }
