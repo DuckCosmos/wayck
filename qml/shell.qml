@@ -85,7 +85,6 @@ ShellRoot {
         active: ClipboardService.open
 
         Clipboard {
-            blurEnabled: cfg.blur
             onDismissed: ClipboardService.hide()
         }
 
