@@ -13,4 +13,12 @@ QtObject {
         target: "launcher"
         function toggle(): void { LauncherService.toggle() }
     }
+
+
+    property var barHandler: IpcHandler {
+        target: "bar"
+        function toggle(): void { BarService.toggle() }
+        function show(): void { BarService.show() }
+        function hide(): void { BarService.hide() }
+    }
 }

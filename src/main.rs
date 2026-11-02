@@ -1,5 +1,6 @@
 mod clipboard;
 mod launcher;
+mod monitor;
 mod utils;
 
 use std::io::{self, BufRead};
@@ -9,6 +10,7 @@ fn main() {
 
     if args.len() > 1 {
         match args[1].as_str() {
+            "--monitor" => monitor::run(),
             "--filter" => {
                 let busca = if args.len() > 2 { &args[2] } else { "" };
                 let res = launcher::filtrar(busca);
