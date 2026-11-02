@@ -153,12 +153,15 @@ PanelWindow {
                         } else if (event.key === Qt.Key_Down) {
                             if (root.appList.length > 0)
                                 root.selectedIndex = Math.min(root.selectedIndex + 1, root.appList.length - 1);
+                                event.accepted = true
                         } else if (event.key === Qt.Key_Up) {
                             if (root.selectedIndex > 0)
                                 root.selectedIndex--;
+                                event.accepted = true
                         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                             if (root.appList.length > root.selectedIndex)
                                 root.launchApp(root.appList[root.selectedIndex]);
+                                event.accepted = true
                         }
                     }
                 }

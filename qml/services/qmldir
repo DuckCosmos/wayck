@@ -1,0 +1,2 @@
+singleton LauncherService 1.0 LauncherService.qml
+singleton ClipboardService 1.0 ClipboardService.qml

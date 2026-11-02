@@ -4,8 +4,7 @@ use std::{
     os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
     process::{Command, Stdio},
-    thread::sleep,
-    time::Duration,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 type Res<T> = Result<T, Box<dyn std::error::Error>>;
@@ -23,127 +22,98 @@ const PKGS: &[&str] = &[
     "qt6-wayland",
     "git",
     "base-devel",
-    "wl-clipboard",
     "kitty",
     "papirus-icon-theme",
 ];
-
-const SERVICE_UNIT: &str = "[Unit]
-Description=Wayck Launcher (Quickshell)
-After=graphical-session.target
-PartOf=graphical-session.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/quickshell -c wayck
-KillMode=process
-Restart=on-failure
-RestartSec=3
-
-[Install]
-WantedBy=graphical-session.target
-";
 
 // ---------- Idioma / Language ----------
 struct T {
     no_pacman: &'static str,
     q_pkgs: &'static str,
+    q_wl: &'static str,
     pkgs_ok: &'static str,
+    wl_ok: &'static str,
     abort: &'static str,
     blur_info: &'static str,
     blur_warn: &'static str,
     q_blur: &'static str,
+    f_wl: &'static str,
     cfg_kept: &'static str,
     build: &'static str,
     installing: &'static str,
-    service: &'static str,
-    running: &'static str,
-    failed: &'static str,
-    see_logs: &'static str,
-    auto_ok: &'static str,
-    auto_warn: &'static str,
-    auto_q: &'static str,
-    yn: &'static str,
-    auto_added: &'static str,
-    auto_have: &'static str,
-    auto_manual: &'static str,
+    hypr_q: &'static str,
+    hypr_backup: &'static str,
+    hypr_done: &'static str,
+    hypr_manual: &'static str,
+    started: &'static str,
+    start_failed: &'static str,
     open: &'static str,
     bind: &'static str,
     cmds: &'static str,
-    c_status: &'static str,
-    c_restart: &'static str,
+    c_start: &'static str,
     c_stop: &'static str,
-    c_logs: &'static str,
+    c_restart: &'static str,
     good: &'static str,
 }
 
 static PT: T = T {
-    no_pacman:
-        "Este instalador só suporta Arch/CachyOS (pacman). Veja a instalação manual no README.",
+    no_pacman: "Este instalador só suporta Arch/CachyOS (pacman). Veja a instalação manual no README.",
     q_pkgs: "Instalar os pacotes necessários com pacman? [S/n]",
+    q_wl: "Instalar o WL-Paste? Necessário para a funcionalidade do Clipboard [S/n]",
+    wl_ok: "Pacote WL está instalado!",
     pkgs_ok: "Pacotes instalados",
     abort: "Abortando.",
     blur_info: "Blur: deixa o fundo do launcher borrado. Mais bonito, mas usa mais GPU.",
-    blur_warn:
-        "Aviso: isso liga o blur do Hyprland inteiro (janelas translúcidas também ficam borradas).",
+    blur_warn: "Aviso: isso liga o blur do Hyprland inteiro (janelas translúcidas também ficam borradas).",
     q_blur: "Ativar blur? [S/n]",
+    f_wl: "FALHA: Comando falhado, execute: sudo pacman -S wl-clipboard cliphist",
     cfg_kept: "Config existente mantida:",
     build: "📦 Compilando o backend em Rust...",
     installing: "📁 Instalando em",
-    service: "Criando serviço systemd...",
-    running: "✓ Wayck rodando em background.",
-    failed: "O serviço não iniciou.",
-    see_logs: "Veja:",
-    auto_ok: "Autostart OK (graphical-session.target ativo)",
-    auto_warn: "graphical-session.target não está ativo: o Wayck não vai subir sozinho no boot.",
-    auto_q: "Adicionar em",
-    yn: "[S/n]",
-    auto_added: "Adicionado.",
-    auto_have: "Autostart já configurado em",
-    auto_manual: "Coloque no autostart do seu compositor:",
+    hypr_q: "Instalar o preset do Hyprland do Wayck em ~/.config/hypr? Ele SUBSTITUI a tua config (inclui monitor, variáveis NVIDIA e apps no autostart como OBS, Vesktop e Spotify). Um backup é feito. [s/N]",
+    hypr_backup: "Backup salvo em",
+    hypr_done: "Preset instalado. Reinicie o Hyprland ou rode: hyprctl reload",
+    hypr_manual: "Pra iniciar o Wayck junto com o Hyprland, adicione ao teu hyprland.lua:",
+    started: "✓ Wayck iniciado.",
+    start_failed: "Não consegui iniciar. Rode: quickshell -c wayck",
     open: "Abrir o launcher:",
     bind: "Atalho no hyprland.lua:",
     cmds: "Comandos úteis:",
-    c_status: "status",
-    c_restart: "reiniciar (após editar QML ou config)",
+    c_start: "iniciar",
     c_stop: "parar",
-    c_logs: "logs ao vivo",
+    c_restart: "reiniciar (após editar QML ou config)",
     good: "Boa sorte!",
 };
 
 static EN: T = T {
     no_pacman: "This installer only supports Arch/CachyOS (pacman). See the manual installation in the README.",
     q_pkgs: "Install the required packages with pacman? [Y/n]",
+    q_wl: "Install WL-Paste? Required for Clipboard functionality [Y/n]",
+    wl_ok: "WL package is installed!",
     pkgs_ok: "Packages installed",
     abort: "Aborting.",
     blur_info: "Blur: blurs the launcher background. Looks better, but uses more GPU.",
     blur_warn: "Warning: this turns on Hyprland's global blur (translucent windows get blurred too).",
     q_blur: "Enable blur? [Y/n]",
+    f_wl: "FAILURE: Command failed, run: sudo pacman -S wl-clipboard cliphist",
     cfg_kept: "Existing config kept:",
     build: "📦 Building the Rust backend...",
     installing: "📁 Installing to",
-    service: "Creating systemd service...",
-    running: "✓ Wayck is running in the background.",
-    failed: "The service did not start.",
-    see_logs: "See:",
-    auto_ok: "Autostart OK (graphical-session.target is active)",
-    auto_warn: "graphical-session.target is not active: Wayck won't start on boot by itself.",
-    auto_q: "Add to",
-    yn: "[Y/n]",
-    auto_added: "Added.",
-    auto_have: "Autostart already configured in",
-    auto_manual: "Put this in your compositor's autostart:",
+    hypr_q: "Install the Wayck Hyprland preset into ~/.config/hypr? It REPLACES your config (includes monitor, NVIDIA variables and autostart apps like OBS, Vesktop and Spotify). A backup is made. [y/N]",
+    hypr_backup: "Backup saved to",
+    hypr_done: "Preset installed. Restart Hyprland or run: hyprctl reload",
+    hypr_manual: "To start Wayck with Hyprland, add this to your hyprland.lua:",
+    started: "✓ Wayck started.",
+    start_failed: "Could not start it. Run: quickshell -c wayck",
     open: "Open the launcher:",
     bind: "Keybind for hyprland.lua:",
     cmds: "Useful commands:",
-    c_status: "status",
-    c_restart: "restart (after editing QML or config)",
+    c_start: "start",
     c_stop: "stop",
-    c_logs: "live logs",
+    c_restart: "restart (after editing QML or config)",
     good: "Good luck!",
 };
 
-/// --lang xx / --lang=xx > $WAYCK_LANG > $LANG > en
 fn pick_lang() -> &'static T {
     let mut code = String::new();
     let mut args = env::args().skip(1);
@@ -169,7 +139,7 @@ fn pick_lang() -> &'static T {
 }
 
 // ---------- Helpers ----------
-fn ask(prompt: &str) -> bool {
+fn ask(prompt: &str, default_yes: bool) -> bool {
     print!("{prompt}");
     let _ = io::stdout().flush();
     let mut reply = String::new();
@@ -177,7 +147,10 @@ fn ask(prompt: &str) -> bool {
         let _ = BufReader::new(tty).read_line(&mut reply);
     }
     let r = reply.trim().to_lowercase();
-    r.is_empty() || matches!(r.as_str(), "s" | "y" | "sim" | "yes")
+    if r.is_empty() {
+        return default_yes;
+    }
+    matches!(r.as_str(), "s" | "y" | "sim" | "yes")
 }
 
 fn must(cmd: &str, args: &[&str]) -> Res<()> {
@@ -223,14 +196,63 @@ fn copy_dir(src: &Path, dst: &Path) -> io::Result<()> {
     Ok(())
 }
 
+// ---------- Etapas ----------
 fn install_packages(t: &T) -> Res<()> {
-    if !ask(&format!("{YE}{}{RESET} ", t.q_pkgs)) {
+    if !ask(&format!("{YE}{}{RESET} ", t.q_pkgs), true) {
         return Err(t.abort.into());
     }
     let mut args = vec!["pacman", "-S", "--needed"];
     args.extend(PKGS);
     must("sudo", &args)?;
     println!("{GREEN}{}{RESET}", t.pkgs_ok);
+
+    let instalado = Command::new("command")
+        .args(["-v", "wl-paste"])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false);
+
+    let rodando = Command::new("pgrep")
+        .args(["-f", "[w]l-paste.*watch"])
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false);
+
+    if !instalado {
+        println!("{YE}{}{RESET}", t.q_wl);
+        if !ask(&format!("{YE}[S/n]{RESET} "), true) {
+            return Ok(());
+        }
+        let status = Command::new("sudo")
+            .args([
+                "pacman",
+                "-S",
+                "--needed",
+                "--noconfirm",
+                "wl-clipboard",
+                "cliphist",
+            ])
+            .status();
+
+        if status.is_err() || !status.unwrap().success() {
+            return Err(t.f_wl.into());
+        }
+        println!("{GREEN}{}{RESET}", t.wl_ok);
+    }
+
+    if !rodando {
+        let _ = Command::new("setsid")
+            .args(["wl-paste", "--type", "text", "--watch", "cliphist", "store"])
+            .spawn();
+        let _ = Command::new("setsid")
+            .args([
+                "wl-paste", "--type", "image", "--watch", "cliphist", "store",
+            ])
+            .spawn();
+    }
+
     Ok(())
 }
 
@@ -242,7 +264,7 @@ fn setup_blur(t: &T, cfg_dir: &Path) -> Res<()> {
     }
     println!("\n{MAGENTA}{}{RESET}", t.blur_info);
     println!("{YE}{}{RESET}", t.blur_warn);
-    let blur = ask(&format!("{MAGENTA}{}{RESET} ", t.q_blur));
+    let blur = ask(&format!("{MAGENTA}{}{RESET} ", t.q_blur), true);
     fs::create_dir_all(cfg_dir)?;
     fs::write(&cfg, format!("{{ \"blur\": {blur} }}\n"))?;
     Ok(())
@@ -276,101 +298,51 @@ fn build_and_install(t: &T, root: &Path, dest: &Path) -> Res<()> {
     Ok(())
 }
 
-fn install_service(t: &T, service_dir: &Path) -> Res<()> {
-    println!("{GREEN}{}{RESET}", t.service);
-    fs::create_dir_all(service_dir)?;
-    fs::write(service_dir.join("wayck.service"), SERVICE_UNIT)?;
+fn install_hypr(t: &T, root: &Path, config_home: &Path) -> Res<()> {
+    let src = root.join("hypr");
+    if !src.is_dir() || !have("Hyprland") {
+        return Ok(());
+    }
+    let dst = config_home.join("hypr");
 
-    let _ = quiet(
-        "systemctl",
-        &[
-            "--user",
-            "import-environment",
-            "WAYLAND_DISPLAY",
-            "HYPRLAND_INSTANCE_SIGNATURE",
-            "XDG_CURRENT_DESKTOP",
-        ],
-    );
-    must("systemctl", &["--user", "daemon-reload"])?;
-    must("systemctl", &["--user", "enable", "wayck.service"])?;
-    must("systemctl", &["--user", "restart", "wayck.service"])?;
-
-    sleep(Duration::from_secs(1));
-    if quiet(
-        "systemctl",
-        &["--user", "is-active", "--quiet", "wayck.service"],
-    ) {
-        println!("{GREEN}{}{RESET}", t.running);
+    if ask(&format!("\n{YE}{}{RESET} ", t.hypr_q), false) {
+        if dst.exists() {
+            let stamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+            let bak = config_home.join(format!("hypr.bak-{stamp}"));
+            fs::rename(&dst, &bak)?;
+            println!("{BLUE}{} {}{RESET}", t.hypr_backup, bak.display());
+        }
+        copy_dir(&src, &dst)?;
+        println!("{GREEN}{}{RESET}", t.hypr_done);
     } else {
-        println!(
-            "{RED}{}{RESET} {} journalctl --user -u wayck -n 30",
-            t.failed, t.see_logs
-        );
+        println!("\n{BLUE}{}{RESET}", t.hypr_manual);
+        println!("  hl.on(\"hyprland.start\", function()");
+        println!("      hl.exec_cmd(\"quickshell -c wayck\")");
+        println!("  end)");
     }
     Ok(())
 }
 
-fn setup_autostart(t: &T, config_home: &Path) -> Res<()> {
-    if !env_set("WAYLAND_DISPLAY") {
-        return Ok(());
-    }
-    if quiet(
-        "systemctl",
-        &["--user", "is-active", "--quiet", "graphical-session.target"],
-    ) {
-        println!("{GREEN}{}{RESET}", t.auto_ok);
-        return Ok(());
+fn start_shell(t: &T) {
+    if !env_set("WAYLAND_DISPLAY") || !have("quickshell") {
+        return;
     }
 
-    let mut vars = vec!["WAYLAND_DISPLAY", "XDG_CURRENT_DESKTOP"];
-    for v in ["HYPRLAND_INSTANCE_SIGNATURE", "SWAYSOCK", "NIRI_SOCKET"] {
-        if env_set(v) {
-            vars.push(v);
-        }
+    let _ = quiet("pkill", &["-f", "quickshell -c wayck"]);
+
+    let ok = Command::new("setsid")
+        .args(["quickshell", "-c", "wayck"])
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .is_ok();
+
+    if ok {
+        println!("{GREEN}{}{RESET}", t.started);
+    } else {
+        println!("{RED}{}{RESET}", t.start_failed);
     }
-
-    let cmd = format!(
-        "dbus-update-activation-environment --systemd {} && systemctl --user start wayck.service",
-        vars.join(" ")
-    );
-
-    let hypr = config_home.join("hypr/hyprland.conf");
-    let sway = config_home.join("sway/config");
-    let target: Option<(PathBuf, String)> =
-        if env_set("HYPRLAND_INSTANCE_SIGNATURE") && hypr.is_file() {
-            Some((hypr, format!("exec-once = {cmd}")))
-        } else if env_set("SWAYSOCK") && sway.is_file() {
-            Some((sway, format!("exec {cmd}")))
-        } else {
-            None
-        };
-
-    println!("\n{YE}{}{RESET}", t.auto_warn);
-
-    match target {
-        Some((file, line)) => {
-            if fs::read_to_string(&file)?.contains("systemctl --user start wayck") {
-                println!("{GREEN}{} {}{RESET}", t.auto_have, file.display());
-                return Ok(());
-            }
-            println!("  {line}");
-            if ask(&format!(
-                "{YE}{} {}? {}{RESET} ",
-                t.auto_q,
-                file.display(),
-                t.yn
-            )) {
-                let mut f = fs::OpenOptions::new().append(true).open(&file)?;
-                writeln!(f, "\n# wayck autostart\n{line}")?;
-                println!("{GREEN}{}{RESET}", t.auto_added);
-            }
-        }
-        None => {
-            println!("  {}", t.auto_manual);
-            println!("  {cmd}");
-        }
-    }
-    Ok(())
 }
 
 fn print_final(t: &T) {
@@ -383,10 +355,18 @@ fn print_final(t: &T) {
     );
 
     println!("\n{BLUE}{}{RESET}", t.cmds);
-    println!("  systemctl --user status wayck     # {}", t.c_status);
-    println!("  systemctl --user restart wayck    # {}", t.c_restart);
-    println!("  systemctl --user stop wayck       # {}", t.c_stop);
-    println!("  journalctl --user -u wayck -f     # {}", t.c_logs);
+    println!(
+        "  setsid quickshell -c wayck &                                 # {}",
+        t.c_start
+    );
+    println!(
+        "  pkill -f \"quickshell -c wayck\"                               # {}",
+        t.c_stop
+    );
+    println!(
+        "  pkill -f \"quickshell -c wayck\"; setsid quickshell -c wayck &   # {}",
+        t.c_restart
+    );
 
     println!("\n{GREEN}{}{RESET}", t.good);
 }
@@ -408,13 +388,12 @@ fn real_main() -> Res<()> {
 
     let cfg_dir = config_home.join("wayck");
     let dest = config_home.join("quickshell/wayck");
-    let service_dir = config_home.join("systemd/user");
 
     install_packages(t)?;
     setup_blur(t, &cfg_dir)?;
     build_and_install(t, &root, &dest)?;
-    install_service(t, &service_dir)?;
-    setup_autostart(t, &config_home)?;
+    install_hypr(t, &root, &config_home)?;
+    start_shell(t);
     print_final(t);
     Ok(())
 }
