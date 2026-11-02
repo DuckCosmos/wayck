@@ -12,6 +12,7 @@ fi
 NEED=()
 command -v git   >/dev/null || NEED+=(git)
 command -v cargo >/dev/null || NEED+=(rust)
+command -v cc    >/dev/null || NEED+=(base-devel)
 if (( ${#NEED[@]} )); then
     sudo pacman -S --needed "${NEED[@]}"
 fi

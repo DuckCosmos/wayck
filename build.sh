@@ -11,7 +11,7 @@ cargo build --release
 echo "📁 ${GREEN}Instalando arquivos em ~/.config/quickshell/wayck/...${RESET}"
 mkdir -p ~/.config/quickshell/wayck
 cp target/release/wayck-backend ~/.config/quickshell/wayck/
-cp qml/*.qml ~/.config/quickshell/wayck/
+cp -a qml/. ~/.config/quickshell/wayck/
 
 echo "✅ Pronto! Teste rodando:"
-quickshell -p ~/.config/quickshell/wayck
+systemctl --user restart wayck
