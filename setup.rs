@@ -221,8 +221,7 @@ fn install_packages(t: &T) -> Res<()> {
         .unwrap_or(false);
 
     if !instalado {
-        println!("{YE}{}{RESET}", t.q_wl);
-        if !ask(&format!("{YE}[S/n]{RESET} "), true) {
+        if !ask(&format!("{YE}{}{RESET}", t.q_wl), true) {
             return Ok(());
         }
         let status = Command::new("sudo")
