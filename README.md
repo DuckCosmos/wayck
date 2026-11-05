@@ -11,7 +11,7 @@ uses a stable-width single-player card; Tray computes its width from the
 service's item snapshot. This avoids relying on a Repeater's own implicit size.
 
 ## Files
-- qml/services/BarConfig.qml
+- qml/features/bar/BarConfig.qml
 - qml/services/BarService.qml
 - qml/services/MediaService.qml
 - qml/services/TrayService.qml

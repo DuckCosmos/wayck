@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 
 import "../../services"
+import "."
 import "components" as Components
 
 PanelWindow {
@@ -27,6 +28,13 @@ PanelWindow {
         case "audio": return Qt.resolvedUrl("modules/Audio.qml")
         case "clock": return Qt.resolvedUrl("modules/Clock.qml")
         case "tray": return Qt.resolvedUrl("modules/Tray.qml")
+        case "usermenu": return Qt.resolvedUrl("modules/UserMenu.qml")
+        case "temperature": return Qt.resolvedUrl("modules/Temperature.qml")
+        case "network": return Qt.resolvedUrl("modules/Network.qml")
+        case "disk": return Qt.resolvedUrl("modules/Disk.qml")
+        case "gpu": return Qt.resolvedUrl("modules/GPU.qml")
+        case "ram": return Qt.resolvedUrl("modules/RAM.qml")
+        case "cpu": return Qt.resolvedUrl("modules/CPU.qml")
         default: return ""
         }
     }
@@ -128,4 +136,15 @@ PanelWindow {
             }
         }
     }
+
+    Component.onCompleted: {
+        console.log("[WAYCK DEBUG] BAR CARREGADA")
+        console.log("[WAYCK DEBUG] LEFT:", JSON.stringify(BarConfig.leftModules))
+        console.log("[WAYCK DEBUG] CENTER:", JSON.stringify(BarConfig.centerModules))
+        console.log("[WAYCK DEBUG] RIGHT:", JSON.stringify(BarConfig.rightModules))
+
+        for (const id of BarConfig.rightModules)
+            console.log("[WAYCK DEBUG] SOURCE:", id, sourceFor(id))
+    }
+
 }
