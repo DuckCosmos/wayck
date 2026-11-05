@@ -115,9 +115,19 @@ chmod +x install.sh
 ./install.sh
 ```
 
+### Direct Installation
+
+If you prefer to install Wayck directly, follow these steps.
+
+**Execute this command**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/main/install.sh | bash
+```
+
 ### Manual Installation
 
-If you prefer to install Wayck manually, follow these steps.
+But, if you prefer to install Wayck manually, follow these steps.
 
 **1. Clone the repository**
 
