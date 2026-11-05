@@ -5,12 +5,16 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "services"
-import "ui/Bar" as BarUI
-import "ui/Clipboard" as ClipboardUI
-import "ui/Launcher" as LauncherUI
+import "features/bar" as BarUI
+import "features/clipboard" as ClipboardUI
+import "features/launcher" as LauncherUI
 
 ShellRoot {
     id: root
+
+    // Mantém o serviço de screenshots instanciado.
+    readonly property var screenshotService: ScreenshotService
+
 
     property bool isHyprland: !!Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
 
