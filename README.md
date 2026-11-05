@@ -103,18 +103,6 @@ wayck/
 
 ## Installation
 
-### Automatic Installation
-
-The recommended installation method uses the included installer.
-
-```bash
-git clone https://github.com/DuckCosmos/wayck.git
-cd wayck
-
-chmod +x install.sh
-./install.sh
-```
-
 ### Direct Installation
 
 If you prefer to install Wayck directly, follow these steps.
