@@ -110,7 +110,7 @@ If you prefer to install Wayck directly, follow these steps.
 **Execute this command**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/main/install.sh | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/main/install.sh)"
 ```
 
 ### Manual Installation

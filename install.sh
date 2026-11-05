@@ -29,7 +29,7 @@ readonly PERSONAL_REPO_PKGS=(
 )
 
 readonly PERSONAL_AUR_PKGS=(
-    vesktop vscodium-bin brave-bin
+    vesktop-bin vscodium-bin brave-bin
 )
 
 LANGUAGE="en"
