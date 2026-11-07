@@ -528,7 +528,7 @@ install_hypr() {
         printf '%b%s: %s%b\n' "$GREEN" "$(msg hypr_backup)" "$backup" "$RESET"
     fi
 
-    copy_dir "$source" "$CONFIG_HOME" ||
+    copy_dir "$source" "$CONFIG_HOME/" ||
         die "Failed to install Hyprland configuration."
 
     printf '%b%s%b\n' "$GREEN" "$(msg hypr_done)" "$RESET"
