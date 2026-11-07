@@ -14,7 +14,7 @@ Singleton {
         command: [
             "sh", "-c",
             'mkdir -p "$HOME/Pictures/Screenshots" && ' +
-            'grim "$HOME/Pictures/Screenshots/Screenshot from $(date \'+%Y-%m-%d %H-%M-%S\').png"'
+            'grim "$HOME/Pictures/Screenshots from $(date \'+%Y-%m-%d %H-%M-%S\').png"'
         ]
     }
 
@@ -24,7 +24,7 @@ Singleton {
         command: [
             "sh", "-c",
             'mkdir -p "$HOME/Pictures/Screenshots" && ' +
-            'grim -g "$(slurp)" "$HOME/Pictures/Screenshots/Screenshot from $(date \'+%Y-%m-%d %H-%M-%S\').png"'
+            'grim -g "$(slurp)" "$HOME/Pictures/Screenshots from $(date \'+%Y-%m-%d %H-%M-%S\').png"'
         ]
     }
 

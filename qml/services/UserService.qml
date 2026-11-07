@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Quickshell
+import "../core"
 
 Singleton {
     id: root
@@ -72,7 +73,7 @@ Singleton {
         case "appearance":
             Quickshell.execDetached([
                 "micro",
-                Quickshell.env("HOME") + "/.config/quickshell/wayck/bar.ini"
+                Config.path
             ])
             break
 

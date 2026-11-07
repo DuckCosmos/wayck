@@ -1,65 +1,42 @@
 import QtQuick
+import ".."
 
+// "Caixa" de um módulo da barra: carrega o arquivo certo (via BarRegistry),
+// entrega o nível de compactação e expõe o tamanho pro layout.
+// (As cores não passam mais por aqui: cada módulo lê o Theme direto.)
 Item {
     id: root
 
     required property string moduleId
-    property url sourceUrl: ""
 
-    property color cPrimary: "#ffb59b"
-    property color cOnPrimary: "#55200a"
-    property color cSurfaceContainer: "#322824"
-    property color cOnSurface: "#f1dfd9"
-    property color cOutline: "#a08d86"
+    property string sectionName: ""
+    property int order: 0              // posição global (esq → centro → dir)
+    property real compactness: 0       // 0 = normal, 1 = compacto
+    property bool shown: true          // false = escondido por falta de espaço
 
-    implicitWidth: loader.implicitWidth
-    implicitHeight: loader.implicitHeight
+    readonly property int priority: BarRegistry.priority(moduleId)
+
+    visible: shown
+
+    implicitWidth: loader.item ? loader.item.implicitWidth : 0
+    implicitHeight: loader.item ? loader.item.implicitHeight : 0
+
     width: implicitWidth
     height: implicitHeight
 
-    function applyTheme(target) {
-        if (!target)
-            return
-
-        if ("cPrimary" in target)
-            target.cPrimary = Qt.binding(() => root.cPrimary)
-        if ("cOnPrimary" in target)
-            target.cOnPrimary = Qt.binding(() => root.cOnPrimary)
-        if ("cSurfaceContainer" in target)
-            target.cSurfaceContainer = Qt.binding(() => root.cSurfaceContainer)
-        if ("cOnSurface" in target)
-            target.cOnSurface = Qt.binding(() => root.cOnSurface)
-        if ("cOutline" in target)
-            target.cOutline = Qt.binding(() => root.cOutline)
-    }
-
     Loader {
         id: loader
-        source: root.sourceUrl
-        
+
+        source: BarRegistry.source(root.moduleId)
+
         onLoaded: {
-            root.applyTheme(item)
-            console.log(
-                "[WAYCK DEBUG] MODULE LOADED:",
-                root.moduleId,
-                root.sourceUrl,
-                "size:",
-                loader.implicitWidth,
-                loader.implicitHeight
-            )
+            if (item && "compactness" in item)
+                item.compactness = Qt.binding(() => root.compactness)
         }
 
         onStatusChanged: {
-            console.log(
-                "[WAYCK DEBUG] MODULE STATUS:",
-                root.moduleId,
-                loader.status,
-                root.sourceUrl
-            )
-
-            if (loader.status === Loader.Error)
-                console.warn("[WAYCK DEBUG] MODULE ERROR:", root.moduleId)
+            if (status === Loader.Error)
+                console.warn("[WAYCK] módulo falhou ao carregar:", root.moduleId, source)
         }
-
     }
 }

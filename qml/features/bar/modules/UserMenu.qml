@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../../../services" as Services
+import "../../../core"
 
 BarCard {
     id: root
@@ -82,7 +83,7 @@ BarCard {
                     width: 7
                     height: 7
                     radius: 4
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 1
                 }
@@ -91,7 +92,7 @@ BarCard {
                     width: 16
                     height: 8
                     radius: 5
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                 }
@@ -99,7 +100,7 @@ BarCard {
 
             Text {
                 text: Services.UserService.username
-                color: root.cOnSurface
+                color: Theme.onSurface
                 font.pixelSize: 12
                 font.bold: true
             }
@@ -120,16 +121,16 @@ BarCard {
 
         radius: 9
         color: powerMouse.containsMouse
-            ? root.cPrimary
-            : Qt.darker(root.cSurfaceContainer, 1.05)
+            ? Theme.primary
+            : Qt.darker(Theme.surfaceContainer, 1.05)
 
         Text {
             anchors.centerIn: parent
             text: "⏻"
             anchors.verticalCenterOffset: 4
             color: powerMouse.containsMouse
-                ? root.cOnPrimary
-                : root.cPrimary
+                ? Theme.onPrimary
+                : Theme.primary
 
             font.pixelSize: 19
             font.bold: true
@@ -169,9 +170,9 @@ BarCard {
                 anchors.fill: parent
 
                 radius: 18
-                color: root.cSurfaceContainer
+                color: Theme.surfaceContainer
                 border.width: 1
-                border.color: Qt.darker(root.cOutline, 1.15)
+                border.color: Qt.darker(Theme.outline, 1.15)
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -186,7 +187,7 @@ BarCard {
                             Layout.preferredWidth: 46
                             Layout.preferredHeight: 46
                             radius: 15
-                            color: root.cPrimary
+                            color: Theme.primary
 
                             Text {
                                 anchors.centerIn: parent
@@ -195,7 +196,7 @@ BarCard {
                                         .substring(0, 1).toUpperCase()
                                     : "?"
 
-                                color: root.cOnPrimary
+                                color: Theme.onPrimary
                                 font.pixelSize: 23
                                 font.bold: true
                             }
@@ -207,7 +208,7 @@ BarCard {
 
                             Text {
                                 text: Services.UserService.username
-                                color: root.cOnSurface
+                                color: Theme.onSurface
                                 font.pixelSize: 16
                                 font.bold: true
                             }
@@ -216,7 +217,7 @@ BarCard {
                                 text: Services.UserService.hostname
                                     + "  ·  " + Services.UserService.desktop
 
-                                color: root.cOutline
+                                color: Theme.outline
                                 font.pixelSize: 10
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -225,7 +226,7 @@ BarCard {
 
                         Text {
                             text: "WAYCK"
-                            color: root.cPrimary
+                            color: Theme.primary
                             font.pixelSize: 10
                             font.bold: true
                         }
@@ -242,15 +243,15 @@ BarCard {
 
                             radius: 9
                             color: popup.page === "home"
-                                ? root.cPrimary
-                                : Qt.darker(root.cSurfaceContainer, 1.08)
+                                ? Theme.primary
+                                : Qt.darker(Theme.surfaceContainer, 1.08)
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "Controle"
                                 color: popup.page === "home"
-                                    ? root.cOnPrimary
-                                    : root.cOnSurface
+                                    ? Theme.onPrimary
+                                    : Theme.onSurface
 
                                 font.pixelSize: 12
                                 font.bold: true
@@ -268,15 +269,15 @@ BarCard {
 
                             radius: 9
                             color: popup.page === "power"
-                                ? root.cPrimary
-                                : Qt.darker(root.cSurfaceContainer, 1.08)
+                                ? Theme.primary
+                                : Qt.darker(Theme.surfaceContainer, 1.08)
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "Energia"
                                 color: popup.page === "power"
-                                    ? root.cOnPrimary
-                                    : root.cOnSurface
+                                    ? Theme.onPrimary
+                                    : Theme.onSurface
 
                                 font.pixelSize: 12
                                 font.bold: true
@@ -296,7 +297,7 @@ BarCard {
 
                         Text {
                             text: "CONFIGURAÇÕES"
-                            color: root.cOutline
+                            color: Theme.outline
                             font.pixelSize: 10
                             font.bold: true
                         }
@@ -318,11 +319,11 @@ BarCard {
 
                                     radius: 11
                                     color: tileMouse.containsMouse
-                                        ? Qt.lighter(root.cSurfaceContainer, 1.12)
-                                        : Qt.darker(root.cSurfaceContainer, 1.04)
+                                        ? Qt.lighter(Theme.surfaceContainer, 1.12)
+                                        : Qt.darker(Theme.surfaceContainer, 1.04)
 
                                     border.width: 1
-                                    border.color: Qt.darker(root.cOutline, 1.25)
+                                    border.color: Qt.darker(Theme.outline, 1.25)
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -332,7 +333,7 @@ BarCard {
                                         Text {
                                             Layout.preferredWidth: 25
                                             text: modelData.symbol
-                                            color: root.cPrimary
+                                            color: Theme.primary
                                             font.pixelSize: 20
                                             font.bold: true
                                             horizontalAlignment: Text.AlignHCenter
@@ -345,7 +346,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: modelData.title
-                                                color: root.cOnSurface
+                                                color: Theme.onSurface
                                                 font.pixelSize: 11
                                                 font.bold: true
                                                 elide: Text.ElideRight
@@ -354,7 +355,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: modelData.subtitle
-                                                color: root.cOutline
+                                                color: Theme.outline
                                                 font.pixelSize: 9
                                                 elide: Text.ElideRight
                                             }
@@ -385,7 +386,7 @@ BarCard {
 
                         Text {
                             text: "ENERGIA E SESSÃO"
-                            color: root.cOutline
+                            color: Theme.outline
                             font.pixelSize: 10
                             font.bold: true
                         }
@@ -407,11 +408,11 @@ BarCard {
 
                                     radius: 11
                                     color: powerTileMouse.containsMouse
-                                        ? Qt.lighter(root.cSurfaceContainer, 1.12)
-                                        : Qt.darker(root.cSurfaceContainer, 1.04)
+                                        ? Qt.lighter(Theme.surfaceContainer, 1.12)
+                                        : Qt.darker(Theme.surfaceContainer, 1.04)
 
                                     border.width: 1
-                                    border.color: Qt.darker(root.cOutline, 1.25)
+                                    border.color: Qt.darker(Theme.outline, 1.25)
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -421,7 +422,7 @@ BarCard {
                                         Text {
                                             Layout.preferredWidth: 25
                                             text: modelData.symbol
-                                            color: root.cPrimary
+                                            color: Theme.primary
                                             font.pixelSize: 19
                                             font.bold: true
                                             horizontalAlignment: Text.AlignHCenter
@@ -434,7 +435,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: modelData.title
-                                                color: root.cOnSurface
+                                                color: Theme.onSurface
                                                 font.pixelSize: 11
                                                 font.bold: true
                                                 elide: Text.ElideRight
@@ -443,7 +444,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: modelData.subtitle
-                                                color: root.cOutline
+                                                color: Theme.outline
                                                 font.pixelSize: 9
                                                 elide: Text.ElideRight
                                             }
@@ -483,7 +484,7 @@ BarCard {
                         Text {
                             Layout.fillWidth: true
                             text: root.actionTitle(popup.pendingAction)
-                            color: root.cOnSurface
+                            color: Theme.onSurface
                             font.pixelSize: 18
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
@@ -493,7 +494,7 @@ BarCard {
                         Text {
                             Layout.fillWidth: true
                             text: root.actionDescription(popup.pendingAction)
-                            color: root.cOutline
+                            color: Theme.outline
                             font.pixelSize: 12
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
@@ -507,12 +508,12 @@ BarCard {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 38
                                 radius: 10
-                                color: Qt.darker(root.cSurfaceContainer, 1.05)
+                                color: Qt.darker(Theme.surfaceContainer, 1.05)
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "Cancelar"
-                                    color: root.cOnSurface
+                                    color: Theme.onSurface
                                     font.pixelSize: 12
                                     font.bold: true
                                 }
@@ -530,12 +531,12 @@ BarCard {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 38
                                 radius: 10
-                                color: root.cPrimary
+                                color: Theme.primary
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: "Confirmar"
-                                    color: root.cOnPrimary
+                                    color: Theme.onPrimary
                                     font.pixelSize: 12
                                     font.bold: true
                                 }
@@ -569,7 +570,7 @@ BarCard {
                         Layout.fillWidth: true
 
                         text: "Wayck Control Center  ·  Linux / Hyprland"
-                        color: root.cOutline
+                        color: Theme.outline
                         font.pixelSize: 9
                         horizontalAlignment: Text.AlignHCenter
                     }

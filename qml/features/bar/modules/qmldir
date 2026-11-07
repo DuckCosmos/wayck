@@ -1,6 +1,15 @@
 BarCard 1.0 BarCard.qml
 Audio 1.0 Audio.qml
-Player 1.0 Player.qml
-Workspaces 1.0 Workspaces.qml
+CPU 1.0 CPU.qml
 Clock 1.0 Clock.qml
+Disk 1.0 Disk.qml
+GPU 1.0 GPU.qml
+Network 1.0 Network.qml
+Player 1.0 Player.qml
+RAM 1.0 RAM.qml
+Temperature 1.0 Temperature.qml
 Tray 1.0 Tray.qml
+TrayItem 1.0 TrayItem.qml
+TrayMenu 1.0 TrayMenu.qml
+UserMenu 1.0 UserMenu.qml
+Workspaces 1.0 Workspaces.qml

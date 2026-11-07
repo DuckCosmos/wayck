@@ -2,15 +2,10 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
 import "."
+import "../../../core"
 
 RowLayout {
     id: root
-
-    property color cPrimary: "#ffb59b"
-    property color cOnPrimary: "#55200a"
-    property color cSurfaceContainer: "#322824"
-    property color cOnSurface: "#f1dfd9"
-    property color cOutline: "#a08d86"
 
     spacing: 5
 
@@ -23,12 +18,6 @@ RowLayout {
 
             property bool active: Hyprland.focusedWorkspace !== null
                 && Hyprland.focusedWorkspace.id === modelData
-
-            cPrimary: root.cPrimary
-            cOnPrimary: root.cOnPrimary
-            cSurfaceContainer: root.cSurfaceContainer
-            cOnSurface: root.cOnSurface
-            cOutline: root.cOutline
 
             highlighted: active
             implicitWidth: 34
@@ -54,7 +43,7 @@ RowLayout {
                 Text {
                     anchors.fill: parent
                     text: String(workspaceCard.modelData)
-                    color: workspaceCard.active ? root.cOnPrimary : root.cOnSurface
+                    color: workspaceCard.active ? Theme.onPrimary : Theme.onSurface
 
                     Behavior on color {
                         ColorAnimation {
@@ -62,7 +51,6 @@ RowLayout {
                             easing.type: Easing.OutCubic
                             }
                     }
-
 
                     font.pixelSize: 13
                     font.bold: true

@@ -1,5 +1,5 @@
 local mainMod  = "SUPER"
-local terminal = "zsh"
+local terminal = "kitty"
 
 -- Apps e shell
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))

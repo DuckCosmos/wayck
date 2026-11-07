@@ -4,119 +4,154 @@ import Quickshell
 import "../../../services"
 import "."
 
-Item {
+BarCard {
     id: root
-
-    property color cPrimary: "#ffb59b"
-    property color cOnPrimary: "#55200a"
-    property color cSurfaceContainer: "#322824"
-    property color cOnSurface: "#f1dfd9"
-    property color cOutline: "#a08d86"
 
     property var items: TrayService.items
     property var hostWindow: QsWindow.window
 
-    readonly property int iconSize: 34
-    readonly property int itemSpacing: 5
+    property var activeTrayItem: null
+    property var activeAnchor: null
 
-    implicitWidth: items.length > 0
-        ? items.length * iconSize + (items.length - 1) * itemSpacing
-        : 0
-    implicitHeight: items.length > 0 ? iconSize : 0
-    width: implicitWidth
-    height: implicitHeight
+    property bool menuVisible: false
+    property bool popupVisible: false
+    property bool menuHovered: false
 
-    function showMenu(trayItem, iconItem) {
-        if (!trayItem.hasMenu || !root.hostWindow)
+    readonly property int iconSize: 30
+    readonly property int itemSpacing: 2
+
+    horizontalPadding: 8
+    verticalPadding: 2
+    contentSpacing: 0
+    minimumHeight: 0
+
+    function openMenu(item, anchor) {
+        if (!item || !item.hasMenu)
             return
 
-        const position = root.hostWindow.itemPosition(iconItem)
+        closeTimer.stop()
+        hideTimer.stop()
 
-        trayItem.display(
-            root.hostWindow,
-            Math.round(position.x + iconItem.width / 2),
-            Math.round(position.y + iconItem.height)
-        )
+        activeAnchor = anchor
+        activeTrayItem = item
+
+        popupVisible = true
+        menuVisible = true
+    }
+
+    function scheduleClose() {
+        closeTimer.restart()
+    }
+
+    function closeMenu() {
+        if (!menuHovered) {
+            menuVisible = false
+            hideTimer.restart()
+        }
+    }
+
+    Timer {
+        id: closeTimer
+
+        interval: 180
+        repeat: false
+
+        onTriggered: root.closeMenu()
+    }
+
+    Timer {
+        id: hideTimer
+
+        interval: 700
+        repeat: false
+
+        onTriggered: {
+            if (!root.menuVisible)
+                root.popupVisible = false
+        }
     }
 
     Row {
-        anchors.fill: parent
         spacing: root.itemSpacing
 
         Repeater {
             model: root.items
 
-            delegate: BarCard {
-                id: trayCard
+            delegate: TrayItem {
                 required property var modelData
-                property var trayItem: modelData
-                property bool iconFailed: false
+
+                trayItem: modelData
 
                 width: root.iconSize
                 height: root.iconSize
-                implicitWidth: root.iconSize
-                implicitHeight: root.iconSize
-                horizontalPadding: 6
-                verticalPadding: 5
 
-                cPrimary: root.cPrimary
-                cOnPrimary: root.cOnPrimary
-                cSurfaceContainer: root.cSurfaceContainer
-                cOnSurface: root.cOnSurface
-                cOutline: root.cOutline
+                onMenuRequested: (item, anchor) => {
+                    root.openMenu(item, anchor)
+                }
 
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    id: iconArea
-
-                    Image {
-                        anchors.fill: parent
-                        source: trayCard.trayItem.icon
-                        fillMode: Image.PreserveAspectFit
-                        sourceSize.width: 24
-                        sourceSize.height: 24
-                        asynchronous: true
-
-                        onStatusChanged: {
-                            if (status === Image.Error)
-                                trayCard.iconFailed = true
-                            else if (status === Image.Ready)
-                                trayCard.iconFailed = false
-                        }
-                    }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: (trayCard.trayItem.title || trayCard.trayItem.id || "?")
-                            .charAt(0).toUpperCase()
-                        color: root.cOnSurface
-                        font.pixelSize: 12
-                        font.bold: true
-                        visible: trayCard.iconFailed || trayCard.trayItem.icon === ""
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-
-                        onClicked: function(mouse) {
-                            const item = trayCard.trayItem
-
-                            if (mouse.button === Qt.LeftButton) {
-                                if (item.onlyMenu && item.hasMenu)
-                                    root.showMenu(item, iconArea)
-                                else
-                                    item.activate()
-                            } else if (mouse.button === Qt.RightButton) {
-                                root.showMenu(item, iconArea)
-                            } else if (mouse.button === Qt.MiddleButton) {
-                                item.secondaryActivate()
-                            }
-                        }
-                    }
+                onPointerLeft: {
+                    root.scheduleClose()
                 }
             }
         }
     }
+
+    PopupWindow {
+        id: menuPopup
+
+        anchor.item: root.activeAnchor
+
+        anchor.rect.x: root.activeAnchor
+            ? (root.activeAnchor.width - width) / 2
+            : 0
+
+        anchor.rect.y: root.activeAnchor
+            ? root.activeAnchor.height
+            : 0
+
+        implicitWidth: menuCard.implicitWidth
+        implicitHeight: menuCard.implicitHeight
+
+        visible: root.popupVisible
+        color: "transparent"
+
+        TrayMenu {
+            id: menuCard
+
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            menu: root.activeTrayItem
+                ? root.activeTrayItem.menu
+                : null
+
+            menuVisible: root.menuVisible
+
+            onPointerEntered: {
+                root.menuHovered = true
+                closeTimer.stop()
+            }
+
+            onPointerExited: {
+                root.menuHovered = false
+                root.scheduleClose()
+            }
+
+            onCloseRequested: {
+                root.menuHovered = false
+                root.menuVisible = false
+                hideTimer.restart()
+            }
+        }
+    }
+
+    implicitWidth: root.items.length > 0
+        ? root.items.length * root.iconSize
+            + (root.items.length - 1) * root.itemSpacing
+            + root.horizontalPadding * 2
+        : 0
+
+    implicitHeight: root.items.length > 0
+        ? root.iconSize + root.verticalPadding * 2
+        : 0
 }

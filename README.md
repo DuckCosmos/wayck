@@ -64,10 +64,14 @@ wayck/
 ├── hypr/
 ├── qml/
 │   ├── shell.qml
+│   ├── core/
+│   │   ├── Config.qml
+│   │   └── Theme.qml
 │   ├── features/
 │   │   ├── bar/
 │   │   │   ├── Bar.qml
 │   │   │   ├── BarConfig.qml
+│   │   │   ├── BarRegistry.qml
 │   │   │   ├── components/
 │   │   │   └── modules/
 │   │   ├── clipboard/
@@ -89,6 +93,7 @@ wayck/
 - **Centralized services:** shared functionality stays in one location.
 - **Modularity:** individual bar modules can be maintained independently.
 - **Separation of concerns:** QML handles presentation and interaction, while Rust handles backend operations.
+- **Single source of truth:** colors live in `Theme`, settings in `Config`, and the list of bar modules in `BarRegistry`.
 - **Maintainability:** a consistent structure avoids unnecessary directory fragmentation.
 
 ---
@@ -189,12 +194,44 @@ The installed Quickshell configuration is expected at:
 ~/.config/quickshell/wayck
 ```
 
+## Configuration
+
+All settings live in a single file, `~/.config/wayck/config.json`. It is created on first run, missing keys fall back to defaults, and Wayck reloads it when it changes.
+
+```json
+{
+  "blur": false,
+  "bar": {
+    "position": "top",
+    "height": 45,
+    "margin": 8,
+    "layout": {
+      "left": ["workspaces", "player", "ram", "disk"],
+      "center": ["cpu", "clock", "gpu", "temperature"],
+      "right": ["network", "audio", "tray", "usermenu"]
+    }
+  }
+}
+```
+
+| Key | Description |
+|:---|:---|
+| `blur` | Enables blur on the launcher (Hyprland). |
+| `bar.position` | `"top"` or `"bottom"`. |
+| `bar.height` / `bar.margin` | Bar height and side margin, in pixels. |
+| `bar.layout` | Modules of each section, in order. Available ids are listed in `BarRegistry.qml`. |
+
+**Responsive bar:** when there is spare room the modules spread out; when space runs short they become compact, and if that is still not enough the lowest-priority modules are hidden until there is room again. Priorities are defined in `BarRegistry.qml`.
+
+**Colors** come from the matugen palette (`~/.local/state/quickshell/user/generated/colors.json`) through `qml/core/Theme.qml`, and update live when the wallpaper changes.
+
 ## Project Structure
 
 | Directory | Responsibility |
 |:---|:---|
 | `src/` | Rust backend |
 | `qml/` | QML application |
+| `qml/core/` | Shared singletons: `Config` (settings) and `Theme` (colors) |
 | `qml/features/bar/` | Desktop bar and its modules |
 | `qml/features/clipboard/` | Clipboard interface |
 | `qml/features/launcher/` | Application launcher |
@@ -209,7 +246,9 @@ Wayck is organized to allow independent development of its interface features an
 | Component | Location |
 |:---|:---|
 | Main entry point | `qml/shell.qml` |
+| Settings and colors | `qml/core/` |
 | Desktop Bar | `qml/features/bar/` |
+| Bar module catalog | `qml/features/bar/BarRegistry.qml` |
 | Bar modules | `qml/features/bar/modules/` |
 | Bar components | `qml/features/bar/components/` |
 | Clipboard | `qml/features/clipboard/` |

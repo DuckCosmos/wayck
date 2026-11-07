@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../services" as Services
 import "."
+import "../../../core"
 
 BarCard {
     id: root
@@ -11,7 +12,7 @@ BarCard {
 
     Text {
         text: "↓"
-        color: root.cPrimary
+        color: Theme.primary
         font.pixelSize: 14
         font.bold: true
     }
@@ -22,14 +23,14 @@ BarCard {
                   Services.SystemMonitorService.data.network_down_kib_s
               )
             : "--"
-        color: root.cOnSurface
+        color: Theme.onSurface
         font.pixelSize: 11
         font.bold: true
     }
 
     Text {
         text: "↑"
-        color: root.cPrimary
+        color: Theme.primary
         font.pixelSize: 14
         font.bold: true
     }
@@ -40,7 +41,7 @@ BarCard {
                   Services.SystemMonitorService.data.network_up_kib_s
               )
             : "--"
-        color: root.cOnSurface
+        color: Theme.onSurface
         font.pixelSize: 11
         font.bold: true
     }

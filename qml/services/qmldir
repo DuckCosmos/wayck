@@ -6,3 +6,4 @@ singleton TrayService 1.0 TrayService.qml
 singleton ScreenshotService 1.0 ScreenshotService.qml
 singleton SystemMonitorService 1.0 SystemMonitorService.qml
 singleton UserService 1.0 UserService.qml
+singleton NotificationService 1.0 NotificationService.qml

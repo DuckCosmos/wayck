@@ -7,7 +7,6 @@ import Quickshell.Services.Mpris
 Singleton {
     id: root
 
-    // Snapshot próprio para que a UI reaja à entrada e saída de players.
     property var players: []
     property var activePlayer: null
 
@@ -27,8 +26,6 @@ Singleton {
             selected = current[0]
 
         activePlayer = selected
-        console.log("[MediaService] players:", current.length,
-                    "active:", selected ? selected.identity : "none")
     }
 
     Connections {
