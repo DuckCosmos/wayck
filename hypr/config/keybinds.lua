@@ -24,8 +24,8 @@ hl.bind(mainMod .. " + ALT + N",      hl.dsp.exec_cmd("playerctl next"))
 hl.bind(mainMod .. " + ALT + P",      hl.dsp.exec_cmd("playerctl previous"))
 
 -- Screenshot e replay do OBS
-hl.bind("CTRL + ALT + RETURN",         hl.dsp.exec_cmd("flameshot full -p ~/Pictures/Screenshots -c"))
-hl.bind("CTRL + SHIFT + ALT + RETURN", hl.dsp.exec_cmd("flameshot screen -p ~/Pictures/Screenshots -c"))
+hl.bind("CTRL + ALT + RETURN",         hl.dsp.exec_cmd("qs -c wayck ipc call screenshot full"))
+hl.bind("CTRL + SHIFT + ALT + RETURN", hl.dsp.exec_cmd("qs -c wayck ipc call screenshot region"))
 hl.bind("F8", hl.dsp.exec_cmd("/usr/bin/obs-cmd --websocket obsws://localhost:4455/ replay save"))
 
 -- Foco
