@@ -1,5 +1,9 @@
-/target
-/git.rs
+# Rust
+/target/
+
+# Binário compilado do git.rs (gere com rustc, não versione)
 /git
 
-/build.sh
+# Editor / sistema
+*.swp
+.DS_Store

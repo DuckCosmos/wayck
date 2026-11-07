@@ -1,15 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
+import "../../../core"
 
 RowLayout {
     id: root
-
-    property color cPrimary: "#ffb59b"
-    property color cOnPrimary: "#55200a"
-    property color cSurfaceContainer: "#322824"
-    property color cOnSurface: "#f1dfd9"
-    property color cOutline: "#a08d86"
 
     property var sink: Pipewire.defaultAudioSink
     property var source: Pipewire.defaultAudioSource
@@ -56,11 +51,6 @@ RowLayout {
 
     // VOLUME
     BarCard {
-        cPrimary: root.cPrimary
-        cOnPrimary: root.cOnPrimary
-        cSurfaceContainer: root.cSurfaceContainer
-        cOnSurface: root.cOnSurface
-        cOutline: root.cOutline
 
         implicitHeight: 36
 
@@ -81,15 +71,15 @@ RowLayout {
 
                     color: root.isReady(root.sink)
                         && !root.sink.audio.muted
-                        ? root.cPrimary
-                        : root.cOutline
+                        ? Theme.primary
+                        : Theme.outline
 
                     font.pixelSize: 16
                 }
 
                 Text {
                     text: root.percentage(root.sink)
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     font.pixelSize: 11
                     font.bold: true
                 }
@@ -121,11 +111,6 @@ RowLayout {
 
     // MICROFONE
     BarCard {
-        cPrimary: root.cPrimary
-        cOnPrimary: root.cOnPrimary
-        cSurfaceContainer: root.cSurfaceContainer
-        cOnSurface: root.cOnSurface
-        cOutline: root.cOutline
 
         implicitHeight: 36
 
@@ -146,15 +131,15 @@ RowLayout {
 
                     color: root.isReady(root.source)
                         && !root.source.audio.muted
-                        ? root.cPrimary
-                        : root.cOutline
+                        ? Theme.primary
+                        : Theme.outline
 
                     font.pixelSize: 16
                 }
 
                 Text {
                     text: root.percentage(root.source)
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     font.pixelSize: 11
                     font.bold: true
                 }

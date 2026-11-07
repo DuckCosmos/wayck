@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../services" as Services
 import "."
+import "../../../core"
 
 BarCard {
     id: root
@@ -11,7 +12,7 @@ BarCard {
 
     Text {
         text: "♨"
-        color: root.cPrimary
+        color: Theme.primary
         font.pixelSize: 15
     }
 
@@ -29,7 +30,7 @@ BarCard {
                 : "N/A"
         }
 
-        color: root.cOnSurface
+        color: Theme.onSurface
         font.pixelSize: 12
         font.bold: true
     }

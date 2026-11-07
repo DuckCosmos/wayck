@@ -7,12 +7,10 @@ import Quickshell.Services.SystemTray
 Singleton {
     id: root
 
-    // Snapshot próprio: a UI não depende do tamanho implícito do ObjectModel.
     property var items: []
 
     function refresh() {
         items = SystemTray.items.values.slice()
-        console.log("[TrayService] items:", items.length)
     }
 
     Connections {

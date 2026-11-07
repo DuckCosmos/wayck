@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../services" as Services
 import "."
+import "../../../core"
 
 BarCard {
     id: root
@@ -14,7 +15,7 @@ BarCard {
 
     Text {
         text: "D"
-        color: root.cPrimary
+        color: Theme.primary
         font.pixelSize: 12
         font.bold: true
         Layout.alignment: Qt.AlignVCenter
@@ -46,7 +47,7 @@ BarCard {
                 ctx.beginPath()
                 ctx.arc(cx, cy, radius, 0, Math.PI * 2)
                 ctx.lineWidth = 2.4
-                ctx.strokeStyle = root.cOutline
+                ctx.strokeStyle = Theme.outline
                 ctx.globalAlpha = 0.38
                 ctx.stroke()
 
@@ -63,7 +64,7 @@ BarCard {
 
                     ctx.lineWidth = 2.4
                     ctx.lineCap = "round"
-                    ctx.strokeStyle = root.cPrimary
+                    ctx.strokeStyle = Theme.primary
                     ctx.globalAlpha = 1
                     ctx.stroke()
                 }
@@ -77,12 +78,16 @@ BarCard {
                 function onMetricValueChanged() {
                     ring.requestPaint()
                 }
+            }
 
-                function onCPrimaryChanged() {
+            Connections {
+                target: Theme
+
+                function onPrimaryChanged() {
                     ring.requestPaint()
                 }
 
-                function onCOutlineChanged() {
+                function onOutlineChanged() {
                     ring.requestPaint()
                 }
             }
@@ -94,7 +99,7 @@ BarCard {
             anchors.centerIn: parent
 
             text: "◫"
-            color: root.cOnSurface
+            color: Theme.onSurface
 
             font.pixelSize: 11
             font.bold: true
@@ -107,7 +112,7 @@ BarCard {
         text: Services.SystemMonitorService.connected
             ? Math.round(root.metricValue) + "%"
             : "--%"
-        color: root.cOnSurface
+        color: Theme.onSurface
 
         font.pixelSize: 12
         font.bold: true

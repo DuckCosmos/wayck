@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "."
+import "../../../core"
 
 BarCard {
     id: root
@@ -11,7 +12,7 @@ BarCard {
 
     Text {
         text: Qt.formatDateTime(root.now, "HH:mm:ss")
-        color: root.cOnSurface
+        color: Theme.onSurface
         font.pixelSize: 14
         font.bold: true
     }
@@ -19,13 +20,13 @@ BarCard {
     Rectangle {
         Layout.preferredWidth: 1
         Layout.preferredHeight: 16
-        color: root.cOutline
+        color: Theme.outline
         opacity: 0.7
     }
 
     Text {
         text: Qt.formatDateTime(root.now, "dd/MM/yy")
-        color: root.cOnSurface
+        color: Theme.onSurface
         font.pixelSize: 11
     }
 

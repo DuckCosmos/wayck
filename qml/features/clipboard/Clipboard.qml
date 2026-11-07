@@ -4,6 +4,7 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import "../../core"
 
 PanelWindow {
     id: root
@@ -11,12 +12,7 @@ PanelWindow {
     property bool _winVisible: false
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string backend: Quickshell.shellPath("wayck-backend")
-    property color cPrimary: colorsData.primary || "#ffb59b"
-    property color cOnPrimary: colorsData.on_primary || "#55200a"
-    property color cSurfaceContainer: colorsData.surface_container_high || "#322824"
-    property color cOnSurface: colorsData.on_surface || "#f1dfd9"
-    property color cOutline: colorsData.outline || "#a08d86"
-    property var colorsData: ({})
+    // Cores vêm do Theme (core/Theme.qml)
 
     property var clipboardList: []
     property int selectedIndex: 0
@@ -68,8 +64,8 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: _winVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    implicitWidth: 600
-    implicitHeight: 470
+    implicitWidth: 800
+    implicitHeight: 520
     visible: _winVisible
 
     Component.onCompleted: root.open()
@@ -95,15 +91,6 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         onActivated: root.close()
-    }
-
-    FileView {
-        path: root.homeDir + "/.local/state/quickshell/user/generated/colors.json"
-        onLoaded: {
-            try {
-                root.colorsData = JSON.parse(text());
-            } catch (e) {}
-        }
     }
 
     ParallelAnimation {
@@ -152,8 +139,8 @@ PanelWindow {
             preferredRendererType: Shape.CurveRenderer
 
             ShapePath {
-                fillColor: Qt.rgba(root.cSurfaceContainer.r, root.cSurfaceContainer.g, root.cSurfaceContainer.b, 1.0)
-                strokeColor: root.cOutline
+                fillColor: Qt.darker(root.cOnSurfaceContainer, 1.2)
+                strokeColor: Theme.outline
                 strokeWidth: 1
                 joinStyle: ShapePath.RoundJoin
                 startX: root.inset + root.topR
@@ -202,7 +189,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 height: 42
                 color: "transparent"
-                border.color: searchInput.activeFocus ? root.cPrimary : "transparent"
+                border.color: searchInput.activeFocus ? Theme.primary : "transparent"
                 border.width: 1
                 radius: 5
                 clip: true
@@ -214,7 +201,7 @@ PanelWindow {
                     verticalAlignment: TextInput.AlignVCenter
                     font.family: Qt.application.font.family
                     font.pixelSize: 16
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     focus: true
                     onTextChanged: searchDebounceTimer.restart()
                     
@@ -236,7 +223,7 @@ PanelWindow {
 
                     Text {
                         text: "Buscar no clipboard..."
-                        color: root.cOnSurface
+                        color: Theme.onSurface
                         opacity: 0.4
                         font: parent.font
                         visible: !parent.text && !parent.activeFocus
@@ -269,7 +256,7 @@ PanelWindow {
                     height: modelData.is_image ? 200 : 48
                     radius: 8
                     clip: true
-                    color: isSelected ? root.cPrimary : (mouseArea.containsMouse ? Qt.rgba(root.cOnSurface.r, root.cOnSurface.g, root.cOnSurface.b, 0.08) : "transparent")
+                    color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08) : Qt.darker(Theme.onSurface, 10))
 
                     Process {
                         id: extractImg
@@ -288,7 +275,7 @@ PanelWindow {
                             textFormat: Text.PlainText
                             font.family: Qt.application.font.family
                             font.pixelSize: 14
-                            color: isSelected ? root.cOnPrimary : root.cOnSurface
+                            color: isSelected ? Theme.onPrimary : Theme.onSurface
                             width: parent.width
                             elide: Text.ElideRight
                             verticalAlignment: Text.AlignVCenter
@@ -316,7 +303,7 @@ PanelWindow {
                             textFormat: Text.PlainText
                             font.family: Qt.application.font.family
                             font.pixelSize: 11
-                            color: isSelected ? root.cOnPrimary : root.cOnSurface
+                            color: isSelected ? Theme.onPrimary : Theme.onSurface
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                             opacity: 0.8

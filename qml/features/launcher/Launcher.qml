@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import "../../core"
 
 PanelWindow {
     id: root
@@ -33,22 +34,10 @@ PanelWindow {
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string backend: Quickshell.shellPath("wayck-backend")
 
-    property color cPrimary: colorsData.primary || "#ffb59b"
-    property color cOnPrimary: colorsData.on_primary || "#55200a"
-    property color cSurfaceContainer: colorsData.surface_container_high || "#322824"
-    property color cOnSurface: colorsData.on_surface || "#f1dfd9"
-    property color cOutline: colorsData.outline || "#a08d86"
+    // Cores vêm do Theme (core/Theme.qml)
 
-    property var colorsData: ({})
     property var appList: []
     property int selectedIndex: 0
-
-    FileView {
-        path: root.homeDir + "/.local/state/quickshell/user/generated/colors.json"
-        onLoaded: {
-            try { root.colorsData = JSON.parse(text()); } catch (e) {}
-        }
-    }
 
     property bool searchPending: false
 
@@ -102,10 +91,10 @@ PanelWindow {
     Rectangle {
         id: card
         anchors.fill: parent
-        color: Qt.rgba(root.cSurfaceContainer.r, root.cSurfaceContainer.g,
-                       root.cSurfaceContainer.b, root.blurEnabled ? 0.5 : 1.0)
+        color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g,
+                       Theme.surfaceContainer.b, root.blurEnabled ? 0.5 : 1.0)
         radius: 16
-        border.color: root.cOutline
+        border.color: Theme.outline
         border.width: 1
 
         scale: root.shown ? 1.0 : 0.95
@@ -122,7 +111,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 height: 42
                 color: "transparent"
-                border.color: searchInput.activeFocus ? root.cPrimary : "transparent"
+                border.color: searchInput.activeFocus ? Theme.primary : "transparent"
                 border.width: 1
                 radius: 8
 
@@ -133,12 +122,12 @@ PanelWindow {
                     verticalAlignment: TextInput.AlignVCenter
                     font.family: Qt.application.font.family
                     font.pixelSize: 16
-                    color: root.cOnSurface
+                    color: Theme.onSurface
                     focus: true
 
                     Text {
                         text: "Buscar..."
-                        color: root.cOnSurface
+                        color: Theme.onSurface
                         opacity: 0.4
                         font: parent.font
                         visible: !parent.text && !parent.activeFocus
@@ -177,7 +166,7 @@ PanelWindow {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: root.cOutline
+                color: Theme.outline
                 opacity: 0.1
             }
 
@@ -198,9 +187,9 @@ PanelWindow {
                     property bool isSelected: index === root.selectedIndex
 
                     color: isSelected
-                        ? root.cPrimary
+                        ? Theme.primary
                         : (mouseArea.containsMouse
-                            ? Qt.rgba(root.cOnSurface.r, root.cOnSurface.g, root.cOnSurface.b, 0.08)
+                            ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08)
                             : "transparent")
 
                     Behavior on color { ColorAnimation { duration: 80 } }
@@ -222,7 +211,7 @@ PanelWindow {
                             text: modelData.nome
                             font.family: Qt.application.font.family
                             font.pixelSize: 15
-                            color: isSelected ? root.cOnPrimary : root.cOnSurface
+                            color: isSelected ? Theme.onPrimary : Theme.onSurface
                             Layout.fillWidth: true
                             elide: Text.ElideRight
                         }

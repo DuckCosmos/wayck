@@ -1,66 +1,60 @@
 pragma Singleton
 
 import QtQuick
-import QtCore
 import Quickshell
+import "../../core"
+import "."
 
+// API da barra por cima do Config (core/Config.qml).
+// Quais módulos EXISTEM vem do BarRegistry; aqui só ficam ONDE cada um está
+// e a aparência da barra, sempre validadas.
 Singleton {
     id: root
 
-    readonly property var catalog: [
-        { id: "workspaces", name: "Workspaces" },
-        { id: "player", name: "Player" },
-        { id: "audio", name: "Audio" },
-        { id: "clock", name: "Clock" },
-        { id: "tray", name: "System Tray" },
+    readonly property var sections: ["left", "center", "right"]
 
-        { id: "cpu", name: "CPU" },
-        { id: "ram", name: "RAM" },
-        { id: "gpu", name: "GPU" },
-        { id: "disk", name: "Disk" },
-        { id: "network", name: "Network" },
-        { id: "temperature", name: "Temperature" },
-        { id: "usermenu", name: "User Menu" }
-]
+    // Lista pra UI de configuração (id + nome).
+    readonly property var catalog: BarRegistry.ids.map(id => ({
+        id: id,
+        name: BarRegistry.name(id)
+    }))
 
-    readonly property string configDirectory: {
-        const xdg = Quickshell.env("XDG_CONFIG_HOME")
-        const home = Quickshell.env("HOME")
+    // ---- Aparência (já validada) ----
+    readonly property string position: Config.bar.position === "bottom" ? "bottom" : "top"
+    readonly property int barHeight: Math.max(30, Math.min(80, Number(Config.bar.height) || 45))
+    readonly property int edgeMargin: Math.max(0, Math.min(40, Number(Config.bar.margin) || 0))
 
-        return (xdg || home + "/.config") + "/quickshell/wayck"
-    }
-
-    Settings {
-        id: settings
-
-        location: "file://" + root.configDirectory + "/bar.ini"
-        category: "Bar"
-
-        property string left: "workspaces,player,ram,disk"
-        property string center: "cpu,clock,gpu,temperature"
-        property string right: "network,audio,tray,usermenu"
-    }
-
+    // ---- Layout ----
     function isKnown(id) {
-        return catalog.some(module => module.id === id)
+        return BarRegistry.has(id)
     }
 
+    // Aceita array ou "a,b,c"; devolve só ids conhecidos, sem repetir.
     function decode(value) {
+        const raw = Array.isArray(value) ? value : String(value || "").split(",")
         const result = []
 
-        for (const id of (value || "").split(",")) {
-            const clean = id.trim()
+        for (const item of raw) {
+            const id = String(item).trim()
 
-            if (isKnown(clean) && !result.includes(clean))
-                result.push(clean)
+            if (isKnown(id) && !result.includes(id))
+                result.push(id)
         }
 
         return result
     }
 
-    readonly property var leftModules: decode(settings.left)
-    readonly property var centerModules: decode(settings.center)
-    readonly property var rightModules: decode(settings.right)
+    readonly property var leftModules: decode(Config.bar.layout.left)
+    readonly property var centerModules: decode(Config.bar.layout.center)
+    readonly property var rightModules: decode(Config.bar.layout.right)
+
+    function layout() {
+        return {
+            left: [...leftModules],
+            center: [...centerModules],
+            right: [...rightModules]
+        }
+    }
 
     function sectionFor(id) {
         if (leftModules.includes(id)) return "left"
@@ -74,28 +68,23 @@ Singleton {
         return sectionFor(id) !== ""
     }
 
-    function saveLayout(layout) {
-        settings.left = layout.left.join(",")
-        settings.center = layout.center.join(",")
-        settings.right = layout.right.join(",")
+    function saveLayout(next) {
+        Config.bar.layout.left = next.left
+        Config.bar.layout.center = next.center
+        Config.bar.layout.right = next.right
+    }
+
+    function removeFromAll(next, id) {
+        for (const section of sections)
+            next[section] = next[section].filter(x => x !== id)
     }
 
     function setEnabled(id, section, enabled) {
-        if (!isKnown(id))
+        if (!isKnown(id) || !sections.includes(section))
             return
 
-        if (!["left", "center", "right"].includes(section))
-            return
-
-        const next = {
-            left: [...leftModules],
-            center: [...centerModules],
-            right: [...rightModules]
-        }
-
-        next.left = next.left.filter(x => x !== id)
-        next.center = next.center.filter(x => x !== id)
-        next.right = next.right.filter(x => x !== id)
+        const next = layout()
+        removeFromAll(next, id)
 
         if (enabled)
             next[section].push(id)
@@ -104,14 +93,8 @@ Singleton {
     }
 
     function setOrder(section, ids) {
-        if (!["left", "center", "right"].includes(section))
+        if (!sections.includes(section))
             return
-
-        const next = {
-            left: [...leftModules],
-            center: [...centerModules],
-            right: [...rightModules]
-        }
 
         const ordered = []
 
@@ -120,9 +103,10 @@ Singleton {
                 ordered.push(id)
         }
 
-        next.left = next.left.filter(id => !ordered.includes(id))
-        next.center = next.center.filter(id => !ordered.includes(id))
-        next.right = next.right.filter(id => !ordered.includes(id))
+        const next = layout()
+
+        for (const id of ordered)
+            removeFromAll(next, id)
 
         next[section] = ordered
 
@@ -130,28 +114,14 @@ Singleton {
     }
 
     function move(id, section, index) {
-        if (!isKnown(id))
+        if (!isKnown(id) || !sections.includes(section))
             return
 
-        if (!["left", "center", "right"].includes(section))
-            return
-
-        const next = {
-            left: [...leftModules],
-            center: [...centerModules],
-            right: [...rightModules]
-        }
-
-        next.left = next.left.filter(x => x !== id)
-        next.center = next.center.filter(x => x !== id)
-        next.right = next.right.filter(x => x !== id)
+        const next = layout()
+        removeFromAll(next, id)
 
         const target = next[section]
-
-        const position = Math.max(
-            0,
-            Math.min(target.length, Number(index) || 0)
-        )
+        const position = Math.max(0, Math.min(target.length, Number(index) || 0))
 
         target.splice(position, 0, id)
 
@@ -159,8 +129,10 @@ Singleton {
     }
 
     function reset() {
-        settings.left = "workspaces"
-        settings.center = "player"
-        settings.right = "audio,clock,tray"
+        saveLayout({
+            left: [...Config.barDefaults.left],
+            center: [...Config.barDefaults.center],
+            right: [...Config.barDefaults.right]
+        })
     }
 }

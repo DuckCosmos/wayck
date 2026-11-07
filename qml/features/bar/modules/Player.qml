@@ -4,6 +4,7 @@ import Quickshell
 import Qt5Compat.GraphicalEffects
 import "../../../services"
 import "."
+import "../../../core"
 
 BarCard {
     id: root
@@ -20,7 +21,7 @@ BarCard {
         Rectangle {
             anchors.fill: parent
             radius: 7
-            color: root.cPrimary
+            color: Theme.primary
             clip: true
 
             Image {
@@ -51,7 +52,7 @@ BarCard {
             Text {
                 anchors.centerIn: parent
                 text: "♫"
-                color: root.cOnPrimary
+                color: Theme.onPrimary
                 font.pixelSize: 17
                 visible: root.player === null || root.player.trackArtUrl === ""
             }
@@ -68,7 +69,7 @@ BarCard {
             text: root.player
                 ? (root.player.trackTitle || root.player.identity || "Player")
                 : "Sem player"
-            color: root.cOnSurface
+            color: Theme.onSurface
             font.pixelSize: 11
             font.bold: true
             elide: Text.ElideRight
@@ -79,7 +80,7 @@ BarCard {
             text: root.player
                 ? (root.player.trackArtist || "Artista desconhecido")
                 : "Aguardando MPRIS"
-            color: root.cOutline
+            color: Theme.outline
             font.pixelSize: 10
             elide: Text.ElideRight
         }
@@ -94,7 +95,7 @@ BarCard {
             anchors.verticalCenterOffset: -2
             text: "‹"
             color: root.player && root.player.canGoPrevious
-                ? root.cOnSurface : root.cOutline
+                ? Theme.onSurface : Theme.outline
             font.pixelSize: 23
         }
 
@@ -113,7 +114,7 @@ BarCard {
             anchors.centerIn: parent
             text: root.player && root.player.isPlaying ? "Ⅱ" : "▶"
             color: root.player && root.player.canTogglePlaying
-                ? root.cPrimary : root.cOutline
+                ? Theme.primary : Theme.outline
             font.pixelSize: 14
             font.bold: true
         }
@@ -134,7 +135,7 @@ BarCard {
             anchors.verticalCenterOffset: -2
             text: "›"
             color: root.player && root.player.canGoNext
-                ? root.cOnSurface : root.cOutline
+                ? Theme.onSurface : Theme.outline
             font.pixelSize: 23
         }
 
