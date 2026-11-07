@@ -520,8 +520,6 @@ install_hypr() {
 
     ask "$(msg hypr_q)" false || return 0
 
-    mkdir -p -- "$CONFIG_HOME"
-
     if [[ -e "$destination" || -L "$destination" ]]; then
         local backup
         backup="$(backup_path "$destination")" ||
@@ -530,7 +528,7 @@ install_hypr() {
         printf '%b%s: %s%b\n' "$GREEN" "$(msg hypr_backup)" "$backup" "$RESET"
     fi
 
-    copy_dir "$source" "$destination" ||
+    copy_dir "$source" "$CONFIG_HOME" ||
         die "Failed to install Hyprland configuration."
 
     printf '%b%s%b\n' "$GREEN" "$(msg hypr_done)" "$RESET"

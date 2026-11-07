@@ -3,6 +3,8 @@
 
 # Binário compilado do git.rs (gere com rustc, não versione)
 /git
+/git.rs
+/build.sh
 
 # Editor / sistema
 *.swp
