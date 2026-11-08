@@ -31,16 +31,16 @@ PanelWindow {
         )
         : Math.min(260, Math.max(210, height - 48))
 
-    readonly property real targetX: Math.max(12, Math.min(
+    readonly property real targetX: Math.max(0, Math.min(
         sourceX + MorphController.sourceWidth / 2 - targetWidth / 2,
-        width - targetWidth - 12
+        width - targetWidth
     ))
 
-    readonly property real targetY: Math.max(12, Math.min(
+    readonly property real targetY: Math.max(0, Math.min(
         BarConfig.position === "bottom"
             ? sourceY + MorphController.sourceHeight - targetHeight
             : sourceY,
-        height - targetHeight - 12
+        height - targetHeight
     ))
 
     color: "transparent"
