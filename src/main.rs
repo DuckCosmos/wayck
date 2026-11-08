@@ -6,7 +6,7 @@ mod utils;
 
 use std::io::{self, BufRead};
 
-use crate::update::check;
+use crate::update::{check, check_info};
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
@@ -58,6 +58,20 @@ async fn main() {
             "--check_version" => match check().await {
                 Ok(has_update) => println!("{}", has_update),
                 Err(error) => eprintln!("Erro ao verificar atualização: {}", error),
+            },
+
+            "--version_info" => match check_info().await {
+                Ok((local, remote, available)) => {
+                    println!("{}", serde_json::json!({
+                        "local": local,
+                        "remote": remote,
+                        "available": available
+                    }));
+                }
+                Err(error) => {
+                    eprintln!("Erro ao consultar versões: {}", error);
+                    std::process::exit(1);
+                }
             },
 
             _ => {}

@@ -695,6 +695,18 @@ print_final() {
 # ============================================================
 
 main() {
+    # Non-interactive update entrypoint used by the bar's hold-to-confirm UI.
+    # The detached process survives the Quickshell restart performed by update_dot.
+    if [[ "${1:-}" == "--update-only" ]]; then
+        pick_lang
+        bootstrap
+        update_dot
+        mkdir -p -- "${XDG_STATE_HOME:-$HOME/.local/state}/wayck"
+        nohup quickshell -c wayck \
+            > "${XDG_STATE_HOME:-$HOME/.local/state}/wayck/update-shell.log" 2>&1 &
+        return 0
+    fi
+
     pick_lang "$@"
     bootstrap
 
