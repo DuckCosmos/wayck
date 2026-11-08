@@ -81,6 +81,36 @@ PanelWindow {
 
     mask: Region {
         item: surface
+
+        // Keep the collapsed player anchor in the overlay input region while
+        // the morph moves away from it. This prevents a false hover exit.
+        Region {
+            item: sourceHoverRegion
+        }
+    }
+
+    // The player source remains a hover-safe area during the morph. Once
+    // the pointer actually leaves this anchor, normal hover-close behavior resumes.
+    Item {
+        id: sourceHoverRegion
+
+        x: root.sourceX
+        y: root.sourceY
+        width: MorphController.sourceWidth
+        height: MorphController.sourceHeight
+        visible: MorphController.active && MorphController.surfaceId === "player"
+
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                if (MorphController.debug)
+                    console.log("[WAYCK MORPH] player source hotspot hover:", hovered)
+
+                if (MorphController.sourceItem)
+                    MorphController.setSourceHovered(MorphController.sourceItem, hovered)
+            }
+        }
     }
 
     MorphSurface {

@@ -26,9 +26,10 @@ BarCard {
 
         const sameAnchor = activeTrayItem === item && activeAnchor === anchor
 
-        if (sameAnchor) {
-            if (MorphController.active && MorphController.surfaceId === "tray"
-                    && MorphController.closing) {
+        if (sameAnchor
+                && MorphController.active
+                && MorphController.surfaceId === "tray") {
+            if (MorphController.closing) {
                 hoverOpenTimer.stop()
                 MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
             }
@@ -136,7 +137,9 @@ BarCard {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
-                MorphController.setSourceHovered(root, hovered)
+                // Match the exact icon anchor used by MorphController.open/retarget.
+                // Passing the whole TrayFace fails its source identity check on exit.
+                MorphController.setSourceHovered(root.activeAnchor || root, hovered)
 
                 if (root.debug)
                     console.log("[WAYCK INPUT] tray row hover:", hovered)
