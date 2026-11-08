@@ -188,7 +188,7 @@ PanelWindow {
                     controlX: root.width - root.inset
                     controlY: content.height
                 }
-                PathLine { x: 0; y: root.height }
+                PathLine { x: 0; y: content.height }
                 PathQuad {
                     x: root.inset
                     y: content.height - root.flare
