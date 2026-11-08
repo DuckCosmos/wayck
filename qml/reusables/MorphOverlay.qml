@@ -6,20 +6,30 @@ import "../"
 PanelWindow {
     id: root
 
-    // Variants injects modelData after creating its delegate.
-    property var modelData: null
+    // Variants injects monitor data after creating the delegate.
+    property var monitor: null
 
     readonly property bool traySurface: MorphController.surfaceId === "tray"
-    readonly property real sourceX: MorphController.sourceGlobalX - (modelData ? modelData.x : 0)
-    readonly property real sourceY: MorphController.sourceGlobalY - (modelData ? modelData.y : 0)
+
+    readonly property real sourceX:
+        MorphController.sourceGlobalX - (monitor ? monitor.x : 0)
+
+    readonly property real sourceY:
+        MorphController.sourceGlobalY - (monitor ? monitor.y : 0)
 
     readonly property real targetWidth: traySurface
-        ? Math.min(Math.max(240, surfaceContent.implicitWidth || 256), Math.max(1, width - 24))
-        : Math.min(460, Math.max(1, width - 48))
+        ? Math.min(
+            Math.max(240, surfaceContent.implicitWidth || 256),
+            Math.max(1, width - 24)
+        )
+        : Math.min(460, Math.max(240, width - 48))
 
     readonly property real targetHeight: traySurface
-        ? Math.min(Math.max(72, surfaceContent.implicitHeight || 72), Math.max(1, height - 24))
-        : Math.min(260, Math.max(1, height - 48))
+        ? Math.min(
+            Math.max(72, surfaceContent.implicitHeight || 72),
+            Math.max(1, height - 24)
+        )
+        : Math.min(260, Math.max(210, height - 48))
 
     readonly property real targetX: Math.max(12, Math.min(
         sourceX + MorphController.sourceWidth / 2 - targetWidth / 2,
@@ -34,8 +44,8 @@ PanelWindow {
     ))
 
     color: "transparent"
-    screen: modelData
-    visible: MorphController.active && MorphController.targetScreen === modelData
+    screen: monitor
+    visible: MorphController.active && MorphController.targetScreen === monitor
 
     anchors {
         top: true
@@ -60,8 +70,8 @@ PanelWindow {
         progress: MorphController.progress
         expanded: !MorphController.closing
 
-        collapsedX: MorphController.sourceGlobalX - (root.modelData ? root.modelData.x : 0)
-        collapsedY: MorphController.sourceGlobalY - (root.modelData ? root.modelData.y : 0)
+        collapsedX: MorphController.sourceGlobalX - (root.monitor ? root.monitor.x : 0)
+        collapsedY: MorphController.sourceGlobalY - (root.monitor ? root.monitor.y : 0)
         collapsedWidth: MorphController.sourceWidth
         collapsedHeight: MorphController.sourceHeight
         collapsedRadius: root.traySurface ? 7 : 9

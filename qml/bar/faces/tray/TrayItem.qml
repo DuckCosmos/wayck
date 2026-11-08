@@ -7,7 +7,7 @@ BarCard {
 
     required property var trayItem
 
-    signal menuRequested(var item, var anchor)
+    signal menuRequested(var item, var anchor, bool immediate)
     signal pointerLeft()
 
     property bool iconFailed: false
@@ -60,15 +60,23 @@ BarCard {
 
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton
+            cursorShape: root.trayItem.hasMenu
+                ? Qt.PointingHandCursor
+                : Qt.ArrowCursor
 
             onEntered: {
                 if (root.trayItem.hasMenu)
-                    root.menuRequested(root.trayItem, iconArea)
+                    root.menuRequested(root.trayItem, iconArea, false)
             }
 
             onExited: root.pointerLeft()
 
-            onClicked: root.trayItem.activate()
+            onClicked: {
+                if (root.trayItem.hasMenu)
+                    root.menuRequested(root.trayItem, iconArea, true)
+                else
+                    root.trayItem.activate()
+            }
         }
     }
 }

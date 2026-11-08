@@ -6,13 +6,16 @@ import Quickshell
 Singleton {
     id: root
 
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+
     property bool active: false
+    property bool opening: false
     property bool closing: false
     property bool closeOnHoverExit: true
     property bool surfaceHovered: false
+    property bool surfaceWasHovered: false
 
-    // progress is the requested endpoint; animationProgress mirrors the
-    // interpolated MorphSurface value so hover-close waits for the open morph.
+    // The endpoint is requested here; MorphSurface reports interpolated progress.
     property real progress: 0
     property real animationProgress: 0
 
@@ -35,13 +38,14 @@ Singleton {
     Timer {
         id: hoverCloseTimer
 
-        interval: 220
+        interval: 260
         repeat: false
 
         onTriggered: {
             if (root.active
                     && !root.closing
                     && root.closeOnHoverExit
+                    && root.surfaceWasHovered
                     && !root.surfaceHovered
                     && root.animationProgress >= 0.98) {
                 root.close()
@@ -49,24 +53,98 @@ Singleton {
         }
     }
 
-    function open(item, requestedSurfaceId, data): void {
-        if (!item || !item.window || !item.visible)
+    function log(message): void {
+        if (debug)
+            console.log("[WAYCK MORPH]", message)
+    }
+
+    function resolveScreen(item, center): var {
+        const sourceWindow = item.window
+
+        if (sourceWindow && sourceWindow.screen)
+            return sourceWindow.screen
+
+        for (const candidate of Quickshell.screens) {
+            if (center.x >= candidate.x
+                    && center.x < candidate.x + candidate.width
+                    && center.y >= candidate.y
+                    && center.y < candidate.y + candidate.height) {
+                return candidate
+            }
+        }
+
+        return null
+    }
+
+    function activate(token, result): void {
+        if (token !== requestSerial || !sourceItem)
             return
 
-        if (active)
+        grabResult = result && result.url ? result : null
+        opening = false
+        active = true
+
+        log("overlay ativo: " + surfaceId
+            + (grabResult ? " (snapshot)" : " (fallback sem snapshot)"))
+
+        Qt.callLater(function() {
+            if (token !== root.requestSerial
+                    || !root.active
+                    || root.closing
+                    || !root.sourceItem) {
+                return
+            }
+
+            // Keep the source visible if capture failed; the overlay still opens.
+            if (root.grabResult)
+                root.sourceItem.opacity = 0
+
+            root.progress = 1
+        })
+    }
+
+    function open(item, requestedSurfaceId, data): void {
+        if (active || opening) {
+            log("pedido ignorado: já existe uma superfície ativa")
             return
+        }
+
+        if (!item) {
+            console.warn("[WAYCK MORPH] origem ausente:", requestedSurfaceId)
+            return
+        }
+
+        if (!item.window || !item.visible || item.width <= 0 || item.height <= 0) {
+            console.warn("[WAYCK MORPH] origem indisponível:", requestedSurfaceId,
+                "window:", !!item.window,
+                "visible:", item.visible,
+                "size:", item.width, "x", item.height)
+            return
+        }
 
         if (requestedSurfaceId !== "player" && requestedSurfaceId !== "tray") {
-            console.warn("[WAYCK MOTION] superfície expandida não registrada:", requestedSurfaceId)
+            console.warn("[WAYCK MORPH] superfície expandida não registrada:", requestedSurfaceId)
             return
         }
 
         const topLeft = item.mapToGlobal(0, 0)
         const bottomRight = item.mapToGlobal(item.width, item.height)
+        const center = Qt.point(
+            (topLeft.x + bottomRight.x) / 2,
+            (topLeft.y + bottomRight.y) / 2
+        )
+        const screen = resolveScreen(item, center)
+
+        if (!screen) {
+            console.warn("[WAYCK MORPH] não foi possível resolver o monitor da origem:",
+                requestedSurfaceId, "at", center.x, center.y)
+            return
+        }
+
         const token = ++requestSerial
 
         sourceItem = item
-        targetScreen = item.window.screen
+        targetScreen = screen
         sourceGlobalX = topLeft.x
         sourceGlobalY = topLeft.y
         sourceWidth = Math.max(1, bottomRight.x - topLeft.x)
@@ -78,41 +156,41 @@ Singleton {
         closing = false
         closeOnHoverExit = true
         surfaceHovered = false
+        surfaceWasHovered = false
         animationProgress = 0
         progress = 0
+        grabResult = null
+        opening = true
         hoverCloseTimer.stop()
 
-        const accepted = item.grabToImage(function(result) {
-            if (token !== root.requestSerial || !root.sourceItem)
-                return
+        log("pedido recebido: " + requestedSurfaceId
+            + " monitor=" + screen.name
+            + " rect=" + Math.round(sourceGlobalX) + ","
+            + Math.round(sourceGlobalY) + " "
+            + Math.round(sourceWidth) + "x" + Math.round(sourceHeight))
 
-            if (!result || !result.url) {
-                console.warn("[WAYCK MOTION] não foi possível capturar a superfície de origem")
-                root.sourceItem = null
-                root.targetScreen = null
-                root.surfaceData = null
-                root.surfaceId = ""
-                return
-            }
+        let accepted = false
 
-            root.grabResult = result
-            root.active = true
-
-            Qt.callLater(function() {
-                if (token !== root.requestSerial || !root.active || root.closing || !root.sourceItem)
+        try {
+            accepted = item.grabToImage(function(result) {
+                if (token !== root.requestSerial || !root.sourceItem)
                     return
 
-                root.sourceItem.opacity = 0
-                root.progress = 1
+                if (!result || !result.url) {
+                    console.warn("[WAYCK MORPH] captura falhou; abrindo sem snapshot")
+                    root.activate(token, null)
+                    return
+                }
+
+                root.activate(token, result)
             })
-        })
+        } catch (error) {
+            console.warn("[WAYCK MORPH] erro ao capturar origem:", error)
+        }
 
         if (!accepted) {
-            console.warn("[WAYCK MOTION] grabToImage recusou a captura da superfície")
-            sourceItem = null
-            targetScreen = null
-            surfaceData = null
-            surfaceId = ""
+            console.warn("[WAYCK MORPH] grabToImage recusou a captura; abrindo sem snapshot")
+            activate(token, null)
         }
     }
 
@@ -120,8 +198,11 @@ Singleton {
         surfaceHovered = hovered
 
         if (hovered) {
+            surfaceWasHovered = true
             hoverCloseTimer.stop()
+            log("ponteiro entrou na superfície")
         } else {
+            log("ponteiro saiu da superfície")
             evaluateHoverExit()
         }
     }
@@ -135,6 +216,7 @@ Singleton {
         if (active
                 && !closing
                 && closeOnHoverExit
+                && surfaceWasHovered
                 && !surfaceHovered
                 && animationProgress >= 0.98) {
             hoverCloseTimer.restart()
@@ -142,13 +224,16 @@ Singleton {
     }
 
     function close(): void {
-        if (!active || closing)
+        if ((!active && !opening) || closing)
             return
 
         const alreadyCollapsed = animationProgress <= 0.001
         hoverCloseTimer.stop()
+        opening = false
         closing = true
         progress = 0
+
+        log("fechando superfície: " + surfaceId)
 
         if (alreadyCollapsed)
             Qt.callLater(root.finish)
@@ -161,9 +246,11 @@ Singleton {
         hoverCloseTimer.stop()
         ++requestSerial
         active = false
+        opening = false
         closing = false
         closeOnHoverExit = true
         surfaceHovered = false
+        surfaceWasHovered = false
         progress = 0
         animationProgress = 0
         sourceItem = null
@@ -171,5 +258,7 @@ Singleton {
         grabResult = null
         surfaceData = null
         surfaceId = ""
+
+        log("superfície liberada")
     }
 }

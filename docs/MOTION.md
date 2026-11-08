@@ -1,6 +1,6 @@
 # Wayck Motion System
 
-The motion system is built around shared tokens and reusable QML surfaces. The goal is to make motion composable: a component describes its states and geometry, while the shared primitives handle interpolation and timing.
+The motion system is built around shared tokens and reusable QML surfaces. Components describe their semantic states and geometry while the shared primitives handle interpolation and timing.
 
 ## Motion tokens
 
@@ -16,19 +16,11 @@ Behavior on opacity {
 }
 ```
 
-Available groups include:
-- `fast`, `normal`, `medium`, `slow`: general-purpose durations.
-- `hoverDuration`, `hoverEnterCurve`, `hoverExitCurve`: pointer feedback.
-- `surfaceOpenDuration`, `surfaceCloseDuration`, `surfaceOpenCurve`, `surfaceCloseCurve`: surface transitions.
-- `morphDuration`, `morphCurve`: shape and geometry morphing.
-- `layoutDuration`, `layoutCurve`: layout movement.
-- `contentFadeDuration`, `contentCurve`: content reveal and concealment.
-
-Change the singleton tokens to tune the shell consistently. Avoid giving every widget unrelated durations.
+The token groups cover general-purpose timing, pointer feedback, surface transitions, layout movement and content reveal. Tune them centrally; avoid unrelated durations per widget.
 
 ## Hover deformation with BarCard
 
-`BarCard` has a reusable hover deformation. It changes the rendered scale, corner radius and border treatment without changing its implicit layout size.
+`BarCard` provides reusable hover deformation without changing its implicit layout size.
 
 ```qml
 BarCard {
@@ -36,119 +28,42 @@ BarCard {
     hoverScale: 1.035
     hoverRadiusBoost: 3
 
-    Text {
-        text: "Volume"
-    }
+    Text { text: "Volume" }
 }
 ```
 
-Set `hoverEnabled: false` when a card is decorative or when its parent owns pointer interaction. The default is enabled.
+Set `hoverEnabled: false` for decorative cards or when a parent owns pointer interaction.
 
-## MorphSurface: compact surface to expanded surface
+## MorphSurface
 
-Use `MorphSurface` when a compact representation and its expanded content belong to the same visual surface and the same QQuickWindow.
+Use `MorphSurface` when compact and expanded content belong to the same visual surface. It interpolates one normalized progress value for position, size, radius and scale. For a cross-window handoff, use the shared overlay host rather than reparenting a `QQuickItem`.
 
-```qml
-MorphSurface {
-    id: surface
+## Shared morph host: player and system tray
 
-    expanded: controller.open
+Player and tray use a per-monitor `PanelWindow` overlay. The source icon is captured with `Item.grabToImage()`; the `ItemGrabResult` is retained while its URL is displayed. When a snapshot cannot be created, the controller still opens the expanded surface instead of silently abandoning the interaction.
 
-    collapsedWidth: 190
-    collapsedHeight: 54
-    collapsedRadius: 27
-    collapsedScale: 0.96
+The player opens after a short hover dwell on its album-art area, or immediately on click. It also opens when there is no active player, showing the empty-player state. The destination is centered around the source icon and grows from that exact rectangle.
 
-    expandedWidth: parent.width
-    expandedHeight: parent.height
-    expandedRadius: 16
-    expandedScale: 1.0
+The system tray opens a native item menu after a hover dwell, or immediately on click. Items without a native menu retain their normal activation behavior. The tray destination is anchored to the originating icon, growing upward from a bottom bar and downward from a top bar. The native menu lives inside the morph surface instead of a separate popup window.
 
-    Column {
-        anchors.fill: parent
-        // Expanded content
-    }
-}
-```
+The hover-close timer only starts after the overlay has actually received a pointer-enter event and then a pointer-leave event. This prevents a newly created overlay from closing simply because the pointer state has not yet propagated to its new window.
 
-The surface interpolates one normalized `progress` value. Position, size, radius and scale are derived from that value, so they stay synchronized. The animation can be retargeted when `expanded` changes while a transition is running.
+## Adding a new morph surface
 
-For non-centered layouts, provide `collapsedX`, `collapsedY`, `expandedX` and `expandedY`. Their defaults center each geometry in the parent.
+1. Give the compact face a stable source `Item` with a non-zero visible size.
+2. Call `MorphController.open(sourceItem, "surface-id", payload)` on hover or click.
+3. Register the expanded component in `MorphOverlay.qml` and pass its payload through `MorphController.surfaceData`.
+4. Choose destination geometry that contains the pointer's original position.
+5. Keep the close path connected to `MorphController.close()`.
 
-## Important: cross-window continuity
+Use the `Motion` singleton for timing and easing. Keep geometry transition and content reveal phase-locked through the same `MorphSurface.progress`.
 
-A `PanelWindow` is a separate Wayland surface. Two different `PanelWindow` instances cannot become the same QML item merely by animating their properties. `MorphSurface` guarantees a coordinated morph only within one QQuickWindow.
+## Cross-window constraints
 
-For a bar module that expands into a separate panel, use a shared overlay/host surface or a temporary visual carrier:
-1. Measure the source item in screen coordinates with `mapToItem` / `mapToGlobal` as appropriate for the Quickshell version.
-2. Render or clone the source appearance inside the overlay host.
-3. Animate that carrier from the source rectangle to the destination rectangle, including radius and clipping.
-4. Reveal the destination content as the carrier reaches its target.
-5. Hide the source representation only after the handoff is complete.
-6. Reverse the same sequence on close, and retarget from the current interpolated geometry if the user interrupts the transition.
+A `PanelWindow` is a distinct Wayland surface. Use a retained snapshot as the bridge between the source window and the overlay window; do not attempt to move the source `QQuickItem` between windows.
 
-Do not claim a true shared-element morph if the source and destination are still independently visible windows. A visual carrier is the bridge between those surfaces.
-
-## Adding motion to a new module
-
-Start by deciding which interaction states the module needs. A common pattern is `idle`, `hover`, `expanded` and `closing`. Keep the state semantic; do not encode animation progress into a pile of booleans.
-
-For a simple hoverable module, use `BarCard`. For a compact-to-expanded surface in one window, use `MorphSurface`. For a panel opened from a bar module, integrate it with the shared overlay carrier rather than creating an unrelated slide animation.
-
-Keep content transitions separate from geometry transitions. Geometry should establish the new surface first; content can then fade, clip or stagger into place. Prefer `Motion` tokens and shared curves over per-widget magic numbers.
+The overlay uses `QsWindow.mask` and a `Region` tied to the morph surface so that the full-screen layer window does not claim pointer input outside the animated shape.
 
 ## Design references
 
-The implementation takes inspiration from Caelestia's fluid visual language, HakuSpace's coordinated surface and navigation transitions, and Serpantinum's shared-host approach. These are design references, not a requirement to duplicate their source code. Check each upstream project's license before copying implementation code.
-
-
-## One progress value per transition
-
-When a component has several animated properties that describe one visual state, prefer one normalized progress value and derive the properties from it. This keeps geometry and content phase-locked and makes an interrupted transition retarget cleanly.
-
-The clipboard surface uses this pattern:
-
-```qml
-property real revealProgress: 0
-
-Behavior on revealProgress {
-    NumberAnimation {
-        duration: root.closing
-            ? Motion.surfaceCloseDuration
-            : Motion.surfaceOpenDuration
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: root.closing
-            ? Motion.surfaceCloseCurve
-            : Motion.surfaceOpenCurve
-    }
-}
-
-Item {
-    height: root.height * root.revealProgress
-    y: root.height * (1 - root.revealProgress)
-    opacity: root.revealProgress
-}
-```
-
-Use this for a single surface transition. Do not force unrelated interactions (for example, a list item's hover state and a panel's open state) into the same progress value.
-
-Notification cards use one progress for opacity, scale and vertical offset. The system tray uses the shared MorphSurface host, so the icon snapshot, panel geometry and content reveal share one transition progress. BarCard.emphasisScale lets a module express selection emphasis without replacing the shared hover behavior.
-
-## Shared morph host
-
-The player and system-tray transitions use a dedicated overlay `PanelWindow` on the source monitor. Each source item is captured with `Item.grabToImage()`; the returned `ItemGrabResult` is retained so its `url` remains valid. The source item is hidden only after the overlay has the snapshot, then the overlay morphs that visual into its expanded content.
-
-The player opens after a short hover dwell over its album artwork. Its expanded card is positioned around the source icon, so the pointer remains inside the destination while the geometry grows. Leaving the expanded card reverses the morph after a short delay; the close control remains available as an explicit alternative.
-
-The tray starts the same transition when the pointer dwells over an item that exposes a menu. Its native menu object is forwarded as `surfaceData`, and the expanded destination is aligned to the originating icon: upward for a bottom bar and downward for a top bar. The menu is rendered inside the shared overlay instead of a separate `PopupWindow`, so the icon snapshot and panel shape remain one continuous surface.
-
-The flow is:
-1. A face emits `expandRequested(sourceItem, surfaceData)` after its hover timer completes.
-2. `BarModule` forwards the source item, module ID and optional payload through `BarSection` to `MorphController`.
-3. `MorphController` measures the source item in global logical coordinates and captures it asynchronously.
-4. The `MorphOverlay` instance for the matching `ShellScreen` converts the source rectangle into screen-local coordinates and animates one `MorphSurface`.
-5. The expanded content fades in inside that surface. Hover exit or an explicit close request reverses the same progress and restores the original bar item.
-
-The overlay uses `QsWindow.mask` with a `Region` tied to the morph surface, so its full-screen layer window does not claim pointer input outside the animated surface. A new module can use this pattern by emitting `expandRequested(sourceItem, surfaceData)`, registering an expanded component in `MorphOverlay`, and choosing destination geometry that contains the pointer's starting position.
-
-The image capture is a one-shot transition snapshot, not a live mirror. This avoids trying to share a `QQuickItem` across separate Wayland windows and avoids keeping an expensive offscreen capture active after the handoff.
+The visual language is informed by Caelestia, HakuSpace and Serpantinum. These are design references; check each upstream project's license before copying implementation code.

@@ -65,9 +65,11 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
 
-        MorphOverlay {
-            required property var modelData
-            screen: modelData
+        delegate: Component {
+            MorphOverlay {
+                required property var modelData
+                monitor: modelData
+            }
         }
     }
 

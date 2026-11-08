@@ -8,8 +8,6 @@ BarCard {
     property var activeTrayItem: null
     property var activeAnchor: null
 
-    signal expandRequested(var sourceItem, var surfaceData)
-
     readonly property int iconSize: 30
     readonly property int itemSpacing: 2
 
@@ -18,17 +16,32 @@ BarCard {
     contentSpacing: 0
     minimumHeight: 0
 
-    function openMenu(item, anchor) {
-        if (!item || !item.hasMenu || MorphController.active)
+    function openMenu(item, anchor, immediate) {
+        if (!item || !item.hasMenu)
             return
+
+        if (MorphController.active || MorphController.opening) {
+            if (MorphController.surfaceId === "tray"
+                    && MorphController.surfaceData === item.menu) {
+                return
+            }
+
+            return
+        }
 
         activeAnchor = anchor
         activeTrayItem = item
-        hoverOpenTimer.restart()
+
+        if (immediate) {
+            hoverOpenTimer.stop()
+            MorphController.open(activeAnchor, "tray", item.menu)
+        } else {
+            hoverOpenTimer.restart()
+        }
     }
 
     function cancelPendingOpen() {
-        if (!MorphController.active)
+        if (!MorphController.active && !MorphController.opening)
             hoverOpenTimer.stop()
     }
 
@@ -42,8 +55,13 @@ BarCard {
             if (root.activeTrayItem
                     && root.activeTrayItem.hasMenu
                     && root.activeAnchor
-                    && !MorphController.active) {
-                root.expandRequested(root.activeAnchor, root.activeTrayItem.menu)
+                    && !MorphController.active
+                    && !MorphController.opening) {
+                MorphController.open(
+                    root.activeAnchor,
+                    "tray",
+                    root.activeTrayItem.menu
+                )
             }
         }
     }
@@ -62,7 +80,9 @@ BarCard {
                 width: root.iconSize
                 height: root.iconSize
 
-                onMenuRequested: (item, anchor) => root.openMenu(item, anchor)
+                onMenuRequested: (item, anchor, immediate) =>
+                    root.openMenu(item, anchor, immediate)
+
                 onPointerLeft: root.cancelPendingOpen()
             }
         }

@@ -9,10 +9,13 @@ BarCard {
 
     property var player: MprisController.activePlayer
 
-    signal expandRequested(var sourceItem, var surfaceData)
-
     implicitHeight: 36
     horizontalPadding: 8
+
+    function openExpanded(): void {
+        expandDelay.stop()
+        MorphController.open(albumArea, "player", null)
+    }
 
     Item {
         id: albumArea
@@ -60,13 +63,15 @@ BarCard {
             }
         }
 
-        HoverHandler {
-            onHoveredChanged: {
-                if (hovered && root.player)
-                    expandDelay.restart()
-                else
-                    expandDelay.stop()
-            }
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton
+            cursorShape: Qt.PointingHandCursor
+
+            onEntered: expandDelay.restart()
+            onExited: expandDelay.stop()
+            onClicked: root.openExpanded()
         }
 
         Timer {
@@ -75,10 +80,7 @@ BarCard {
             interval: 220
             repeat: false
 
-            onTriggered: {
-                if (root.player)
-                    root.expandRequested(albumArea, null)
-            }
+            onTriggered: root.openExpanded()
         }
     }
 
