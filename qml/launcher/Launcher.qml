@@ -88,7 +88,7 @@ PanelWindow {
 
     MorphSurface {
         id: card
-        anchors.centerIn: parent
+        // MorphSurface computes both centered geometries itself.
         expanded: root.shown
         expandedWidth: parent.width
         expandedHeight: parent.height
