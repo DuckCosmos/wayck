@@ -26,8 +26,9 @@ PanelWindow {
 
     Behavior on compactness {
         NumberAnimation {
-            duration: 160
-            easing.type: Easing.OutCubic
+            duration: Motion.barResizeDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.layoutCurve
         }
     }
 
@@ -212,6 +213,13 @@ PanelWindow {
         layoutTimer.restart()
     }
 
+    function forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef): void {
+        if (debug)
+            console.log("[WAYCK INPUT] Bar recebeu", surfaceId,
+                "source=", !!sourceItem, "window=", !!windowRef)
+        MorphController.open(sourceItem, surfaceId, surfaceData, windowRef || QsWindow.window)
+    }
+
     Connections {
         target: BarConfig
 
@@ -228,6 +236,15 @@ PanelWindow {
         anchors.fill: parent
 
         onWidthChanged: root.scheduleLayout()
+
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] bar content hover:", hovered)
+            }
+        }
 
         readonly property real leftEdge:
             leftSection.width > 0 ? leftSection.width + root.sectionGap : 0
@@ -252,6 +269,7 @@ PanelWindow {
             x: 0
 
             onMetricsChanged: root.scheduleLayout()
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
         }
 
         BarSection {
@@ -268,6 +286,7 @@ PanelWindow {
             x: Math.max(barContent.leftEdge, Math.min(barContent.idealCenterX, barContent.maxCenterX))
 
             onMetricsChanged: root.scheduleLayout()
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
         }
 
         BarSection {
@@ -284,6 +303,7 @@ PanelWindow {
             x: barContent.width - width
 
             onMetricsChanged: root.scheduleLayout()
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
         }
     }
 }

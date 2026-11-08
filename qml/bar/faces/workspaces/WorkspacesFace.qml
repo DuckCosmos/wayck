@@ -21,16 +21,9 @@ RowLayout {
             highlighted: active
             implicitWidth: 34
             implicitHeight: 34
-            scale: active ? 1.10 : 1.0
+            emphasisScale: active ? 1.10 : 1.0
             z: active ? 1 : 0
             transformOrigin: Item.Center
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 180
-                    easing.type: Easing.OutCubic
-                }
-            }
 
             horizontalPadding: 4
             verticalPadding: 4
@@ -46,9 +39,9 @@ RowLayout {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: 180
-                            easing.type: Easing.OutCubic
-                            }
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
                     }
 
                     font.pixelSize: 13

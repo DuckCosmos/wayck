@@ -541,6 +541,10 @@ update_dot() {
         "$ROOT/scripts/wayck-wallpaper.sh" \
         "$UPDATE_STAGE/wayck-wallpaper"
 
+    install -m 755 \
+        "$ROOT/install.sh" \
+        "$UPDATE_STAGE/install.sh"
+
     printf '%b%s%b\n' "$YELLOW" "$(msg update.stopping)" "$RESET"
 
     quickshell -c wayck kill 2>/dev/null || true
@@ -601,6 +605,7 @@ build_and_install() {
 
     install -m 755 "$ROOT/target/release/wayck-backend" "$stage/wayck-backend"
     install -m 755 "$ROOT/scripts/wayck-wallpaper.sh" "$stage/wayck-wallpaper"
+    install -m 755 "$ROOT/install.sh" "$stage/install.sh"
 
     printf '%b%s%b\n' "$GREEN" "$(msg installing path "$DEST")" "$RESET"
 
@@ -695,6 +700,18 @@ print_final() {
 # ============================================================
 
 main() {
+    # Non-interactive update entrypoint used by the bar's hold-to-confirm UI.
+    # The detached process survives the Quickshell restart performed by update_dot.
+    if [[ "${1:-}" == "--update-only" ]]; then
+        pick_lang
+        bootstrap
+        update_dot
+        mkdir -p -- "${XDG_STATE_HOME:-$HOME/.local/state}/wayck"
+        nohup quickshell -c wayck \
+            > "${XDG_STATE_HOME:-$HOME/.local/state}/wayck/update-shell.log" 2>&1 &
+        return 0
+    fi
+
     pick_lang "$@"
     bootstrap
 

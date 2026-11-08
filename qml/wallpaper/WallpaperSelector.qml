@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import Quickshell.Wayland
 import QtQuick.Controls
 import "../"
 
@@ -22,6 +23,17 @@ PanelWindow {
     property string originalWallpaper: ""
     property string previewedWallpaper: ""
     property string applyingPath: ""
+    property string pendingPreviewPath: ""
+    property string activePreviewPath: ""
+
+    readonly property var blurShape: Region { item: selector }
+
+    onOpenedChanged: {
+        if (opened)
+            closeTimer.stop()
+        else
+            closeTimer.restart()
+    }
 
     readonly property string wallpaperCommand: {
         const configured = Quickshell.env("WAYCK_WALLPAPER")
@@ -43,12 +55,17 @@ PanelWindow {
         right: true
     }
 
-    visible: opened
+    visible: opened || closeTimer.running
     focusable: opened
     aboveWindows: true
     exclusiveZone: -1
 
     color: "transparent"
+    WlrLayershell.namespace: "wayck-wallpaper-selector"
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.exclusiveZone: -1
+    WlrLayershell.keyboardFocus: opened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    BackgroundEffect.blurRegion: Config.blur ? blurShape : null
 
     function openSelector(): void {
         if (opened)
@@ -57,6 +74,8 @@ PanelWindow {
         opened = true
         initializing = true
         applying = false
+        pendingPreviewPath = ""
+        activePreviewPath = ""
 
         wallpapers = []
         filteredWallpapers = []
@@ -135,7 +154,7 @@ PanelWindow {
 
             if (selectedWallpaper &&
                 selectedWallpaper !== previewedWallpaper) {
-                previewTimer.restart()
+                previewSelected()
             }
         })
     }
@@ -143,17 +162,31 @@ PanelWindow {
     function previewSelected(): void {
         const path = selectedWallpaper
 
-        if (!path || path === previewedWallpaper)
+        if (!path)
             return
 
-        previewedWallpaper = path
+        if (path === previewedWallpaper
+                && (!previewProcess.running || activePreviewPath === path)
+                && pendingPreviewPath === "") {
+            return
+        }
 
-        previewProcess.exec([
-            "hyprctl",
-            "hyprpaper",
-            "wallpaper",
-            "," + path + ",cover"
-        ])
+        pendingPreviewPath = path
+        previewTimer.restart()
+    }
+
+    function runPreview(): void {
+        if (previewProcess.running || !pendingPreviewPath)
+            return
+
+        const path = pendingPreviewPath
+        pendingPreviewPath = ""
+
+        if (path === previewedWallpaper)
+            return
+
+        activePreviewPath = path
+        previewProcess.exec([wallpaperCommand, "set", path])
     }
 
     function confirmSelector(): void {
@@ -161,20 +194,25 @@ PanelWindow {
             return
 
         const path = selectedWallpaper
-
         if (!path) {
-            opened = false
+            cancelSelector()
             return
         }
 
-        applying = true
-        applyingPath = path
+        // Selection changes already preview through wayck-wallpaper (including
+        // Matugen). Enter commits the highlighted item and closes the selector.
+        previewTimer.stop()
 
-        applyProcess.exec([
-            wallpaperCommand,
-            "set",
-            path
-        ])
+        if (path !== previewedWallpaper && path !== activePreviewPath) {
+            pendingPreviewPath = path
+            if (!previewProcess.running)
+                runPreview()
+        } else if (pendingPreviewPath !== path) {
+            pendingPreviewPath = ""
+        }
+
+        originalWallpaper = path
+        opened = false
     }
 
     function cancelSelector(): void {
@@ -183,16 +221,14 @@ PanelWindow {
 
         previewTimer.stop()
 
-        if (originalWallpaper &&
-            previewedWallpaper !== originalWallpaper) {
-            previewedWallpaper = originalWallpaper
-
-            previewProcess.exec([
-                "hyprctl",
-                "hyprpaper",
-                "wallpaper",
-                "," + originalWallpaper + ",cover"
-            ])
+        if (originalWallpaper
+                && (previewedWallpaper !== originalWallpaper
+                    || (previewProcess.running && activePreviewPath !== originalWallpaper))) {
+            pendingPreviewPath = originalWallpaper
+            if (!previewProcess.running)
+                runPreview()
+        } else {
+            pendingPreviewPath = ""
         }
 
         opened = false
@@ -211,44 +247,76 @@ PanelWindow {
 
         Rectangle {
             anchors.fill: parent
-            color: "#99000000"
+            color: Qt.rgba(0, 0, 0, 0.22)
+            opacity: root.opened ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Motion.contentFadeDuration
+                    easing.type: Motion.standard
+                }
+            }
         }
 
         MouseArea {
             anchors.fill: parent
             z: 0
-
+            enabled: root.opened
             onClicked: root.cancelSelector()
         }
 
-        Rectangle {
+        MorphSurface {
             id: selector
-
-            width: Math.min(1120, focusRoot.width - 40)
-            height: Math.min(380, focusRoot.height - 40)
-
             anchors.centerIn: parent
-
-            color: Qt.darker(Theme.surfaceContainer, 1.5)
-            radius: 0
-
+            expanded: root.opened
+            expandedWidth: Math.max(300, Math.min(620, focusRoot.width - 32))
+            expandedHeight: Math.max(220, Math.min(270, focusRoot.height - 32))
+            collapsedWidth: 174
+            collapsedHeight: 48
+            expandedRadius: 16
+            collapsedRadius: 24
+            color: Qt.alpha(Theme.surfaceContainer, Config.blur ? 0.66 : 0.96)
+            border.width: 1
+            border.color: Theme.outline
             z: 1
 
             ColumnLayout {
                 anchors.fill: parent
 
-                anchors.leftMargin: 28
-                anchors.rightMargin: 28
-                anchors.topMargin: 28
-                anchors.bottomMargin: 28
+                anchors.leftMargin: 18
+                anchors.rightMargin: 18
+                anchors.topMargin: 14
+                anchors.bottomMargin: 14
 
-                spacing: 18
+                spacing: 8
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 22
+
+                    Text {
+                        text: "WALLPAPERS"
+                        color: Theme.onSurface
+                        font.pixelSize: 11
+                        font.bold: true
+                        font.letterSpacing: 1.2
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Text {
+                        text: carousel.count > 0
+                            ? (Math.max(0, carousel.currentIndex + 1) + " / " + carousel.count)
+                            : "0 / 0"
+                        color: Theme.outline
+                        font.pixelSize: 11
+                    }
+                }
 
                 PathView {
                     id: carousel
 
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 250
+                    Layout.preferredHeight: 126
 
                     clip: true
 
@@ -257,7 +325,7 @@ PanelWindow {
 
                     model: root.filteredWallpapers
 
-                    pathItemCount: 5
+                    pathItemCount: 3
                     cacheItemCount: 3
 
                     preferredHighlightBegin: 0.5
@@ -266,7 +334,7 @@ PanelWindow {
                     highlightRangeMode: PathView.StrictlyEnforceRange
                     snapMode: PathView.SnapOneItem
 
-                    highlightMoveDuration: 320
+                    highlightMoveDuration: Motion.wallpaperMoveDuration
                     flickDeceleration: 1800
                     dragMargin: height / 2
 
@@ -276,7 +344,7 @@ PanelWindow {
                         if (root.initializing || !root.opened)
                             return
 
-                        previewTimer.restart()
+                        previewSelected()
                     }
 
                     Keys.onLeftPressed: event => {
@@ -305,48 +373,27 @@ PanelWindow {
                     }
 
                     path: Path {
-                        startX: 100
+                        startX: 82
                         startY: carousel.height / 2
 
-                        PathAttribute {
-                            name: "itemScale"
-                            value: 0.68
-                        }
-
-                        PathAttribute {
-                            name: "itemOpacity"
-                            value: 0.35
-                        }
+                        PathAttribute { name: "itemScale"; value: 0.76 }
+                        PathAttribute { name: "itemOpacity"; value: 0.42 }
 
                         PathLine {
                             x: carousel.width / 2
                             y: carousel.height / 2
                         }
 
-                        PathAttribute {
-                            name: "itemScale"
-                            value: 1.12
-                        }
-
-                        PathAttribute {
-                            name: "itemOpacity"
-                            value: 1.0
-                        }
+                        PathAttribute { name: "itemScale"; value: 1.04 }
+                        PathAttribute { name: "itemOpacity"; value: 1.0 }
 
                         PathLine {
-                            x: carousel.width - 100
+                            x: carousel.width - 82
                             y: carousel.height / 2
                         }
 
-                        PathAttribute {
-                            name: "itemScale"
-                            value: 0.68
-                        }
-
-                        PathAttribute {
-                            name: "itemOpacity"
-                            value: 0.35
-                        }
+                        PathAttribute { name: "itemScale"; value: 0.76 }
+                        PathAttribute { name: "itemOpacity"; value: 0.42 }
                     }
 
                     delegate: Item {
@@ -355,8 +402,8 @@ PanelWindow {
                         required property string modelData
                         required property int index
 
-                        width: 180
-                        height: 210
+                        width: 156
+                        height: 108
 
                         scale: PathView.itemScale
                         opacity: PathView.itemOpacity
@@ -365,15 +412,43 @@ PanelWindow {
 
                         z: PathView.isCurrentItem ? 1 : 0
 
-                        Image {
+                        Rectangle {
                             anchors.fill: parent
+                            radius: 11
+                            color: Theme.surfaceContainer
+                            clip: true
 
-                            source: "file://" + wallpaperItem.modelData
+                            Image {
+                                anchors.fill: parent
+                                source: "file://" + wallpaperItem.modelData
+                                fillMode: Image.PreserveAspectCrop
+                                asynchronous: true
+                                cache: true
+                                smooth: true
+                            }
 
-                            fillMode: Image.PreserveAspectCrop
-                            asynchronous: true
-                            cache: true
-                            smooth: true
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                height: 28
+                                color: Qt.rgba(0, 0, 0, 0.48)
+                            }
+
+                            Text {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                anchors.bottomMargin: 7
+                                text: wallpaperItem.modelData.substring(
+                                    wallpaperItem.modelData.lastIndexOf("/") + 1
+                                )
+                                color: "white"
+                                font.pixelSize: 9
+                                elide: Text.ElideMiddle
+                            }
                         }
 
                         TapHandler {
@@ -405,10 +480,10 @@ PanelWindow {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 46
+                    Layout.preferredHeight: 36
 
-                    color: Qt.darker(Theme.surfaceContainer, 1.3)
-                    radius: 0
+                    color: Qt.alpha(Theme.surfaceContainer, 0.7)
+                    radius: 9
 
                     TextField {
                         background: Item {}
@@ -451,12 +526,18 @@ PanelWindow {
     }
 
     Timer {
+        id: closeTimer
+        interval: Motion.surfaceCloseDuration
+        repeat: false
+    }
+
+    Timer {
         id: previewTimer
 
-        interval: 100
+        interval: 75
         repeat: false
 
-        onTriggered: root.previewSelected()
+        onTriggered: root.runPreview()
     }
 
     Timer {
@@ -515,45 +596,26 @@ PanelWindow {
     Process {
         id: previewProcess
 
+        property string activePath: ""
+
         stderr: StdioCollector {
             id: previewErrors
         }
 
         onExited: (exitCode, exitStatus) => {
-            if (exitCode !== 0) {
+            if (exitCode === 0) {
+                root.previewedWallpaper = activePath
+            } else {
                 console.warn(
-                    "[WallpaperSelector] falha na prévia:",
+                    "[WallpaperSelector] falha ao pré-visualizar/aplicar Matugen:",
                     previewErrors.text.trim()
                 )
             }
-        }
-    }
 
-    Process {
-        id: applyProcess
-
-        stderr: StdioCollector {
-            id: applyErrors
-        }
-
-        onExited: (exitCode, exitStatus) => {
-            root.applying = false
-
-            if (exitCode === 0) {
-                root.originalWallpaper = root.applyingPath
-                root.previewedWallpaper = root.applyingPath
-                root.opened = false
-
-                console.log(
-                    "[WallpaperSelector] aplicado:",
-                    root.applyingPath
-                )
-            } else {
-                console.warn(
-                    "[WallpaperSelector] falha ao aplicar:",
-                    applyErrors.text.trim()
-                )
-            }
+            if (root.pendingPreviewPath && root.pendingPreviewPath !== activePath)
+                root.runPreview()
+            else if (root.pendingPreviewPath === activePath)
+                root.pendingPreviewPath = ""
         }
     }
 

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Services.Pipewire
 import "../../../"
 
@@ -9,13 +10,12 @@ RowLayout {
     property var sink: Pipewire.defaultAudioSink
     property var source: Pipewire.defaultAudioSource
 
+    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+
     spacing: 6
 
     PwObjectTracker {
-        objects: [
-            root.sink,
-            root.source
-        ]
+        objects: [root.sink, root.source]
     }
 
     function isReady(node) {
@@ -36,10 +36,7 @@ RowLayout {
         if (!isReady(node))
             return
 
-        node.audio.volume = Math.max(
-            0,
-            Math.min(1, node.audio.volume + delta)
-        )
+        node.audio.volume = Math.max(0, Math.min(1, node.audio.volume + delta))
     }
 
     function percentage(node) {
@@ -49,12 +46,11 @@ RowLayout {
         return Math.round(node.audio.volume * 100) + "%"
     }
 
-    // VOLUME
     BarCard {
-
         implicitHeight: 36
 
         Item {
+            id: volumeAnchor
             Layout.preferredWidth: 51
             Layout.preferredHeight: 24
 
@@ -65,15 +61,9 @@ RowLayout {
                 Text {
                     text: !root.isReady(root.sink)
                         ? "󰖁"
-                        : root.sink.audio.muted
-                            ? "󰖁"
-                            : "󰕾"
-
-                    color: root.isReady(root.sink)
-                        && !root.sink.audio.muted
-                        ? Theme.primary
-                        : Theme.outline
-
+                        : root.sink.audio.muted ? "󰖁" : "󰕾"
+                    color: root.isReady(root.sink) && !root.sink.audio.muted
+                        ? Theme.primary : Theme.outline
                     font.pixelSize: 16
                 }
 
@@ -85,6 +75,29 @@ RowLayout {
                 }
             }
 
+            HoverHandler {
+                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+                onHoveredChanged: {
+                    MorphController.setSourceHovered(volumeAnchor, hovered)
+                    if (hovered)
+                        mixerOpenTimer.restart()
+                    else
+                        mixerOpenTimer.stop()
+                }
+            }
+
+            Timer {
+                id: mixerOpenTimer
+                interval: Motion.hoverDwellDuration
+                repeat: false
+                onTriggered: {
+                    if (root.debug)
+                        console.log("[WAYCK INPUT] audio mixer hover dwell")
+                    root.expandRequested(volumeAnchor, null, QsWindow.window)
+                }
+            }
+
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton
@@ -93,25 +106,15 @@ RowLayout {
 
                 onWheel: function(wheel) {
                     const direction = wheel.angleDelta.y > 0 ? 1 : -1
-                    const steps = Math.max(
-                        1,
-                        Math.round(Math.abs(wheel.angleDelta.y) / 120)
-                    )
-
-                    root.adjustVolume(
-                        root.sink,
-                        direction * 0.05 * steps
-                    )
-
+                    const steps = Math.max(1, Math.round(Math.abs(wheel.angleDelta.y) / 120))
+                    root.adjustVolume(root.sink, direction * 0.05 * steps)
                     wheel.accepted = true
                 }
             }
         }
     }
 
-    // MICROFONE
     BarCard {
-
         implicitHeight: 36
 
         Item {
@@ -125,15 +128,9 @@ RowLayout {
                 Text {
                     text: !root.isReady(root.source)
                         ? "󰍭"
-                        : root.source.audio.muted
-                            ? "󰍭"
-                            : "󰍬"
-
-                    color: root.isReady(root.source)
-                        && !root.source.audio.muted
-                        ? Theme.primary
-                        : Theme.outline
-
+                        : root.source.audio.muted ? "󰍭" : "󰍬"
+                    color: root.isReady(root.source) && !root.source.audio.muted
+                        ? Theme.primary : Theme.outline
                     font.pixelSize: 16
                 }
 
@@ -148,24 +145,17 @@ RowLayout {
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton
-
                 onClicked: root.toggleMute(root.source)
 
                 onWheel: function(wheel) {
                     const direction = wheel.angleDelta.y > 0 ? 1 : -1
-                    const steps = Math.max(
-                        1,
-                        Math.round(Math.abs(wheel.angleDelta.y) / 120)
-                    )
-
-                    root.adjustVolume(
-                        root.source,
-                        direction * 0.05 * steps
-                    )
-
+                    const steps = Math.max(1, Math.round(Math.abs(wheel.angleDelta.y) / 120))
+                    root.adjustVolume(root.source, direction * 0.05 * steps)
                     wheel.accepted = true
                 }
             }
         }
     }
+
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 }

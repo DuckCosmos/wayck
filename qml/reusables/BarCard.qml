@@ -1,4 +1,3 @@
-
 import QtQuick
 import QtQuick.Layouts
 import "../"
@@ -10,6 +9,7 @@ Item {
 
     property bool highlighted: false
     property string section: "center"
+    property real emphasisScale: 1
 
     property int contentSpacing: 6
     property int cornerRadius: 6
@@ -19,6 +19,13 @@ Item {
 
     property bool showBackground: true
     property bool showBorder: true
+
+    // Opt-in hover deformation. The layout metrics stay unchanged; only the
+    // rendered surface lifts and rounds, so neighboring modules do not reflow.
+    property bool hoverEnabled: true
+    property real hoverScale: 1.035
+    property real hoverRadiusBoost: 3
+    property bool hovered: false
 
     default property alias contentData: content.data
 
@@ -48,30 +55,72 @@ Item {
         content.implicitHeight + effectiveVerticalPadding * 2
     )
 
+    scale: emphasisScale * (hoverEnabled && hovered ? hoverScale : 1)
+    transformOrigin: Item.Center
+
+    Behavior on scale {
+        NumberAnimation {
+            duration: Motion.hoverDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: root.hovered ? Motion.hoverEnterCurve : Motion.hoverExitCurve
+        }
+    }
+
+    HoverHandler {
+        enabled: root.hoverEnabled
+        onHoveredChanged: root.hovered = hovered
+    }
+
     Rectangle {
         anchors.fill: parent
-        radius: root.radius
+        radius: Math.min(width / 2, height / 2,
+                         root.radius + (root.hovered ? root.hoverRadiusBoost : 0))
 
         color: root.highlighted
             ? Qt.darker(Theme.outline, 0.85)
-            : Qt.darker(Theme.surfaceContainer, 1.75)
+            : (root.hovered
+                ? Qt.lighter(Theme.surfaceContainer, 1.08)
+                : Qt.darker(Theme.surfaceContainer, 1.75))
 
         antialiasing: true
         visible: root.showBackground
+
+        Behavior on color {
+            ColorAnimation { duration: Motion.colorDuration; easing.type: Motion.standard }
+        }
+        Behavior on radius {
+            NumberAnimation {
+                duration: Motion.hoverDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Motion.morphCurve
+            }
+        }
     }
 
     Rectangle {
         anchors.fill: parent
         color: "transparent"
-        radius: root.radius
+        radius: Math.min(width / 2, height / 2,
+                         root.radius + (root.hovered ? root.hoverRadiusBoost : 0))
 
         border.width: 1
         border.color: root.highlighted
             ? Theme.surfaceContainer
-            : Qt.darker(Theme.outline, 1.15)
+            : (root.hovered ? Theme.primary : Qt.darker(Theme.outline, 1.15))
 
         antialiasing: true
         visible: root.showBorder
+
+        Behavior on border.color {
+            ColorAnimation { duration: Motion.colorDuration; easing.type: Motion.standard }
+        }
+        Behavior on radius {
+            NumberAnimation {
+                duration: Motion.hoverDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Motion.morphCurve
+            }
+        }
     }
 
     RowLayout {

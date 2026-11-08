@@ -10,6 +10,9 @@ PanelWindow {
     id: root
 
     property bool _winVisible: false
+    property bool closing: false
+    property real revealProgress: 0
+
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string backend: Quickshell.shellPath("wayck-backend")
 
@@ -52,15 +55,34 @@ PanelWindow {
     }
 
     function open() {
-        _winVisible = true;
-        hideAnim.stop();
-        showAnim.start();
-        triggerSearch();
+        _winVisible = true
+        closing = false
+        revealProgress = 1
+        triggerSearch()
     }
 
     function close() {
-        showAnim.stop();
-        hideAnim.start();
+        if (!_winVisible || closing)
+            return
+
+        closing = true
+
+        if (revealProgress <= 0.001) {
+            _winVisible = false
+            closing = false
+            dismissed()
+            return
+        }
+
+        revealProgress = 0
+    }
+
+    onRevealProgressChanged: {
+        if (closing && revealProgress <= 0.001) {
+            _winVisible = false
+            closing = false
+            dismissed()
+        }
     }
 
     color: "transparent"
@@ -97,47 +119,25 @@ PanelWindow {
         onActivated: root.close()
     }
 
-    ParallelAnimation {
-        id: showAnim
-        SpringAnimation {
-            target: content
-            property: "y"
-            to: 0
-            spring: 4
-            damping: 0.4
-            mass: 0.6
-        }
+    Behavior on revealProgress {
         NumberAnimation {
-            target: content
-            property: "opacity"
-            to: 1
-            duration: 200
-            easing.type: Easing.OutCubic
-        }
-    }
-
-    ParallelAnimation {
-        id: hideAnim
-        onFinished: {
-            root._winVisible = false;
-            root.dismissed();
-        }
-
-        NumberAnimation {
-            target: content
-            property: "y"
-            to: root.height + 50
-            duration: 250
-            easing.type: Easing.InCubic
+            duration: root.closing
+                ? Motion.surfaceCloseDuration
+                : Motion.surfaceOpenDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: root.closing
+                ? Motion.surfaceCloseCurve
+                : Motion.surfaceOpenCurve
         }
     }
 
     Item {
         id: content
         width: parent.width
-        height: parent.height
-        y: root.height
-        opacity: 0
+        height: root.height * root.revealProgress
+        y: root.height * (1 - root.revealProgress)
+        opacity: root.revealProgress
+        clip: true
 
         Shape {
             anchors.fill: parent
@@ -158,19 +158,19 @@ PanelWindow {
                     radiusX: root.topR
                     radiusY: root.topR
                 }
-                PathLine { x: root.width - root.inset; y: root.height - root.flare }
+                PathLine { x: root.width - root.inset; y: content.height - root.flare }
                 PathQuad {
                     x: root.width
-                    y: root.height
+                    y: content.height
                     controlX: root.width - root.inset
-                    controlY: root.height
+                    controlY: content.height
                 }
-                PathLine { x: 0; y: root.height }
+                PathLine { x: 0; y: content.height }
                 PathQuad {
                     x: root.inset
-                    y: root.height - root.flare
+                    y: content.height - root.flare
                     controlX: root.inset
-                    controlY: root.height
+                    controlY: content.height
                 }
                 PathLine { x: root.inset; y: root.topR }
                 PathArc {
@@ -210,6 +210,24 @@ PanelWindow {
                 currentIndex: root.selectedIndex
                 spacing: 4
 
+                add: Transition {
+                    NumberAnimation {
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: Motion.contentFadeDuration
+                        easing.type: Motion.standard
+                    }
+                }
+                displaced: Transition {
+                    NumberAnimation {
+                        properties: "x,y"
+                        duration: Motion.layoutDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Motion.layoutCurve
+                    }
+                }
+
                 delegate: Rectangle {
                     id: delegateItem
                     property bool isSelected: index === root.selectedIndex
@@ -234,6 +252,20 @@ PanelWindow {
                     height: modelData.is_image ? 200 : 48
                     radius: 8
                     clip: true
+
+                    Behavior on height {
+                        NumberAnimation {
+                            duration: Motion.layoutDuration
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: Motion.layoutCurve
+                        }
+                    }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
+                    }
                     color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08) : Qt.darker(Theme.surfaceContainer, 1.8))
 
                     Process {

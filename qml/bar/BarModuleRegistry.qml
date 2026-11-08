@@ -8,6 +8,7 @@ Singleton {
     id: root
 
     readonly property var types: ({
+        "updater":     { name: "Update",      face: "faces/updater/UpdaterFace.qml",         priority: 120 },
         "workspaces":  { name: "Workspaces",  face: "faces/workspaces/WorkspacesFace.qml",   priority: 100 },
         "player":      { name: "Player",      face: "faces/player/PlayerFace.qml",           priority: 50 },
         "audio":       { name: "Audio",       face: "faces/audio/AudioFace.qml",             priority: 80 },

@@ -148,10 +148,10 @@ BarCard {
         anchor.edges: Edges.Bottom | Edges.Right
         anchor.gravity: Edges.Bottom | Edges.Left
 
-        width: 360
-        height: page === "home" ? 500
-              : page === "power" ? 410
-              : 280
+        implicitWidth: 360
+        implicitHeight: page === "home" ? 500
+                      : page === "power" ? 410
+                      : 280
 
         visible: false
         grabFocus: true

@@ -33,7 +33,154 @@ ShellRoot {
 
     Process {
         running: root.isHyprland && Config.blur
-        command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-launcher-blur', match={namespace='^wayck-launcher$'}, blur=true, ignore_alpha=0 })"]
+        command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-launcher-blur', match={namespace='^wayck-launcher
+
+    Connections {
+        function onOpenChanged() {
+            if (LauncherController.open && ClipboardController.open) {
+                if (clipboardLoader.item)
+                    clipboardLoader.item.close();
+                else
+                    ClipboardController.hide();
+            }
+        }
+
+        target: LauncherController
+    }
+
+    Connections {
+        function onOpenChanged() {
+            if (ClipboardController.open && LauncherController.open) {
+                if (launcherLoader.item)
+                    launcherLoader.item.close();
+                else
+                    LauncherController.hide();
+            }
+        }
+
+        target: ClipboardController
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        delegate: Component {
+            MorphOverlay {
+                required property var modelData
+                monitor: modelData
+            }
+        }
+    }
+
+    NotificationPopup {}
+
+    WallpaperSelector {}
+
+    LazyLoader {
+        id: launcherLoader
+        active: LauncherController.open
+
+        Launcher {
+            blurEnabled: Config.blur
+            onDismissed: LauncherController.hide()
+        }
+    }
+
+    LazyLoader {
+        id: clipboardLoader
+        active: ClipboardController.open
+
+        Clipboard {
+            onDismissed: ClipboardController.hide()
+        }
+    }
+
+    LazyLoader {
+        id: barLoader
+        active: BarController.open
+
+        Bar {
+            onDismissed: BarController.hide()
+        }
+    }
+}
+}, blur=true, ignore_alpha=0 })"]
+    }
+
+    Process {
+        running: root.isHyprland && Config.blur
+        command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-wallpaper-selector-blur', match={namespace='^wayck-wallpaper-selector
+
+    Connections {
+        function onOpenChanged() {
+            if (LauncherController.open && ClipboardController.open) {
+                if (clipboardLoader.item)
+                    clipboardLoader.item.close();
+                else
+                    ClipboardController.hide();
+            }
+        }
+
+        target: LauncherController
+    }
+
+    Connections {
+        function onOpenChanged() {
+            if (ClipboardController.open && LauncherController.open) {
+                if (launcherLoader.item)
+                    launcherLoader.item.close();
+                else
+                    LauncherController.hide();
+            }
+        }
+
+        target: ClipboardController
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        delegate: Component {
+            MorphOverlay {
+                required property var modelData
+                monitor: modelData
+            }
+        }
+    }
+
+    NotificationPopup {}
+
+    WallpaperSelector {}
+
+    LazyLoader {
+        id: launcherLoader
+        active: LauncherController.open
+
+        Launcher {
+            blurEnabled: Config.blur
+            onDismissed: LauncherController.hide()
+        }
+    }
+
+    LazyLoader {
+        id: clipboardLoader
+        active: ClipboardController.open
+
+        Clipboard {
+            onDismissed: ClipboardController.hide()
+        }
+    }
+
+    LazyLoader {
+        id: barLoader
+        active: BarController.open
+
+        Bar {
+            onDismissed: BarController.hide()
+        }
+    }
+}
+}, blur=true, ignore_alpha=0 })"]
     }
 
     Connections {
@@ -60,6 +207,17 @@ ShellRoot {
         }
 
         target: ClipboardController
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        delegate: Component {
+            MorphOverlay {
+                required property var modelData
+                monitor: modelData
+            }
+        }
     }
 
     NotificationPopup {}

@@ -1,47 +1,34 @@
-use std::fs;
+use std::error::Error;
 
-fn parse_version(version: &str) -> Option<(u32, u32, u32)> {
-    let parts: Vec<u32> = version
-        .trim()
-        .split(".")
-        .map(|part| part.parse::<u32>().ok())
-        .collect::<Option<Vec<u32>>>()?;
+const LOCAL_VERSION: &str = include_str!("../version.txt");
 
-    if parts.len() != 3 {
-        return None;
-    }
-
-    Some((parts[0], parts[1], parts[2]))
-}
-
-async fn remote_version() -> Result<String, Box<dyn std::error::Error>> {
-    let version =
-        reqwest::get("https://raw.githubusercontent.com/DuckCosmos/wayck/main/version.txt")
-            .await?
-            .error_for_status()?
-            .text()
-            .await?;
+async fn remote_version() -> Result<String, Box<dyn Error>> {
+    let version = reqwest::get(
+        "https://raw.githubusercontent.com/DuckCosmos/wayck/main/version.txt"
+    )
+    .await?
+    .error_for_status()?
+    .text()
+    .await?;
 
     Ok(version.trim().to_string())
 }
 
-fn has_update(local: &str, remote: &str) -> bool {
-    match (parse_version(local), parse_version(remote)) {
-        (Some(local), Some(remote)) => remote > local,
-        _ => false,
-    }
-}
-
-pub async fn check() -> Result<bool, Box<dyn std::error::Error>> {
-    let local = fs::read_to_string(
-        dirs::data_local_dir()
-            .ok_or_else(|| {
-                std::io::Error::new(std::io::ErrorKind::NotFound, "Directory unavailable")
-            })?
-            .join("wayck-src/version.txt"),
-    )?;
-
+pub async fn check_info() -> Result<(String, String, bool), Box<dyn Error>> {
+    let local = LOCAL_VERSION.trim().to_string();
     let remote = remote_version().await?;
 
-    Ok(has_update(&local, &remote))
+    // A newer version is represented by a changed version.txt on main.
+    // Empty remote files are ignored so an unversioned repository cannot
+    // accidentally advertise a blank update.
+    let available = !local.is_empty()
+        && !remote.is_empty()
+        && remote != local;
+
+    Ok((local, remote, available))
+}
+
+pub async fn check() -> Result<bool, Box<dyn Error>> {
+    let (_, _, available) = check_info().await?;
+    Ok(available)
 }

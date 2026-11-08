@@ -36,7 +36,16 @@ Singleton {
         return result
     }
 
-    readonly property var leftModules: decode(Config.bar.layout.left)
+    readonly property var leftModules: {
+        const modules = decode(Config.bar.layout.left)
+
+        // Update is a system status affordance, not a user-reorderable module.
+        // It occupies the first slot only while a newer GitHub version exists.
+        if (UpdateController.updateAvailable && !modules.includes("updater"))
+            modules.unshift("updater")
+
+        return modules
+    }
     readonly property var centerModules: decode(Config.bar.layout.center)
     readonly property var rightModules: decode(Config.bar.layout.right)
 

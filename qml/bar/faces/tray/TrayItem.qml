@@ -2,17 +2,18 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
 
     required property var trayItem
 
-    signal menuRequested(var item, var anchor)
+    signal menuRequested(var item, var anchor, bool immediate)
     signal pointerLeft()
 
     property bool iconFailed: false
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+    readonly property var interactionAnchor: iconArea
 
     horizontalPadding: 6
     verticalPadding: 6
@@ -22,7 +23,8 @@ BarCard {
     Item {
         id: iconArea
 
-        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         Image {
             anchors.fill: parent
@@ -58,21 +60,22 @@ BarCard {
 
         MouseArea {
             anchors.fill: parent
-
-            hoverEnabled: true
+            hoverEnabled: false
             acceptedButtons: Qt.LeftButton
-
-            onEntered: {
-                if (root.trayItem.hasMenu)
-                    root.menuRequested(root.trayItem, iconArea)
-            }
-
-            onExited: {
-                root.pointerLeft()
-            }
+            cursorShape: root.trayItem.hasMenu
+                ? Qt.PointingHandCursor
+                : Qt.ArrowCursor
 
             onClicked: {
-                root.trayItem.activate()
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray MouseArea clicked:",
+                        root.trayItem.title || root.trayItem.id,
+                        "hasMenu=", root.trayItem.hasMenu)
+
+                if (root.trayItem.hasMenu)
+                    root.menuRequested(root.trayItem, iconArea, true)
+                else
+                    root.trayItem.activate()
             }
         }
     }

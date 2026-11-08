@@ -82,26 +82,28 @@ PanelWindow {
 
     Timer {
         id: closeTimer
-        interval: 150
+        interval: Motion.surfaceCloseDuration + 40
         onTriggered: root.dismissed()
     }
 
-    Rectangle {
+    MorphSurface {
         id: card
-        anchors.fill: parent
+        // MorphSurface computes both centered geometries itself.
+        expanded: root.shown
+        expandedWidth: parent.width
+        expandedHeight: parent.height
+        collapsedWidth: Math.min(190, parent.width * 0.55)
+        collapsedHeight: 54
+        expandedRadius: 16
+        collapsedRadius: 27
+
         color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g,
                        Theme.surfaceContainer.b, root.blurEnabled ? 0.5 : 1.0)
-        radius: 16
         border.color: Theme.outline
         border.width: 1
 
         LayoutMirroring.enabled: I18n.rtl
         LayoutMirroring.childrenInherit: true
-
-        scale: root.shown ? 1.0 : 0.95
-        opacity: root.shown ? 1.0 : 0.0
-        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
-        Behavior on opacity { NumberAnimation { duration: 100 } }
 
         ColumnLayout {
             anchors.fill: parent
@@ -183,6 +185,25 @@ PanelWindow {
                 currentIndex: root.selectedIndex
                 spacing: 4
 
+                add: Transition {
+                    NumberAnimation {
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: Motion.contentFadeDuration
+                        easing.type: Motion.standard
+                    }
+                }
+
+                displaced: Transition {
+                    NumberAnimation {
+                        properties: "x,y"
+                        duration: Motion.layoutDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Motion.layoutCurve
+                    }
+                }
+
                 delegate: Rectangle {
                     width: listView.width
                     height: 40
@@ -196,7 +217,12 @@ PanelWindow {
                             ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08)
                             : "transparent")
 
-                    Behavior on color { ColorAnimation { duration: 80 } }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
+                    }
 
                     RowLayout {
                         anchors.fill: parent

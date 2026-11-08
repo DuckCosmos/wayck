@@ -1,21 +1,16 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
 
     property var items: TrayController.items
-    property var hostWindow: QsWindow.window
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
 
     property var activeTrayItem: null
     property var activeAnchor: null
-
-    property bool menuVisible: false
-    property bool popupVisible: false
-    property bool menuHovered: false
 
     readonly property int iconSize: 30
     readonly property int itemSpacing: 2
@@ -25,54 +20,141 @@ BarCard {
     contentSpacing: 0
     minimumHeight: 0
 
-    function openMenu(item, anchor) {
-        if (!item || !item.hasMenu)
+    function openMenu(item, anchor, immediate) {
+        if (!item || !item.hasMenu || !item.menu || !anchor)
             return
 
-        closeTimer.stop()
-        hideTimer.stop()
+        const sameAnchor = activeTrayItem === item && activeAnchor === anchor
+
+        if (sameAnchor
+                && MorphController.active
+                && MorphController.surfaceId === "tray") {
+            if (MorphController.closing) {
+                hoverOpenTimer.stop()
+                MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
+            }
+            return
+        }
+
+        if (debug)
+            console.log("[WAYCK INPUT] tray focus:", item.title || item.id,
+                "immediate=", immediate)
 
         activeAnchor = anchor
         activeTrayItem = item
 
-        popupVisible = true
-        menuVisible = true
-    }
+        // Once a tray surface exists, changing icons retargets the same surface.
+        // Its progress never returns to zero; only its geometry and menu data move.
+        if (MorphController.active && MorphController.surfaceId === "tray") {
+            hoverOpenTimer.stop()
+            MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
+            return
+        }
 
-    function scheduleClose() {
-        closeTimer.restart()
-    }
+        if (MorphController.active || MorphController.opening)
+            return
 
-    function closeMenu() {
-        if (!menuHovered) {
-            menuVisible = false
-            hideTimer.restart()
+        if (immediate) {
+            hoverOpenTimer.stop()
+            requestExpand("click")
+        } else {
+            hoverOpenTimer.restart()
         }
     }
 
-    Timer {
-        id: closeTimer
+    function updateHoveredMenu(position): void {
+        // The row-level HoverHandler reports coordinates in trayRow space.
+        let hit = trayRow.childAt(position.x, position.y)
 
-        interval: 180
-        repeat: false
+        // childAt may return an inner visual item; climb to the TrayItem delegate.
+        while (hit && hit !== trayRow && hit.trayItem === undefined)
+            hit = hit.parent
 
-        onTriggered: root.closeMenu()
+        if (!hit || hit === trayRow || hit.trayItem === undefined)
+            return
+
+        const item = hit.trayItem
+
+        if (!item.hasMenu || !item.menu) {
+            hoverOpenTimer.stop()
+            if (!MorphController.active) {
+                activeTrayItem = null
+                activeAnchor = null
+            } else if (debug) {
+                console.log("[WAYCK INPUT] tray item sem menu; mantendo superfície atual até sair da região")
+            }
+            return
+        }
+
+        root.openMenu(item, hit.interactionAnchor, false)
+    }
+
+    function requestExpand(reason): void {
+        if (!activeAnchor || !activeTrayItem || !activeTrayItem.menu) {
+            if (debug)
+                console.log("[WAYCK INPUT] tray request missing anchor/menu")
+            return
+        }
+
+        if (debug)
+            console.log("[WAYCK INPUT] tray emit expandRequested:",
+                reason, activeTrayItem.title || activeTrayItem.id)
+
+        expandRequested(activeAnchor, activeTrayItem.menu, QsWindow.window)
+    }
+
+    function cancelPendingOpen() {
+        if (!MorphController.active && !MorphController.opening)
+            hoverOpenTimer.stop()
     }
 
     Timer {
-        id: hideTimer
+        id: hoverOpenTimer
 
-        interval: 700
+        interval: Motion.hoverDwellDuration + 10
         repeat: false
 
         onTriggered: {
-            if (!root.menuVisible)
-                root.popupVisible = false
+            if (root.debug)
+                console.log("[WAYCK INPUT] tray hover dwell elapsed:",
+                    root.activeTrayItem ? (root.activeTrayItem.title || root.activeTrayItem.id) : "null")
+
+            if (root.activeTrayItem
+                    && root.activeTrayItem.hasMenu
+                    && root.activeAnchor
+                    && !MorphController.active
+                    && !MorphController.opening) {
+                root.requestExpand("hover dwell")
+            }
         }
     }
 
     Row {
+        id: trayRow
         spacing: root.itemSpacing
+
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                // Match the exact icon anchor used by MorphController.open/retarget.
+                // Passing the whole TrayFace fails its source identity check on exit.
+                MorphController.setSourceHovered(root.activeAnchor || root, hovered)
+
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray row hover:", hovered)
+
+                if (hovered)
+                    root.updateHoveredMenu(point.position)
+                else
+                    root.cancelPendingOpen()
+            }
+
+            onPointChanged: {
+                if (hovered)
+                    root.updateHoveredMenu(point.position)
+            }
+        }
 
         Repeater {
             model: root.items
@@ -85,62 +167,8 @@ BarCard {
                 width: root.iconSize
                 height: root.iconSize
 
-                onMenuRequested: (item, anchor) => {
-                    root.openMenu(item, anchor)
-                }
-
-                onPointerLeft: {
-                    root.scheduleClose()
-                }
-            }
-        }
-    }
-
-    PopupWindow {
-        id: menuPopup
-
-        anchor.item: root.activeAnchor
-
-        anchor.rect.x: root.activeAnchor
-            ? (root.activeAnchor.width - width) / 2
-            : 0
-
-        anchor.rect.y: root.activeAnchor
-            ? root.activeAnchor.height
-            : 0
-
-        implicitWidth: menuCard.implicitWidth
-        implicitHeight: menuCard.implicitHeight
-
-        visible: root.popupVisible
-        color: "transparent"
-
-        TrayMenu {
-            id: menuCard
-
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            menu: root.activeTrayItem
-                ? root.activeTrayItem.menu
-                : null
-
-            menuVisible: root.menuVisible
-
-            onPointerEntered: {
-                root.menuHovered = true
-                closeTimer.stop()
-            }
-
-            onPointerExited: {
-                root.menuHovered = false
-                root.scheduleClose()
-            }
-
-            onCloseRequested: {
-                root.menuHovered = false
-                root.menuVisible = false
-                hideTimer.restart()
+                onMenuRequested: (item, anchor, immediate) =>
+                    root.openMenu(item, anchor, immediate)
             }
         }
     }

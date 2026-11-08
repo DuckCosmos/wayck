@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
@@ -10,55 +9,47 @@ BarCard {
     required property var menu
 
     signal closeRequested()
-    signal pointerEntered()
-    signal pointerExited()
 
     property var activeMenu: menu
-    property bool menuVisible: false
-
     property var menuStack: []
+    property real menuSwitchOpacity: 1
 
     readonly property int menuWidth: 240
     readonly property int entryHeight: 34
 
     horizontalPadding: 8
     verticalPadding: 8
-    showBackground: true
-    showBorder: true
+    showBackground: false
+    showBorder: false
+    hoverEnabled: false
 
     implicitWidth: menuWidth + horizontalPadding * 2
     implicitHeight: menuColumn.implicitHeight + verticalPadding * 2
 
     width: implicitWidth
     height: implicitHeight
+    opacity: menuSwitchOpacity
+    clip: true
 
-    onMenuChanged: {
-        activeMenu = menu
-        menuStack = []
+    NumberAnimation {
+        id: menuSwitchAnimation
+        target: root
+        property: "menuSwitchOpacity"
+        to: 1
+        duration: Motion.menuContentDuration
+        easing.type: Easing.OutCubic
     }
 
-    // Idiomas RTL (árabe, persa): espelha o menu.
+    // RTL menus (Arabic and Persian) mirror their entry layout.
     LayoutMirroring.enabled: I18n.rtl
     LayoutMirroring.childrenInherit: true
 
-    scale: menuVisible ? 1 : 0.85
-    transformOrigin: Item.Bottom
-
-    Behavior on scale {
-        NumberAnimation {
-            duration: 450
-            easing.type: Easing.OutBack
-            easing.overshoot: 1.5
-        }
-    }
-
-    opacity: menuVisible ? 1 : 0
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: 180
-            easing.type: Easing.InOutCubic
-        }
+    onMenuChanged: {
+        menuSwitchAnimation.stop()
+        menuSwitchOpacity = 0
+        activeMenu = menu
+        menuStack = []
+        menuSwitchAnimation.start()
     }
 
     QsMenuOpener {
@@ -66,20 +57,30 @@ BarCard {
         menu: root.activeMenu
     }
 
-    HoverHandler {
-        onHoveredChanged: {
-            if (hovered)
-                root.pointerEntered()
-            else
-                root.pointerExited()
-        }
-    }
-
     Column {
         id: menuColumn
 
         width: root.menuWidth
         spacing: 4
+
+        move: Transition {
+            NumberAnimation {
+                properties: "x,y"
+                duration: Motion.menuContentDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Motion.layoutCurve
+            }
+        }
+
+        add: Transition {
+            NumberAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: Motion.menuContentDuration
+                easing.type: Motion.standard
+            }
+        }
 
         Item {
             width: parent.width
@@ -152,6 +153,13 @@ BarCard {
                         : "transparent"
 
                     visible: !entryItem.modelData.isSeparator
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
+                    }
                 }
 
                 Rectangle {
