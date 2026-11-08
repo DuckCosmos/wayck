@@ -58,7 +58,10 @@ Singleton {
             console.log("[WAYCK MORPH]", message)
     }
 
-    function resolveScreen(item, center): var {
+    function resolveScreen(item, center, windowRef): var {
+        if (windowRef && windowRef.screen)
+            return windowRef.screen
+
         const sourceWindow = item.window
 
         if (sourceWindow && sourceWindow.screen)
@@ -103,7 +106,7 @@ Singleton {
         })
     }
 
-    function open(item, requestedSurfaceId, data): void {
+    function open(item, requestedSurfaceId, data, windowRef): void {
         if (active || opening) {
             log("pedido ignorado: já existe uma superfície ativa")
             return
@@ -114,9 +117,11 @@ Singleton {
             return
         }
 
-        if (!item.window || !item.visible || item.width <= 0 || item.height <= 0) {
+        const sourceWindow = windowRef || item.window
+
+        if (!sourceWindow || !item.visible || item.width <= 0 || item.height <= 0) {
             console.warn("[WAYCK MORPH] origem indisponível:", requestedSurfaceId,
-                "window:", !!item.window,
+                "window:", !!sourceWindow,
                 "visible:", item.visible,
                 "size:", item.width, "x", item.height)
             return
@@ -133,7 +138,7 @@ Singleton {
             (topLeft.x + bottomRight.x) / 2,
             (topLeft.y + bottomRight.y) / 2
         )
-        const screen = resolveScreen(item, center)
+        const screen = resolveScreen(item, center, sourceWindow)
 
         if (!screen) {
             console.warn("[WAYCK MORPH] não foi possível resolver o monitor da origem:",

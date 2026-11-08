@@ -14,7 +14,7 @@ BarCard {
 
     function openExpanded(): void {
         expandDelay.stop()
-        MorphController.open(albumArea, "player", null)
+        MorphController.open(albumArea, "player", null, QsWindow.window)
     }
 
     Item {

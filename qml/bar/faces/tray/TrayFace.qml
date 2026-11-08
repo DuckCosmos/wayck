@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import "../../../"
 
 BarCard {
@@ -34,7 +35,7 @@ BarCard {
 
         if (immediate) {
             hoverOpenTimer.stop()
-            MorphController.open(activeAnchor, "tray", item.menu)
+            MorphController.open(activeAnchor, "tray", item.menu, QsWindow.window)
         } else {
             hoverOpenTimer.restart()
         }
@@ -60,7 +61,8 @@ BarCard {
                 MorphController.open(
                     root.activeAnchor,
                     "tray",
-                    root.activeTrayItem.menu
+                    root.activeTrayItem.menu,
+                    QsWindow.window
                 )
             }
         }
