@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import "../"
 
 Item {
@@ -12,8 +13,9 @@ Item {
     property bool shown: true
 
     readonly property int priority: BarModuleRegistry.priority(moduleId)
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
-    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData)
+    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData, var windowRef)
 
     // Keep natural metrics available to Bar.evaluate(); animate only the slot.
     visible: shown || opacity > 0.01
@@ -50,9 +52,14 @@ Item {
         target: loader.item
         ignoreUnknownSignals: true
 
-        function onExpandRequested(sourceItem, surfaceData) {
-            if (sourceItem)
-                root.surfaceRequested(sourceItem, root.moduleId, surfaceData)
+        function onExpandRequested(sourceItem, surfaceData, windowRef) {
+            if (!sourceItem)
+                return
+
+            if (root.debug)
+                console.log("[WAYCK INPUT] BarModule recebeu", root.moduleId)
+
+            root.surfaceRequested(sourceItem, root.moduleId, surfaceData, windowRef)
         }
     }
 
