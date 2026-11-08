@@ -109,15 +109,6 @@ BarCard {
             }
         }
 
-        remove: Transition {
-            NumberAnimation {
-                property: "opacity"
-                to: 0
-                duration: Motion.fast
-                easing.type: Motion.standardIn
-            }
-        }
-
         Item {
             width: parent.width
             height: 30

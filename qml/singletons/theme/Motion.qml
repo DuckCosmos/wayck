@@ -13,6 +13,7 @@ QtObject {
     readonly property int layoutDuration: 320
     readonly property int stackDuration: 360
     readonly property int barResizeDuration: 260
+    readonly property int colorDuration: 180
     readonly property int contentFadeDuration: 180
     readonly property int contentRevealDelay: 90
     readonly property int menuContentDuration: 220
