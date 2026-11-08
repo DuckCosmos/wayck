@@ -26,8 +26,9 @@ PanelWindow {
 
     Behavior on compactness {
         NumberAnimation {
-            duration: 160
-            easing.type: Easing.OutCubic
+            duration: Motion.barResizeDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.layoutCurve
         }
     }
 

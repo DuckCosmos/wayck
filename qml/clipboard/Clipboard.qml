@@ -99,35 +99,58 @@ PanelWindow {
 
     ParallelAnimation {
         id: showAnim
-        SpringAnimation {
+        NumberAnimation {
+            target: content
+            property: "height"
+            to: root.height
+            duration: Motion.surfaceOpenDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.surfaceOpenCurve
+        }
+        NumberAnimation {
             target: content
             property: "y"
             to: 0
-            spring: 4
-            damping: 0.4
-            mass: 0.6
+            duration: Motion.surfaceOpenDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.surfaceOpenCurve
         }
         NumberAnimation {
             target: content
             property: "opacity"
             to: 1
-            duration: 200
-            easing.type: Easing.OutCubic
+            duration: Motion.contentFadeDuration
+            easing.type: Easing.InOutCubic
         }
     }
 
     ParallelAnimation {
         id: hideAnim
         onFinished: {
-            root._winVisible = false;
-            root.dismissed();
+            root._winVisible = false
+            root.dismissed()
         }
-
+        NumberAnimation {
+            target: content
+            property: "height"
+            to: 0
+            duration: Motion.surfaceCloseDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.surfaceCloseCurve
+        }
         NumberAnimation {
             target: content
             property: "y"
-            to: root.height + 50
-            duration: 250
+            to: root.height
+            duration: Motion.surfaceCloseDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.surfaceCloseCurve
+        }
+        NumberAnimation {
+            target: content
+            property: "opacity"
+            to: 0
+            duration: Motion.contentFadeDuration
             easing.type: Easing.InCubic
         }
     }
@@ -135,7 +158,7 @@ PanelWindow {
     Item {
         id: content
         width: parent.width
-        height: parent.height
+        height: 0
         y: root.height
         opacity: 0
 
@@ -158,7 +181,7 @@ PanelWindow {
                     radiusX: root.topR
                     radiusY: root.topR
                 }
-                PathLine { x: root.width - root.inset; y: root.height - root.flare }
+                PathLine { x: root.width - root.inset; y: content.height - root.flare }
                 PathQuad {
                     x: root.width
                     y: root.height
@@ -168,7 +191,7 @@ PanelWindow {
                 PathLine { x: 0; y: root.height }
                 PathQuad {
                     x: root.inset
-                    y: root.height - root.flare
+                    y: content.height - root.flare
                     controlX: root.inset
                     controlY: root.height
                 }
@@ -210,6 +233,24 @@ PanelWindow {
                 currentIndex: root.selectedIndex
                 spacing: 4
 
+                add: Transition {
+                    NumberAnimation {
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: Motion.contentFadeDuration
+                        easing.type: Motion.standard
+                    }
+                }
+                displaced: Transition {
+                    NumberAnimation {
+                        properties: "x,y"
+                        duration: Motion.layoutDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Motion.layoutCurve
+                    }
+                }
+
                 delegate: Rectangle {
                     id: delegateItem
                     property bool isSelected: index === root.selectedIndex
@@ -234,6 +275,20 @@ PanelWindow {
                     height: modelData.is_image ? 200 : 48
                     radius: 8
                     clip: true
+
+                    Behavior on height {
+                        NumberAnimation {
+                            duration: Motion.layoutDuration
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: Motion.layoutCurve
+                        }
+                    }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
+                    }
                     color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08) : Qt.darker(Theme.surfaceContainer, 1.8))
 
                     Process {

@@ -27,8 +27,9 @@ RowLayout {
 
             Behavior on scale {
                 NumberAnimation {
-                    duration: 180
-                    easing.type: Easing.OutCubic
+                    duration: Motion.normal
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: Motion.selectionCurve
                 }
             }
 
@@ -46,9 +47,9 @@ RowLayout {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: 180
-                            easing.type: Easing.OutCubic
-                            }
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
                     }
 
                     font.pixelSize: 13

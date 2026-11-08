@@ -23,6 +23,13 @@ PanelWindow {
     property string previewedWallpaper: ""
     property string applyingPath: ""
 
+    onOpenedChanged: {
+        if (opened)
+            closeTimer.stop()
+        else
+            closeTimer.restart()
+    }
+
     readonly property string wallpaperCommand: {
         const configured = Quickshell.env("WAYCK_WALLPAPER")
         return configured && configured.length > 0
@@ -43,7 +50,7 @@ PanelWindow {
         right: true
     }
 
-    visible: opened
+    visible: opened || closeTimer.running
     focusable: opened
     aboveWindows: true
     exclusiveZone: -1
@@ -212,26 +219,33 @@ PanelWindow {
         Rectangle {
             anchors.fill: parent
             color: "#99000000"
+            opacity: root.opened ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Motion.contentFadeDuration
+                    easing.type: Motion.standard
+                }
+            }
         }
 
         MouseArea {
             anchors.fill: parent
             z: 0
-
+            enabled: root.opened
             onClicked: root.cancelSelector()
         }
 
-        Rectangle {
+        MorphSurface {
             id: selector
-
-            width: Math.min(1120, focusRoot.width - 40)
-            height: Math.min(380, focusRoot.height - 40)
-
             anchors.centerIn: parent
-
+            expanded: root.opened
+            expandedWidth: Math.max(240, Math.min(1120, focusRoot.width - 40))
+            expandedHeight: Math.max(180, Math.min(380, focusRoot.height - 40))
+            collapsedWidth: 168
+            collapsedHeight: 54
+            expandedRadius: 18
+            collapsedRadius: 27
             color: Qt.darker(Theme.surfaceContainer, 1.5)
-            radius: 0
-
             z: 1
 
             ColumnLayout {
@@ -266,7 +280,7 @@ PanelWindow {
                     highlightRangeMode: PathView.StrictlyEnforceRange
                     snapMode: PathView.SnapOneItem
 
-                    highlightMoveDuration: 320
+                    highlightMoveDuration: Motion.wallpaperMoveDuration
                     flickDeceleration: 1800
                     dragMargin: height / 2
 
@@ -448,6 +462,12 @@ PanelWindow {
                 }
             }
         }
+    }
+
+    Timer {
+        id: closeTimer
+        interval: Motion.surfaceCloseDuration
+        repeat: false
     }
 
     Timer {

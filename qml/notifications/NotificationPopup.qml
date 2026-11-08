@@ -1,32 +1,47 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import ".."
 
 PanelWindow {
     id: root
+    property bool hasNotifications: SysNotif.notifications.length > 0
 
-    anchors {
-        top: true
-        left: true
-        right: true
-    }
+    anchors { top: true; left: true; right: true }
+    margins { top: 43 }
 
-    margins {
-        top: 43
-    }
-
-    visible: SysNotif.notifications.length > 0
+    visible: hasNotifications || hideTimer.running
     implicitWidth: 420
     implicitHeight: content.implicitHeight
     exclusiveZone: -1
-
     color: "transparent"
 
-    ColumnLayout {
+    onHasNotificationsChanged: {
+        if (hasNotifications)
+            hideTimer.stop()
+        else
+            hideTimer.restart()
+    }
+
+    Timer {
+        id: hideTimer
+        interval: Motion.surfaceCloseDuration
+        repeat: false
+    }
+
+    Column {
         id: content
+        width: 280
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 10
+
+        move: Transition {
+            NumberAnimation {
+                properties: "x,y"
+                duration: Motion.stackDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Motion.layoutCurve
+            }
+        }
 
         Repeater {
             model: ScriptModel {
@@ -36,10 +51,9 @@ PanelWindow {
 
             delegate: NotificationCard {
                 required property var modelData
-
                 notification: modelData
-
-                Layout.fillWidth: true
+                width: content.width
+                height: implicitHeight
             }
         }
     }

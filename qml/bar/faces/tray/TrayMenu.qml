@@ -30,7 +30,16 @@ BarCard {
     implicitHeight: menuColumn.implicitHeight + verticalPadding * 2
 
     width: implicitWidth
-    height: implicitHeight
+    height: menuVisible ? implicitHeight : 0
+    clip: true
+
+    Behavior on height {
+        NumberAnimation {
+            duration: root.menuVisible ? Motion.surfaceOpenDuration : Motion.surfaceCloseDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: root.menuVisible ? Motion.surfaceOpenCurve : Motion.surfaceCloseCurve
+        }
+    }
 
     onMenuChanged: {
         activeMenu = menu
@@ -41,14 +50,14 @@ BarCard {
     LayoutMirroring.enabled: I18n.rtl
     LayoutMirroring.childrenInherit: true
 
-    scale: menuVisible ? 1 : 0.85
+    scale: menuVisible ? 1 : Motion.subtleScale
     transformOrigin: Item.Bottom
 
     Behavior on scale {
         NumberAnimation {
-            duration: 450
-            easing.type: Easing.OutBack
-            easing.overshoot: 1.5
+            duration: Motion.surfaceOpenDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
         }
     }
 
@@ -56,8 +65,8 @@ BarCard {
 
     Behavior on opacity {
         NumberAnimation {
-            duration: 180
-            easing.type: Easing.InOutCubic
+            duration: Motion.contentFadeDuration
+            easing.type: Motion.standardInOut
         }
     }
 
@@ -80,6 +89,34 @@ BarCard {
 
         width: root.menuWidth
         spacing: 4
+
+        move: Transition {
+            NumberAnimation {
+                properties: "x,y"
+                duration: Motion.menuContentDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Motion.layoutCurve
+            }
+        }
+
+        add: Transition {
+            NumberAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: Motion.menuContentDuration
+                easing.type: Motion.standard
+            }
+        }
+
+        remove: Transition {
+            NumberAnimation {
+                property: "opacity"
+                to: 0
+                duration: Motion.fast
+                easing.type: Motion.standardIn
+            }
+        }
 
         Item {
             width: parent.width

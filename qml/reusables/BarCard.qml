@@ -58,6 +58,12 @@ Item {
 
         antialiasing: true
         visible: root.showBackground
+        Behavior on color {
+            ColorAnimation { duration: Motion.colorDuration; easing.type: Motion.standard }
+        }
+        Behavior on radius {
+            NumberAnimation { duration: Motion.barResizeDuration; easing.type: Motion.standard }
+        }
     }
 
     Rectangle {
@@ -72,6 +78,12 @@ Item {
 
         antialiasing: true
         visible: root.showBorder
+        Behavior on border.color {
+            ColorAnimation { duration: Motion.colorDuration; easing.type: Motion.standard }
+        }
+        Behavior on radius {
+            NumberAnimation { duration: Motion.barResizeDuration; easing.type: Motion.standard }
+        }
     }
 
     RowLayout {

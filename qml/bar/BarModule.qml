@@ -13,13 +13,35 @@ Item {
 
     readonly property int priority: BarModuleRegistry.priority(moduleId)
 
-    visible: shown
-
+    // Keep natural metrics available to Bar.evaluate(); animate only the slot.
+    visible: shown || opacity > 0.01
     implicitWidth: loader.item ? loader.item.implicitWidth : 0
     implicitHeight: loader.item ? loader.item.implicitHeight : 0
-
-    width: implicitWidth
+    width: shown ? implicitWidth : 0
     height: implicitHeight
+    opacity: shown ? 1 : 0
+    scale: shown ? 1 : Motion.subtleScale
+
+    Behavior on width {
+        NumberAnimation {
+            duration: Motion.barResizeDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.layoutCurve
+        }
+    }
+    Behavior on opacity {
+        NumberAnimation {
+            duration: Motion.contentFadeDuration
+            easing.type: Motion.standard
+        }
+    }
+    Behavior on scale {
+        NumberAnimation {
+            duration: Motion.barResizeDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
+        }
+    }
 
     Loader {
         id: loader

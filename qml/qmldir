@@ -38,3 +38,5 @@ singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qm
 singleton ScreenshotController 1.0 singletons/widgetcontrols/ScreenshotController.qml
 singleton TrayController 1.0 singletons/widgetcontrols/TrayController.qml
 singleton UserController 1.0 singletons/widgetcontrols/UserController.qml
+singleton Motion 1.0 singletons/theme/Motion.qml
+MorphSurface 1.0 reusables/MorphSurface.qml
