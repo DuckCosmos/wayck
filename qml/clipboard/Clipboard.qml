@@ -159,7 +159,7 @@ PanelWindow {
         id: content
         width: parent.width
         height: 0
-        y: root.height
+        y: content.height
         opacity: 0
 
         Shape {
@@ -184,16 +184,16 @@ PanelWindow {
                 PathLine { x: root.width - root.inset; y: content.height - root.flare }
                 PathQuad {
                     x: root.width
-                    y: root.height
+                    y: content.height
                     controlX: root.width - root.inset
-                    controlY: root.height
+                    controlY: content.height
                 }
                 PathLine { x: 0; y: root.height }
                 PathQuad {
                     x: root.inset
                     y: content.height - root.flare
                     controlX: root.inset
-                    controlY: root.height
+                    controlY: content.height
                 }
                 PathLine { x: root.inset; y: root.topR }
                 PathArc {
