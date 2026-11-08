@@ -8,6 +8,7 @@ QtObject {
     readonly property int slow: 320
 
     readonly property int hoverDuration: 190
+    readonly property int hoverDwellDuration: 105
     readonly property int surfaceOpenDuration: 420
     readonly property int surfaceCloseDuration: 300
     readonly property int surfaceRetargetDuration: 280

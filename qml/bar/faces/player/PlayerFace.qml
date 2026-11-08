@@ -102,7 +102,7 @@ BarCard {
         Timer {
             id: expandDelay
 
-            interval: 220
+            interval: Motion.hoverDwellDuration
             repeat: false
 
             onTriggered: root.requestExpand("hover dwell")

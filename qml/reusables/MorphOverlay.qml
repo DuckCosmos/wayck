@@ -10,6 +10,8 @@ PanelWindow {
     property var monitor: null
 
     readonly property bool traySurface: MorphController.surfaceId === "tray"
+    readonly property bool audioSurface: MorphController.surfaceId === "audio"
+    readonly property bool updaterSurface: MorphController.surfaceId === "updater"
     readonly property bool ownsSurface: MorphController.active
         && monitor !== null
         && MorphController.targetScreen !== null
@@ -27,14 +29,22 @@ PanelWindow {
             Math.max(240, surfaceContent.implicitWidth || 256),
             Math.max(1, width - 24)
         )
-        : Math.min(460, Math.max(240, width - 48))
+        : audioSurface
+            ? Math.min(390, Math.max(300, width - 32))
+            : updaterSurface
+                ? Math.min(360, Math.max(300, width - 32))
+                : Math.min(460, Math.max(240, width - 48))
 
     readonly property real targetHeight: traySurface
         ? Math.min(
             Math.max(72, surfaceContent.implicitHeight || 72),
             Math.max(1, height - 24)
         )
-        : Math.min(260, Math.max(210, height - 48))
+        : audioSurface
+            ? Math.min(300, Math.max(230, height - 32))
+            : updaterSurface
+                ? Math.min(220, Math.max(180, height - 32))
+                : Math.min(260, Math.max(210, height - 48))
 
     readonly property real targetX: Math.max(0, Math.min(
         sourceX + MorphController.sourceWidth / 2 - targetWidth / 2,
@@ -132,7 +142,7 @@ PanelWindow {
         expandedHeight: root.targetHeight
         expandedX: root.targetX
         expandedY: root.targetY
-        expandedRadius: root.traySurface ? 14 : 20
+        expandedRadius: root.traySurface ? 14 : (root.audioSurface || root.updaterSurface ? 17 : 20)
         expandedScale: 1
 
         color: Theme.surfaceContainer
@@ -145,7 +155,10 @@ PanelWindow {
             anchors.fill: parent
             sourceComponent: !MorphController.active
                 ? null
-                : (root.traySurface ? trayContent : playerContent)
+                : (root.traySurface
+                    ? trayContent
+                    : (root.audioSurface ? audioContent
+                        : (root.updaterSurface ? updaterContent : playerContent)))
         }
 
         HoverHandler {
@@ -182,6 +195,14 @@ PanelWindow {
 
         TrayExpandedSurface {
             menu: MorphController.surfaceData
+            onCloseRequested: MorphController.close()
+        }
+    }
+
+    Component {
+        id: audioContent
+
+        AudioExpandedSurface {
             onCloseRequested: MorphController.close()
         }
     }

@@ -111,7 +111,7 @@ BarCard {
     Timer {
         id: hoverOpenTimer
 
-        interval: 200
+        interval: Motion.hoverDwellDuration + 10
         repeat: false
 
         onTriggered: {

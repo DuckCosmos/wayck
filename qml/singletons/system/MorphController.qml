@@ -105,7 +105,10 @@ Singleton {
             return
         }
 
-        if (requestedSurfaceId !== "player" && requestedSurfaceId !== "tray") {
+        if (requestedSurfaceId !== "player"
+                && requestedSurfaceId !== "tray"
+                && requestedSurfaceId !== "audio"
+                && requestedSurfaceId !== "updater") {
             console.warn("[WAYCK MORPH] superfície sem componente:", requestedSurfaceId)
             return
         }
