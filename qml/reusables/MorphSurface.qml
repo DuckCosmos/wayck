@@ -5,7 +5,8 @@ Rectangle {
     id: root
 
     // A single surface whose geometry is interpolated as one motion value.
-    // Keep this item inside the same QQuickWindow as its source and destination.
+    // This primitive owns geometry inside one QQuickWindow. For a cross-window handoff,
+    // animate a retained snapshot in a shared overlay rather than reparenting the source item.
     property bool expanded: false
 
     property real collapsedX: parent ? (parent.width - collapsedWidth) / 2 : 0

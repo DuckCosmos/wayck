@@ -9,12 +9,14 @@ BarCard {
 
     property var player: MprisController.activePlayer
 
-    signal expandRequested()
+    signal expandRequested(var sourceItem, var surfaceData)
 
     implicitHeight: 36
     horizontalPadding: 8
 
     Item {
+        id: albumArea
+
         Layout.preferredWidth: 26
         Layout.preferredHeight: 26
 
@@ -58,10 +60,25 @@ BarCard {
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.expandRequested()
-            cursorShape: Qt.PointingHandCursor
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered && root.player)
+                    expandDelay.restart()
+                else
+                    expandDelay.stop()
+            }
+        }
+
+        Timer {
+            id: expandDelay
+
+            interval: 220
+            repeat: false
+
+            onTriggered: {
+                if (root.player)
+                    root.expandRequested(albumArea, null)
+            }
         }
     }
 

@@ -17,6 +17,7 @@ singleton WallpaperService 1.0 singletons/system/WallpaperService.qml
 BarCard 1.0 reusables/BarCard.qml
 MorphOverlay 1.0 reusables/MorphOverlay.qml
 PlayerExpandedSurface 1.0 bar/faces/player/PlayerExpandedSurface.qml
+TrayExpandedSurface 1.0 bar/faces/tray/TrayExpandedSurface.qml
 
 # Notificações
 NotificationCard 1.0 notifications/NotificationCard.qml

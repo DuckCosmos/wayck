@@ -11,7 +11,7 @@ Row {
     property int firstOrder: 0
 
     signal metricsChanged()
-    signal surfaceRequested(var sourceItem, string surfaceId)
+    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData)
 
     spacing: 6
 
@@ -46,7 +46,8 @@ Row {
             y: (root.height - height) / 2
 
             onImplicitWidthChanged: root.metricsChanged()
-            onSurfaceRequested: root.surfaceRequested(sourceItem, surfaceId)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) =>
+                root.surfaceRequested(sourceItem, surfaceId, surfaceData)
             Component.onCompleted: root.metricsChanged()
         }
     }

@@ -1,21 +1,14 @@
 import QtQuick
-import QtQuick.Layouts
-import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
 
     property var items: TrayController.items
-    property var hostWindow: QsWindow.window
-
     property var activeTrayItem: null
     property var activeAnchor: null
 
-    property bool menuVisible: false
-    property bool popupVisible: false
-    property bool menuHovered: false
+    signal expandRequested(var sourceItem, var surfaceData)
 
     readonly property int iconSize: 30
     readonly property int itemSpacing: 2
@@ -26,48 +19,32 @@ BarCard {
     minimumHeight: 0
 
     function openMenu(item, anchor) {
-        if (!item || !item.hasMenu)
+        if (!item || !item.hasMenu || MorphController.active)
             return
-
-        closeTimer.stop()
-        hideTimer.stop()
 
         activeAnchor = anchor
         activeTrayItem = item
-
-        popupVisible = true
-        menuVisible = true
+        hoverOpenTimer.restart()
     }
 
-    function scheduleClose() {
-        closeTimer.restart()
-    }
-
-    function closeMenu() {
-        if (!menuHovered) {
-            menuVisible = false
-            hideTimer.restart()
-        }
+    function cancelPendingOpen() {
+        if (!MorphController.active)
+            hoverOpenTimer.stop()
     }
 
     Timer {
-        id: closeTimer
+        id: hoverOpenTimer
 
-        interval: 180
-        repeat: false
-
-        onTriggered: root.closeMenu()
-    }
-
-    Timer {
-        id: hideTimer
-
-        interval: 700
+        interval: 200
         repeat: false
 
         onTriggered: {
-            if (!root.menuVisible)
-                root.popupVisible = false
+            if (root.activeTrayItem
+                    && root.activeTrayItem.hasMenu
+                    && root.activeAnchor
+                    && !MorphController.active) {
+                root.expandRequested(root.activeAnchor, root.activeTrayItem.menu)
+            }
         }
     }
 
@@ -85,62 +62,8 @@ BarCard {
                 width: root.iconSize
                 height: root.iconSize
 
-                onMenuRequested: (item, anchor) => {
-                    root.openMenu(item, anchor)
-                }
-
-                onPointerLeft: {
-                    root.scheduleClose()
-                }
-            }
-        }
-    }
-
-    PopupWindow {
-        id: menuPopup
-
-        anchor.item: root.activeAnchor
-
-        anchor.rect.x: root.activeAnchor
-            ? (root.activeAnchor.width - width) / 2
-            : 0
-
-        anchor.rect.y: root.activeAnchor
-            ? root.activeAnchor.height
-            : 0
-
-        implicitWidth: menuCard.implicitWidth
-        implicitHeight: menuCard.implicitHeight
-
-        visible: root.popupVisible
-        color: "transparent"
-
-        TrayMenu {
-            id: menuCard
-
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            menu: root.activeTrayItem
-                ? root.activeTrayItem.menu
-                : null
-
-            menuVisible: root.menuVisible
-
-            onPointerEntered: {
-                root.menuHovered = true
-                closeTimer.stop()
-            }
-
-            onPointerExited: {
-                root.menuHovered = false
-                root.scheduleClose()
-            }
-
-            onCloseRequested: {
-                root.menuHovered = false
-                root.menuVisible = false
-                hideTimer.restart()
+                onMenuRequested: (item, anchor) => root.openMenu(item, anchor)
+                onPointerLeft: root.cancelPendingOpen()
             }
         }
     }

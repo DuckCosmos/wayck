@@ -132,7 +132,7 @@ Item {
 
 Use this for a single surface transition. Do not force unrelated interactions (for example, a list item's hover state and a panel's open state) into the same progress value.
 
-Notification cards use one progress for opacity, scale and vertical offset. Tray menus use one progress for reveal height, scale and opacity. BarCard.emphasisScale lets a module express selection emphasis without replacing the shared hover behavior.
+Notification cards use one progress for opacity, scale and vertical offset. The system tray uses the shared MorphSurface host, so the icon snapshot, panel geometry and content reveal share one transition progress. BarCard.emphasisScale lets a module express selection emphasis without replacing the shared hover behavior.
 
 ## Shared morph host
 

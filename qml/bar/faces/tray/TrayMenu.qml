@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
@@ -10,13 +9,8 @@ BarCard {
     required property var menu
 
     signal closeRequested()
-    signal pointerEntered()
-    signal pointerExited()
 
     property var activeMenu: menu
-    property bool menuVisible: false
-    property real openProgress: menuVisible ? 1 : 0
-
     property var menuStack: []
 
     readonly property int menuWidth: 240
@@ -24,53 +18,29 @@ BarCard {
 
     horizontalPadding: 8
     verticalPadding: 8
-    showBackground: true
-    showBorder: true
+    showBackground: false
+    showBorder: false
+    hoverEnabled: false
 
     implicitWidth: menuWidth + horizontalPadding * 2
     implicitHeight: menuColumn.implicitHeight + verticalPadding * 2
 
     width: implicitWidth
-    height: implicitHeight * openProgress
+    height: implicitHeight
     clip: true
 
-    Behavior on openProgress {
-        NumberAnimation {
-            duration: root.menuVisible
-                ? Motion.surfaceOpenDuration
-                : Motion.surfaceCloseDuration
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: root.menuVisible
-                ? Motion.surfaceOpenCurve
-                : Motion.surfaceCloseCurve
-        }
-    }
+    // RTL menus (Arabic and Persian) mirror their entry layout.
+    LayoutMirroring.enabled: I18n.rtl
+    LayoutMirroring.childrenInherit: true
 
     onMenuChanged: {
         activeMenu = menu
         menuStack = []
     }
 
-    // Idiomas RTL (árabe, persa): espelha o menu.
-    LayoutMirroring.enabled: I18n.rtl
-    LayoutMirroring.childrenInherit: true
-
-    scale: Motion.subtleScale + (1 - Motion.subtleScale) * openProgress
-    transformOrigin: Item.Bottom
-    opacity: openProgress
-
     QsMenuOpener {
         id: opener
         menu: root.activeMenu
-    }
-
-    HoverHandler {
-        onHoveredChanged: {
-            if (hovered)
-                root.pointerEntered()
-            else
-                root.pointerExited()
-        }
     }
 
     Column {
@@ -169,6 +139,13 @@ BarCard {
                         : "transparent"
 
                     visible: !entryItem.modelData.isSeparator
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Motion.colorDuration
+                            easing.type: Motion.standard
+                        }
+                    }
                 }
 
                 Rectangle {

@@ -13,7 +13,7 @@ Item {
 
     readonly property int priority: BarModuleRegistry.priority(moduleId)
 
-    signal surfaceRequested(var sourceItem, string surfaceId)
+    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData)
 
     // Keep natural metrics available to Bar.evaluate(); animate only the slot.
     visible: shown || opacity > 0.01
@@ -34,7 +34,8 @@ Item {
     Behavior on opacity {
         NumberAnimation {
             duration: Motion.contentFadeDuration
-            easing.type: Motion.standard
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.contentCurve
         }
     }
     Behavior on scale {
@@ -49,9 +50,9 @@ Item {
         target: loader.item
         ignoreUnknownSignals: true
 
-        function onExpandRequested() {
-            if (loader.item)
-                root.surfaceRequested(loader.item, root.moduleId)
+        function onExpandRequested(sourceItem, surfaceData) {
+            if (sourceItem)
+                root.surfaceRequested(sourceItem, root.moduleId, surfaceData)
         }
     }
 

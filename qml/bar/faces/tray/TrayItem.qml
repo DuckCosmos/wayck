@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import "../../../"
-import "."
 
 BarCard {
     id: root
@@ -22,7 +20,8 @@ BarCard {
     Item {
         id: iconArea
 
-        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         Image {
             anchors.fill: parent
@@ -67,13 +66,9 @@ BarCard {
                     root.menuRequested(root.trayItem, iconArea)
             }
 
-            onExited: {
-                root.pointerLeft()
-            }
+            onExited: root.pointerLeft()
 
-            onClicked: {
-                root.trayItem.activate()
-            }
+            onClicked: root.trayItem.activate()
         }
     }
 }

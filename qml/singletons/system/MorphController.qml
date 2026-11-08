@@ -8,11 +8,19 @@ Singleton {
 
     property bool active: false
     property bool closing: false
+    property bool closeOnHoverExit: true
+    property bool surfaceHovered: false
+
+    // progress is the requested endpoint; animationProgress mirrors the
+    // interpolated MorphSurface value so hover-close waits for the open morph.
     property real progress: 0
+    property real animationProgress: 0
 
     property var sourceItem: null
     property var targetScreen: null
     property var grabResult: null
+    property var surfaceData: null
+
     property real sourceGlobalX: 0
     property real sourceGlobalY: 0
     property real sourceWidth: 0
@@ -24,15 +32,32 @@ Singleton {
 
     readonly property url snapshotUrl: grabResult ? grabResult.url : ""
 
-    function open(item, requestedSurfaceId): void {
+    Timer {
+        id: hoverCloseTimer
+
+        interval: 220
+        repeat: false
+
+        onTriggered: {
+            if (root.active
+                    && !root.closing
+                    && root.closeOnHoverExit
+                    && !root.surfaceHovered
+                    && root.animationProgress >= 0.98) {
+                root.close()
+            }
+        }
+    }
+
+    function open(item, requestedSurfaceId, data): void {
         if (!item || !item.window || !item.visible)
             return
 
         if (active)
             return
 
-        if (requestedSurfaceId !== "player") {
-            console.warn("[WAYCK MOTION] superfície expandida ainda não implementada:", requestedSurfaceId)
+        if (requestedSurfaceId !== "player" && requestedSurfaceId !== "tray") {
+            console.warn("[WAYCK MOTION] superfície expandida não registrada:", requestedSurfaceId)
             return
         }
 
@@ -47,9 +72,15 @@ Singleton {
         sourceWidth = Math.max(1, bottomRight.x - topLeft.x)
         sourceHeight = Math.max(1, bottomRight.y - topLeft.y)
         sourceOpacity = item.opacity
+
         surfaceId = requestedSurfaceId
+        surfaceData = data === undefined ? null : data
         closing = false
+        closeOnHoverExit = true
+        surfaceHovered = false
+        animationProgress = 0
         progress = 0
+        hoverCloseTimer.stop()
 
         const accepted = item.grabToImage(function(result) {
             if (token !== root.requestSerial || !root.sourceItem)
@@ -59,6 +90,7 @@ Singleton {
                 console.warn("[WAYCK MOTION] não foi possível capturar a superfície de origem")
                 root.sourceItem = null
                 root.targetScreen = null
+                root.surfaceData = null
                 root.surfaceId = ""
                 return
             }
@@ -79,15 +111,42 @@ Singleton {
             console.warn("[WAYCK MOTION] grabToImage recusou a captura da superfície")
             sourceItem = null
             targetScreen = null
+            surfaceData = null
             surfaceId = ""
         }
     }
 
+    function setSurfaceHovered(hovered: bool): void {
+        surfaceHovered = hovered
+
+        if (hovered) {
+            hoverCloseTimer.stop()
+        } else {
+            evaluateHoverExit()
+        }
+    }
+
+    function syncAnimationProgress(value: real): void {
+        animationProgress = value
+        evaluateHoverExit()
+    }
+
+    function evaluateHoverExit(): void {
+        if (active
+                && !closing
+                && closeOnHoverExit
+                && !surfaceHovered
+                && animationProgress >= 0.98) {
+            hoverCloseTimer.restart()
+        }
+    }
+
     function close(): void {
-        if (!active)
+        if (!active || closing)
             return
 
-        const alreadyCollapsed = progress <= 0.001
+        const alreadyCollapsed = animationProgress <= 0.001
+        hoverCloseTimer.stop()
         closing = true
         progress = 0
 
@@ -99,13 +158,18 @@ Singleton {
         if (sourceItem)
             sourceItem.opacity = sourceOpacity
 
+        hoverCloseTimer.stop()
         ++requestSerial
         active = false
         closing = false
+        closeOnHoverExit = true
+        surfaceHovered = false
         progress = 0
+        animationProgress = 0
         sourceItem = null
         targetScreen = null
         grabResult = null
+        surfaceData = null
         surfaceId = ""
     }
 }

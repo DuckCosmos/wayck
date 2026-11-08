@@ -35,8 +35,8 @@ PanelWindow {
         progress: MorphController.progress
         expanded: !MorphController.closing
 
-        collapsedX: MorphController.sourceGlobalX - root.modelData.x
-        collapsedY: MorphController.sourceGlobalY - root.modelData.y
+        collapsedX: MorphController.sourceGlobalX - (root.modelData ? root.modelData.x : 0)
+        collapsedY: MorphController.sourceGlobalY - (root.modelData ? root.modelData.y : 0)
         collapsedWidth: MorphController.sourceWidth
         collapsedHeight: MorphController.sourceHeight
         collapsedRadius: 9
