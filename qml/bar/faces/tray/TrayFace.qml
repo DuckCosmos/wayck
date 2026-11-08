@@ -62,8 +62,8 @@ BarCard {
     }
 
     function updateHoveredMenu(position): void {
-        const local = trayRow.mapFromItem(trayRow.parent, position.x, position.y)
-        let hit = trayRow.childAt(local.x, local.y)
+        // The row-level HoverHandler reports coordinates in trayRow space.
+        let hit = trayRow.childAt(position.x, position.y)
 
         // childAt may return an inner visual item; climb to the TrayItem delegate.
         while (hit && hit !== trayRow && hit.trayItem === undefined)
@@ -128,30 +128,30 @@ BarCard {
         }
     }
 
-    HoverHandler {
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-
-        onHoveredChanged: {
-            MorphController.setSourceHovered(root, hovered)
-
-            if (root.debug)
-                console.log("[WAYCK INPUT] tray region hover:", hovered)
-
-            if (hovered)
-                root.updateHoveredMenu(point.position)
-            else
-                root.cancelPendingOpen()
-        }
-
-        onPointChanged: {
-            if (hovered)
-                root.updateHoveredMenu(point.position)
-        }
-    }
-
     Row {
         id: trayRow
         spacing: root.itemSpacing
+
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                MorphController.setSourceHovered(root, hovered)
+
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray row hover:", hovered)
+
+                if (hovered)
+                    root.updateHoveredMenu(point.position)
+                else
+                    root.cancelPendingOpen()
+            }
+
+            onPointChanged: {
+                if (hovered)
+                    root.updateHoveredMenu(point.position)
+            }
+        }
 
         Repeater {
             model: root.items
