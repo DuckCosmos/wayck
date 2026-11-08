@@ -42,11 +42,11 @@ Use `MorphSurface` when compact and expanded content belong to the same visual s
 
 Player and tray use a per-monitor `PanelWindow` overlay. The source icon is captured with `Item.grabToImage()`; the `ItemGrabResult` is retained while its URL is displayed. When a snapshot cannot be created, the controller still opens the expanded surface instead of silently abandoning the interaction.
 
-The player opens after a short hover dwell on its album-art area, or immediately on click. It also opens when there is no active player, showing the empty-player state. The destination is centered around the source icon and grows from that exact rectangle.
+The player opens after a short hover dwell anywhere on its card, or immediately when the album-art target is clicked. It also opens when there is no active player, showing the empty-player state. The destination grows from the full card rectangle.
 
-The system tray opens a native item menu after a hover dwell, or immediately on click. Items without a native menu retain their normal activation behavior. The tray destination is anchored to the originating icon, growing upward from a bottom bar and downward from a top bar. The native menu lives inside the morph surface instead of a separate popup window.
+The system tray tracks the pointer across the complete tray row and resolves the delegate under the pointer, rather than treating each icon as an independent popup. A hover dwell opens the first native menu; moving to another menu-bearing icon calls `MorphController.retarget()` on the existing surface. Retargeting updates the source rectangle and menu payload while keeping `MorphSurface.progress` open. Behaviors on the expanded geometry smoothly move and resize the same surface, so rapid pointer movement continuously retargets the animation instead of closing and reopening it.
 
-The hover-close timer only starts after the overlay has actually received a pointer-enter event and then a pointer-leave event. This prevents a newly created overlay from closing simply because the pointer state has not yet propagated to its new window.
+Tray menus sit outside the icon lane: below a top bar or above a bottom bar. The controller tracks both the tray region and the expanded surface. It starts the close delay only after the pointer leaves both regions, and a new tray target can reverse an in-progress close.
 
 ## Adding a new morph surface
 

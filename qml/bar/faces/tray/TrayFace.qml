@@ -21,29 +21,37 @@ BarCard {
     minimumHeight: 0
 
     function openMenu(item, anchor, immediate) {
-        if (debug)
-            console.log("[WAYCK INPUT] tray menu request:",
-                item ? (item.title || item.id) : "null",
-                "immediate=", immediate,
-                "anchor=", !!anchor)
-
-        if (!item || !item.hasMenu || !item.menu) {
-            if (debug)
-                console.log("[WAYCK INPUT] tray icon has no native menu")
+        if (!item || !item.hasMenu || !item.menu || !anchor)
             return
-        }
 
-        if (MorphController.active || MorphController.opening) {
-            if (MorphController.surfaceId === "tray"
-                    && MorphController.surfaceData === item.menu) {
-                return
+        const sameAnchor = activeTrayItem === item && activeAnchor === anchor
+
+        if (sameAnchor) {
+            if (MorphController.active && MorphController.surfaceId === "tray"
+                    && MorphController.closing) {
+                hoverOpenTimer.stop()
+                MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
             }
-
             return
         }
+
+        if (debug)
+            console.log("[WAYCK INPUT] tray focus:", item.title || item.id,
+                "immediate=", immediate)
 
         activeAnchor = anchor
         activeTrayItem = item
+
+        // Once a tray surface exists, changing icons retargets the same surface.
+        // Its progress never returns to zero; only its geometry and menu data move.
+        if (MorphController.active && MorphController.surfaceId === "tray") {
+            hoverOpenTimer.stop()
+            MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
+            return
+        }
+
+        if (MorphController.active || MorphController.opening)
+            return
 
         if (immediate) {
             hoverOpenTimer.stop()
@@ -51,6 +59,33 @@ BarCard {
         } else {
             hoverOpenTimer.restart()
         }
+    }
+
+    function updateHoveredMenu(position): void {
+        const local = trayRow.mapFromItem(trayRow.parent, position.x, position.y)
+        let hit = trayRow.childAt(local.x, local.y)
+
+        // childAt may return an inner visual item; climb to the TrayItem delegate.
+        while (hit && hit !== trayRow && hit.trayItem === undefined)
+            hit = hit.parent
+
+        if (!hit || hit === trayRow || hit.trayItem === undefined)
+            return
+
+        const item = hit.trayItem
+
+        if (!item.hasMenu || !item.menu) {
+            hoverOpenTimer.stop()
+            if (!MorphController.active) {
+                activeTrayItem = null
+                activeAnchor = null
+            } else if (debug) {
+                console.log("[WAYCK INPUT] tray item sem menu; mantendo superfície atual até sair da região")
+            }
+            return
+        }
+
+        root.openMenu(item, hit.interactionAnchor, false)
     }
 
     function requestExpand(reason): void {
@@ -93,7 +128,29 @@ BarCard {
         }
     }
 
+    HoverHandler {
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+        onHoveredChanged: {
+            MorphController.setSourceHovered(root, hovered)
+
+            if (root.debug)
+                console.log("[WAYCK INPUT] tray region hover:", hovered)
+
+            if (hovered)
+                root.updateHoveredMenu(point.position)
+            else
+                root.cancelPendingOpen()
+        }
+
+        onPointChanged: {
+            if (hovered)
+                root.updateHoveredMenu(point.position)
+        }
+    }
+
     Row {
+        id: trayRow
         spacing: root.itemSpacing
 
         Repeater {
@@ -109,8 +166,6 @@ BarCard {
 
                 onMenuRequested: (item, anchor, immediate) =>
                     root.openMenu(item, anchor, immediate)
-
-                onPointerLeft: root.cancelPendingOpen()
             }
         }
     }

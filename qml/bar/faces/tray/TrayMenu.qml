@@ -12,6 +12,7 @@ BarCard {
 
     property var activeMenu: menu
     property var menuStack: []
+    property real menuSwitchOpacity: 1
 
     readonly property int menuWidth: 240
     readonly property int entryHeight: 34
@@ -27,15 +28,28 @@ BarCard {
 
     width: implicitWidth
     height: implicitHeight
+    opacity: menuSwitchOpacity
     clip: true
+
+    NumberAnimation {
+        id: menuSwitchAnimation
+        target: root
+        property: "menuSwitchOpacity"
+        to: 1
+        duration: Motion.menuContentDuration
+        easing.type: Easing.OutCubic
+    }
 
     // RTL menus (Arabic and Persian) mirror their entry layout.
     LayoutMirroring.enabled: I18n.rtl
     LayoutMirroring.childrenInherit: true
 
     onMenuChanged: {
+        menuSwitchAnimation.stop()
+        menuSwitchOpacity = 0
         activeMenu = menu
         menuStack = []
+        menuSwitchAnimation.start()
     }
 
     QsMenuOpener {

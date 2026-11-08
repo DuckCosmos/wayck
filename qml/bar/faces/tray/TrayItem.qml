@@ -13,6 +13,7 @@ BarCard {
 
     property bool iconFailed: false
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+    readonly property var interactionAnchor: iconArea
 
     horizontalPadding: 6
     verticalPadding: 6
@@ -59,30 +60,11 @@ BarCard {
 
         MouseArea {
             anchors.fill: parent
-            hoverEnabled: true
+            hoverEnabled: false
             acceptedButtons: Qt.LeftButton
             cursorShape: root.trayItem.hasMenu
                 ? Qt.PointingHandCursor
                 : Qt.ArrowCursor
-
-            onEntered: {
-                if (root.debug)
-                    console.log("[WAYCK INPUT] tray MouseArea entered:",
-                        root.trayItem.title || root.trayItem.id,
-                        "hasMenu=", root.trayItem.hasMenu)
-                MorphController.setSourceHovered(iconArea, true)
-
-                if (root.trayItem.hasMenu)
-                    root.menuRequested(root.trayItem, iconArea, false)
-            }
-
-            onExited: {
-                if (root.debug)
-                    console.log("[WAYCK INPUT] tray MouseArea exited:",
-                        root.trayItem.title || root.trayItem.id)
-                MorphController.setSourceHovered(iconArea, false)
-                root.pointerLeft()
-            }
 
             onClicked: {
                 if (root.debug)

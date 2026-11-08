@@ -41,11 +41,13 @@ PanelWindow {
         width - targetWidth
     ))
 
-    readonly property real targetY: Math.max(0, Math.min(
+    // Keep the expanded tray panel outside the icon lane so the overlay never
+    // covers the next icons while the pointer travels across the tray.
+    readonly property real targetY: Math.max(8, Math.min(
         BarConfig.position === "bottom"
-            ? sourceY + MorphController.sourceHeight - targetHeight
-            : sourceY,
-        height - targetHeight
+            ? sourceY - targetHeight - 8
+            : sourceY + MorphController.sourceHeight + 8,
+        height - targetHeight - 8
     ))
 
     color: "transparent"
@@ -85,6 +87,7 @@ PanelWindow {
         id: surface
 
         snapshotSource: MorphController.snapshotUrl
+        snapshotOpacity: MorphController.snapshotOpacity
         progress: MorphController.progress
         expanded: !MorphController.closing
 
@@ -127,8 +130,12 @@ PanelWindow {
         onProgressChanged: {
             MorphController.syncAnimationProgress(progress)
 
-            if (MorphController.closing && progress <= 0.001)
-                Qt.callLater(MorphController.finish)
+            if (MorphController.closing && progress <= 0.001) {
+                Qt.callLater(function() {
+                    if (MorphController.closing && MorphController.progress <= 0.001)
+                        MorphController.finish()
+                })
+            }
         }
     }
 

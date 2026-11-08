@@ -27,6 +27,48 @@ Rectangle {
     property int openDuration: Motion.surfaceOpenDuration
     property int closeDuration: Motion.surfaceCloseDuration
     property url snapshotSource: ""
+    property real snapshotOpacity: 1
+
+    // Retargeting a live tray popout moves the expanded endpoint without
+    // touching the normalized open/close progress.
+    Behavior on expandedX {
+        NumberAnimation {
+            duration: Motion.surfaceRetargetDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
+        }
+    }
+
+    Behavior on expandedY {
+        NumberAnimation {
+            duration: Motion.surfaceRetargetDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
+        }
+    }
+
+    Behavior on expandedWidth {
+        NumberAnimation {
+            duration: Motion.surfaceRetargetDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
+        }
+    }
+
+    Behavior on expandedHeight {
+        NumberAnimation {
+            duration: Motion.surfaceRetargetDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Motion.morphCurve
+        }
+    }
+
+    Behavior on snapshotOpacity {
+        NumberAnimation {
+            duration: Motion.contentFadeDuration
+            easing.type: Easing.OutCubic
+        }
+    }
 
     // Animating one normalized progress keeps x/y/width/height/radius/scale
     // phase-locked and allows a running morph to be retargeted safely.
@@ -63,7 +105,7 @@ Rectangle {
         fillMode: Image.Stretch
         asynchronous: true
         visible: root.snapshotSource != ""
-        opacity: 1 - root.contentProgress
+        opacity: (1 - root.contentProgress) * root.snapshotOpacity
     }
 
     Item {

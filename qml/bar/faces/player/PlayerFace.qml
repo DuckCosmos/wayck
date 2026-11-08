@@ -19,9 +19,25 @@ BarCard {
         expandDelay.stop()
         if (debug)
             console.log("[WAYCK INPUT] player emit expandRequested:",
-                reason, "anchor=", albumArea.width + "x" + albumArea.height,
+                reason, "anchor=", root.width + "x" + root.height,
                 "window=", !!QsWindow.window)
-        expandRequested(albumArea, null, QsWindow.window)
+        expandRequested(root, null, QsWindow.window)
+    }
+
+    HoverHandler {
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+        onHoveredChanged: {
+            MorphController.setSourceHovered(root, hovered)
+
+            if (root.debug)
+                console.log("[WAYCK INPUT] player card hover:", hovered)
+
+            if (hovered)
+                expandDelay.restart()
+            else
+                expandDelay.stop()
+        }
     }
 
     Item {
@@ -72,23 +88,9 @@ BarCard {
 
         MouseArea {
             anchors.fill: parent
-            hoverEnabled: true
+            hoverEnabled: false
             acceptedButtons: Qt.LeftButton
             cursorShape: Qt.PointingHandCursor
-
-            onEntered: {
-                if (root.debug)
-                    console.log("[WAYCK INPUT] player MouseArea entered")
-                MorphController.setSourceHovered(albumArea, true)
-                expandDelay.restart()
-            }
-
-            onExited: {
-                if (root.debug)
-                    console.log("[WAYCK INPUT] player MouseArea exited")
-                MorphController.setSourceHovered(albumArea, false)
-                expandDelay.stop()
-            }
 
             onClicked: {
                 if (root.debug)

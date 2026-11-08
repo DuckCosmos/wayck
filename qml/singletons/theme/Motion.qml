@@ -10,6 +10,7 @@ QtObject {
     readonly property int hoverDuration: 190
     readonly property int surfaceOpenDuration: 420
     readonly property int surfaceCloseDuration: 300
+    readonly property int surfaceRetargetDuration: 280
     readonly property int morphDuration: 420
     readonly property int layoutDuration: 320
     readonly property int stackDuration: 360
