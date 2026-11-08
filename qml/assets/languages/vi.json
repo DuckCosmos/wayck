@@ -204,5 +204,14 @@
         "yes_words": "c có y yes",
         "hint_yes": "[C/n]",
         "hint_no": "[c/N]"
+    },
+    "updater": {
+        "title": "Có bản cập nhật",
+        "description": "Phiên bản Wayck mới đã sẵn sàng. Giữ nút đến khi thanh đầy để cài đặt.",
+        "hold": "Giữ để cập nhật",
+        "holding": "Tiếp tục giữ · {progress}%",
+        "cancelHint": "Thả trước khi hoàn tất để hủy.",
+        "installing": "Đang bắt đầu cập nhật…",
+        "installHint": "Wayck sẽ cập nhật tệp và khởi động lại shell."
     }
 }

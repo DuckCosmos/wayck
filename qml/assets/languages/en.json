@@ -205,5 +205,14 @@
         "yes_words": "y yes",
         "hint_yes": "[Y/n]",
         "hint_no": "[y/N]"
+    },
+    "updater": {
+        "title": "UPDATE AVAILABLE",
+        "description": "A new Wayck version is ready. Hold until the bar fills to install.",
+        "hold": "Hold to update",
+        "holding": "Keep holding · {progress}%",
+        "cancelHint": "Release before it finishes to cancel.",
+        "installing": "Starting update…",
+        "installHint": "Wayck will update its files and restart the shell."
     }
 }

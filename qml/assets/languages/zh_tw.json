@@ -204,5 +204,14 @@
         "yes_words": "y yes 是 s",
         "hint_yes": "[Y/n]",
         "hint_no": "[y/N]"
+    },
+    "updater": {
+        "title": "有可用更新",
+        "description": "Wayck 新版本已準備就緒。按住直到進度條填滿即可安裝。",
+        "hold": "按住以更新",
+        "holding": "繼續按住 · {progress}%",
+        "cancelHint": "完成前放開即可取消。",
+        "installing": "正在啟動更新…",
+        "installHint": "Wayck 將更新檔案並重新啟動 shell。"
     }
 }

@@ -204,5 +204,14 @@
         "yes_words": "y yes 예 네",
         "hint_yes": "[Y/n]",
         "hint_no": "[y/N]"
+    },
+    "updater": {
+        "title": "업데이트 사용 가능",
+        "description": "새 Wayck 버전이 준비되었습니다. 막대가 찰 때까지 길게 누르세요.",
+        "hold": "길게 눌러 업데이트",
+        "holding": "계속 누르세요 · {progress}%",
+        "cancelHint": "취소하려면 완료 전에 놓으세요.",
+        "installing": "업데이트 시작 중…",
+        "installHint": "Wayck 파일을 업데이트하고 셸을 다시 시작합니다."
     }
 }

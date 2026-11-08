@@ -204,5 +204,14 @@
         "yes_words": "j ja y yes",
         "hint_yes": "[J/n]",
         "hint_no": "[j/N]"
+    },
+    "updater": {
+        "title": "Update beschikbaar",
+        "description": "Een nieuwe Wayck-versie staat klaar. Houd ingedrukt tot de balk vol is.",
+        "hold": "Vasthouden om bij te werken",
+        "holding": "Blijf vasthouden · {progress}%",
+        "cancelHint": "Laat los vóór het einde om te annuleren.",
+        "installing": "Update starten…",
+        "installHint": "Wayck werkt de bestanden bij en start de shell opnieuw."
     }
 }

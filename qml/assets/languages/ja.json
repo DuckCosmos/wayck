@@ -204,5 +204,14 @@
         "yes_words": "y yes はい h hai",
         "hint_yes": "[Y/n]",
         "hint_no": "[y/N]"
+    },
+    "updater": {
+        "title": "アップデートがあります",
+        "description": "Wayck の新しいバージョンがあります。バーがいっぱいになるまで押し続けてください。",
+        "hold": "長押しして更新",
+        "holding": "押し続けてください · {progress}%",
+        "cancelHint": "完了前に離すとキャンセルします。",
+        "installing": "アップデートを開始中…",
+        "installHint": "Wayck のファイルを更新して shell を再起動します。"
     }
 }

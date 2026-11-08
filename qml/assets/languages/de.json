@@ -204,5 +204,14 @@
         "yes_words": "j ja y yes",
         "hint_yes": "[J/n]",
         "hint_no": "[j/N]"
+    },
+    "updater": {
+        "title": "Update verfügbar",
+        "description": "Eine neue Wayck-Version ist bereit. Halte die Taste gedrückt, bis der Balken voll ist.",
+        "hold": "Zum Aktualisieren halten",
+        "holding": "Weiter halten · {progress}%",
+        "cancelHint": "Vor dem Ende loslassen, um abzubrechen.",
+        "installing": "Update wird gestartet…",
+        "installHint": "Wayck aktualisiert die Dateien und startet die Shell neu."
     }
 }

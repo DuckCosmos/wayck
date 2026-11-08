@@ -205,5 +205,14 @@
         "yes_words": "s sim y yes",
         "hint_yes": "[S/n]",
         "hint_no": "[s/N]"
+    },
+    "updater": {
+        "title": "ATUALIZAÇÃO DISPONÍVEL",
+        "description": "Uma nova versão do Wayck está pronta. Segure até a barra preencher para instalar.",
+        "hold": "Segure para atualizar",
+        "holding": "Continue segurando · {progress}%",
+        "cancelHint": "Solte antes do fim para cancelar.",
+        "installing": "Iniciando atualização…",
+        "installHint": "O Wayck atualizará os arquivos e reiniciará a shell."
     }
 }

@@ -204,5 +204,14 @@
         "yes_words": "b bəli y yes",
         "hint_yes": "[B/x]",
         "hint_no": "[b/X]"
+    },
+    "updater": {
+        "title": "Yeniləmə mövcuddur",
+        "description": "Wayck-in yeni versiyası hazırdır. Quraşdırmaq üçün zolaq dolana qədər basıb saxlayın.",
+        "hold": "Yeniləmək üçün saxlayın",
+        "holding": "Basmağa davam edin · {progress}%",
+        "cancelHint": "Ləğv etmək üçün tamamlanmadan buraxın.",
+        "installing": "Yeniləmə başladılır…",
+        "installHint": "Wayck faylları yeniləyəcək və shell-i yenidən başladacaq."
     }
 }

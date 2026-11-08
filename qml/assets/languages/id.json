@@ -204,5 +204,14 @@
         "yes_words": "y ya yes",
         "hint_yes": "[Y/n]",
         "hint_no": "[y/N]"
+    },
+    "updater": {
+        "title": "Pembaruan tersedia",
+        "description": "Versi baru Wayck siap. Tahan sampai bilah penuh untuk memasang.",
+        "hold": "Tahan untuk memperbarui",
+        "holding": "Terus tahan · {progress}%",
+        "cancelHint": "Lepaskan sebelum selesai untuk membatalkan.",
+        "installing": "Memulai pembaruan…",
+        "installHint": "Wayck akan memperbarui file dan memulai ulang shell."
     }
 }

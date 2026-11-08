@@ -51,7 +51,7 @@ Item {
                 spacing: 2
 
                 Text {
-                    text: "ATUALIZAÇÃO DISPONÍVEL"
+                    text: I18n.t("updater.title")
                     color: Theme.onSurface
                     font.pixelSize: 11
                     font.bold: true
@@ -83,7 +83,7 @@ Item {
 
         Text {
             Layout.fillWidth: true
-            text: "Uma nova versão do Wayck está pronta. Segure o botão até o preenchimento concluir para instalar."
+            text: I18n.t("updater.description")
             color: Theme.onSurface
             opacity: 0.78
             font.pixelSize: 10
@@ -112,30 +112,19 @@ Item {
 
                 Behavior on width {
                     NumberAnimation {
-                        duration: 90
+                        duration: 70
                         easing.type: Easing.OutCubic
                     }
                 }
             }
 
-            Rectangle {
-                visible: root.holdProgress > 0.015 && root.holdProgress < 1
-                x: Math.max(0, parent.width * root.holdProgress - width / 2)
-                anchors.verticalCenter: parent.verticalCenter
-                width: 19
-                height: 19
-                radius: 10
-                color: Qt.lighter(Theme.primary, 1.22)
-                opacity: 0.9
-            }
-
             Text {
                 anchors.centerIn: parent
                 text: root.completed
-                    ? "Atualização iniciando…"
+                    ? I18n.t("updater.installing")
                     : (root.holdActive
-                        ? "Continue segurando  " + Math.round(root.holdProgress * 100) + "%"
-                        : "Segure para atualizar")
+                        ? I18n.t("updater.holding", { progress: Math.round(root.holdProgress * 100) })
+                        : I18n.t("updater.hold"))
                 color: root.holdProgress > 0.48 ? Theme.onPrimary : Theme.onSurface
                 font.pixelSize: 11
                 font.bold: true
@@ -173,11 +162,12 @@ Item {
         Text {
             Layout.fillWidth: true
             text: root.holdActive
-                ? "Soltar antes do fim cancela a ação."
-                : "A instalação atualizará os arquivos e reiniciará a shell."
+                ? I18n.t("updater.cancelHint")
+                : I18n.t("updater.installHint")
             color: Theme.outline
             font.pixelSize: 9
             horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
         }
     }
 

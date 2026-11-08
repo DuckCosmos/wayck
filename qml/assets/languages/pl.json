@@ -204,5 +204,14 @@
         "yes_words": "t tak y yes",
         "hint_yes": "[T/n]",
         "hint_no": "[t/N]"
+    },
+    "updater": {
+        "title": "Dostępna aktualizacja",
+        "description": "Nowa wersja Wayck jest gotowa. Przytrzymaj, aż pasek się zapełni.",
+        "hold": "Przytrzymaj, aby zaktualizować",
+        "holding": "Przytrzymaj dalej · {progress}%",
+        "cancelHint": "Puść przed końcem, aby anulować.",
+        "installing": "Uruchamianie aktualizacji…",
+        "installHint": "Wayck zaktualizuje pliki i uruchomi ponownie powłokę."
     }
 }
