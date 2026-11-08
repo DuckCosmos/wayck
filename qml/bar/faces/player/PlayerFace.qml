@@ -9,6 +9,8 @@ BarCard {
 
     property var player: MprisController.activePlayer
 
+    signal expandRequested()
+
     implicitHeight: 36
     horizontalPadding: 8
 
@@ -54,6 +56,12 @@ BarCard {
                 font.pixelSize: 17
                 visible: root.player === null || root.player.trackArtUrl === ""
             }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.expandRequested()
+            cursorShape: Qt.PointingHandCursor
         }
     }
 

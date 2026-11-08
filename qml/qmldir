@@ -15,6 +15,8 @@ singleton WallpaperService 1.0 singletons/system/WallpaperService.qml
 
 # Reutilizáveis
 BarCard 1.0 reusables/BarCard.qml
+MorphOverlay 1.0 reusables/MorphOverlay.qml
+PlayerExpandedSurface 1.0 bar/faces/player/PlayerExpandedSurface.qml
 
 # Notificações
 NotificationCard 1.0 notifications/NotificationCard.qml
@@ -24,6 +26,7 @@ NotificationPopup 1.0 notifications/NotificationPopup.qml
 singleton Config 1.0 singletons/system/Config.qml
 singleton I18n 1.0 singletons/system/I18n.qml
 singleton SysNotif 1.0 singletons/system/SysNotif.qml
+singleton MorphController 1.0 singletons/system/MorphController.qml
 
 # Singletons: tema, áudio e dados
 singleton Theme 1.0 singletons/theme/Theme.qml

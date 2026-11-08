@@ -25,6 +25,7 @@ Rectangle {
 
     property int openDuration: Motion.surfaceOpenDuration
     property int closeDuration: Motion.surfaceCloseDuration
+    property url snapshotSource: ""
 
     // Animating one normalized progress keeps x/y/width/height/radius/scale
     // phase-locked and allows a running morph to be retargeted safely.
@@ -53,9 +54,21 @@ Rectangle {
         }
     }
 
+    Image {
+        parent: root
+        anchors.fill: parent
+        z: 0
+        source: root.snapshotSource
+        fillMode: Image.Stretch
+        asynchronous: true
+        visible: root.snapshotSource != ""
+        opacity: 1 - root.contentProgress
+    }
+
     Item {
         id: content
         anchors.fill: parent
+        z: 1
         opacity: root.contentProgress
         enabled: root.progress > 0.98
         visible: root.progress > 0.01

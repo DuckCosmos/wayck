@@ -62,6 +62,15 @@ ShellRoot {
         target: ClipboardController
     }
 
+    Variants {
+        model: Quickshell.screens
+
+        MorphOverlay {
+            required property var modelData
+            screen: modelData
+        }
+    }
+
     NotificationPopup {}
 
     WallpaperSelector {}

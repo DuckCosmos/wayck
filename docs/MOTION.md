@@ -133,3 +133,18 @@ Item {
 Use this for a single surface transition. Do not force unrelated interactions (for example, a list item's hover state and a panel's open state) into the same progress value.
 
 Notification cards use one progress for opacity, scale and vertical offset. Tray menus use one progress for reveal height, scale and opacity. BarCard.emphasisScale lets a module express selection emphasis without replacing the shared hover behavior.
+
+## Shared morph host
+
+The bar-to-player transition uses a dedicated overlay `PanelWindow` on the source monitor. The source `BarCard` is captured with `Item.grabToImage()`, retained through its `ItemGrabResult.url`, and hidden only after the overlay is ready. The overlay morphs the captured visual from the measured source rectangle into the expanded player surface; the expanded controls fade in during the same progress interval.
+
+The flow is:
+1. A face emits `expandRequested` from a deliberate interaction target.
+2. `BarModule` forwards the face and module ID through `BarSection` to `MorphController`.
+3. `MorphController` measures the face in global logical coordinates and captures it asynchronously.
+4. `MorphOverlay` for the matching `ShellScreen` converts the source rectangle into its local coordinate space and animates one `MorphSurface`.
+5. The expanded content is revealed inside the overlay surface. Closing reverses the same progress and restores the original bar item.
+
+The overlay uses `QsWindow.mask` with a `Region` tied to the morph surface, so its full-screen layer window does not claim pointer input outside the animated surface. The first integration is the player module; new modules can add a face-specific `expandRequested` signal and a matching expanded surface component.
+
+The image capture is a one-shot transition snapshot, not a live mirror. This avoids trying to share a `QQuickItem` across separate Wayland windows and avoids keeping an expensive offscreen capture active after the handoff.

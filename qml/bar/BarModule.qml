@@ -13,6 +13,8 @@ Item {
 
     readonly property int priority: BarModuleRegistry.priority(moduleId)
 
+    signal surfaceRequested(var sourceItem, string surfaceId)
+
     // Keep natural metrics available to Bar.evaluate(); animate only the slot.
     visible: shown || opacity > 0.01
     implicitWidth: loader.item ? loader.item.implicitWidth : 0
@@ -40,6 +42,16 @@ Item {
             duration: Motion.barResizeDuration
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Motion.morphCurve
+        }
+    }
+
+    Connections {
+        target: loader.item
+        ignoreUnknownSignals: true
+
+        function onExpandRequested() {
+            if (loader.item)
+                root.surfaceRequested(loader.item, root.moduleId)
         }
     }
 
