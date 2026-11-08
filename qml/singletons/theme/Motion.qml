@@ -7,6 +7,7 @@ QtObject {
     readonly property int medium: 250
     readonly property int slow: 320
 
+    readonly property int hoverDuration: 190
     readonly property int surfaceOpenDuration: 420
     readonly property int surfaceCloseDuration: 300
     readonly property int morphDuration: 420
@@ -30,6 +31,8 @@ QtObject {
     readonly property list<real> layoutCurve: [0.16, 1.0, 0.30, 1.0, 1, 1]
     readonly property list<real> contentCurve: [0.20, 0.80, 0.20, 1.0, 1, 1]
     readonly property list<real> selectionCurve: [0.22, 1.0, 0.36, 1.0, 1, 1]
+    readonly property list<real> hoverEnterCurve: [0.20, 0.90, 0.25, 1.0, 1, 1]
+    readonly property list<real> hoverExitCurve: [0.40, 0.0, 0.20, 1.0, 1, 1]
 
     readonly property real subtleScale: 0.98
     readonly property real entranceScale: 0.94
