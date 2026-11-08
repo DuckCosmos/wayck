@@ -10,6 +10,9 @@ PanelWindow {
     id: root
 
     property bool _winVisible: false
+    property bool closing: false
+    property real revealProgress: 0
+
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string backend: Quickshell.shellPath("wayck-backend")
 
@@ -52,15 +55,26 @@ PanelWindow {
     }
 
     function open() {
-        _winVisible = true;
-        hideAnim.stop();
-        showAnim.start();
-        triggerSearch();
+        _winVisible = true
+        closing = false
+        revealProgress = 1
+        triggerSearch()
     }
 
     function close() {
-        showAnim.stop();
-        hideAnim.start();
+        if (!_winVisible || closing)
+            return
+
+        closing = true
+        revealProgress = 0
+    }
+
+    onRevealProgressChanged: {
+        if (closing && revealProgress <= 0.001) {
+            _winVisible = false
+            closing = false
+            dismissed()
+        }
     }
 
     color: "transparent"
@@ -97,70 +111,24 @@ PanelWindow {
         onActivated: root.close()
     }
 
-    ParallelAnimation {
-        id: showAnim
+    Behavior on revealProgress {
         NumberAnimation {
-            target: content
-            property: "height"
-            to: root.height
-            duration: Motion.surfaceOpenDuration
+            duration: root.closing
+                ? Motion.surfaceCloseDuration
+                : Motion.surfaceOpenDuration
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceOpenCurve
-        }
-        NumberAnimation {
-            target: content
-            property: "y"
-            to: 0
-            duration: Motion.surfaceOpenDuration
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceOpenCurve
-        }
-        NumberAnimation {
-            target: content
-            property: "opacity"
-            to: 1
-            duration: Motion.contentFadeDuration
-            easing.type: Easing.InOutCubic
-        }
-    }
-
-    ParallelAnimation {
-        id: hideAnim
-        onFinished: {
-            root._winVisible = false
-            root.dismissed()
-        }
-        NumberAnimation {
-            target: content
-            property: "height"
-            to: 0
-            duration: Motion.surfaceCloseDuration
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceCloseCurve
-        }
-        NumberAnimation {
-            target: content
-            property: "y"
-            to: root.height
-            duration: Motion.surfaceCloseDuration
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceCloseCurve
-        }
-        NumberAnimation {
-            target: content
-            property: "opacity"
-            to: 0
-            duration: Motion.contentFadeDuration
-            easing.type: Easing.InCubic
+            easing.bezierCurve: root.closing
+                ? Motion.surfaceCloseCurve
+                : Motion.surfaceOpenCurve
         }
     }
 
     Item {
         id: content
         width: parent.width
-        height: 0
-        y: content.height
-        opacity: 0
+        height: root.height * root.revealProgress
+        y: root.height * (1 - root.revealProgress)
+        opacity: root.revealProgress
         clip: true
 
         Shape {

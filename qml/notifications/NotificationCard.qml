@@ -12,16 +12,18 @@ Item {
     property int bottomPadding: 12
     property int contentSpacing: 12
     property bool exiting: false
+    property bool removalScheduled: false
+    property real motionProgress: 0
     property real enterOffset: 12
 
     implicitWidth: 280
     implicitHeight: Math.max(76, textColumn.implicitHeight + topPadding + bottomPadding)
     width: implicitWidth
     height: implicitHeight
-    opacity: 0
-    scale: Motion.entranceScale
+    opacity: motionProgress
+    scale: Motion.entranceScale + (1 - Motion.entranceScale) * motionProgress
 
-    transform: Translate { y: root.enterOffset }
+    transform: Translate { y: root.enterOffset * (1 - root.motionProgress) }
 
     Rectangle {
         anchors.fill: parent
@@ -94,64 +96,29 @@ Item {
         }
     }
 
-    ParallelAnimation {
-        id: enterAnimation
+    Behavior on motionProgress {
         NumberAnimation {
-            target: root
-            property: "opacity"
-            to: 1
-            duration: Motion.medium
-            easing.type: Motion.standard
-        }
-        NumberAnimation {
-            target: root
-            property: "enterOffset"
-            to: 0
-            duration: Motion.slow
+            duration: root.exiting ? Motion.normal : Motion.slow
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceOpenCurve
-        }
-        NumberAnimation {
-            target: root
-            property: "scale"
-            to: 1
-            duration: Motion.slow
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.surfaceOpenCurve
+            easing.bezierCurve: root.exiting
+                ? Motion.surfaceCloseCurve
+                : Motion.surfaceOpenCurve
         }
     }
 
-    ParallelAnimation {
-        id: exitAnimation
-        NumberAnimation {
-            target: root
-            property: "opacity"
-            to: 0
-            duration: Motion.fast
-            easing.type: Motion.standardIn
+    onMotionProgressChanged: {
+        if (exiting && motionProgress <= 0.001 && !removalScheduled) {
+            removalScheduled = true
+            Qt.callLater(() => SysNotif.removeNotification(root.notification.id))
         }
-        NumberAnimation {
-            target: root
-            property: "enterOffset"
-            to: -10
-            duration: Motion.normal
-            easing.type: Motion.standardIn
-        }
-        NumberAnimation {
-            target: root
-            property: "scale"
-            to: Motion.exitScale
-            duration: Motion.normal
-            easing.type: Motion.standardIn
-        }
-        onFinished: SysNotif.removeNotification(root.notification.id)
     }
 
     function dismiss(): void {
         if (exiting)
             return
+
         exiting = true
-        exitAnimation.start()
+        motionProgress = 0
     }
 
     HoverHandler { id: hoverHandler }
@@ -163,5 +130,5 @@ Item {
         onTriggered: root.dismiss()
     }
 
-    Component.onCompleted: Qt.callLater(() => enterAnimation.start())
+    Component.onCompleted: Qt.callLater(() => root.motionProgress = 1)
 }

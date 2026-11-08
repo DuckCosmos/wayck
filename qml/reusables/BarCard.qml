@@ -9,6 +9,7 @@ Item {
 
     property bool highlighted: false
     property string section: "center"
+    property real emphasisScale: 1
 
     property int contentSpacing: 6
     property int cornerRadius: 6
@@ -54,7 +55,7 @@ Item {
         content.implicitHeight + effectiveVerticalPadding * 2
     )
 
-    scale: hoverEnabled && hovered ? hoverScale : 1
+    scale: emphasisScale * (hoverEnabled && hovered ? hoverScale : 1)
     transformOrigin: Item.Center
 
     Behavior on scale {

@@ -15,6 +15,7 @@ BarCard {
 
     property var activeMenu: menu
     property bool menuVisible: false
+    property real openProgress: menuVisible ? 1 : 0
 
     property var menuStack: []
 
@@ -30,14 +31,18 @@ BarCard {
     implicitHeight: menuColumn.implicitHeight + verticalPadding * 2
 
     width: implicitWidth
-    height: menuVisible ? implicitHeight : 0
+    height: implicitHeight * openProgress
     clip: true
 
-    Behavior on height {
+    Behavior on openProgress {
         NumberAnimation {
-            duration: root.menuVisible ? Motion.surfaceOpenDuration : Motion.surfaceCloseDuration
+            duration: root.menuVisible
+                ? Motion.surfaceOpenDuration
+                : Motion.surfaceCloseDuration
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: root.menuVisible ? Motion.surfaceOpenCurve : Motion.surfaceCloseCurve
+            easing.bezierCurve: root.menuVisible
+                ? Motion.surfaceOpenCurve
+                : Motion.surfaceCloseCurve
         }
     }
 
@@ -50,25 +55,9 @@ BarCard {
     LayoutMirroring.enabled: I18n.rtl
     LayoutMirroring.childrenInherit: true
 
-    scale: menuVisible ? 1 : Motion.subtleScale
+    scale: Motion.subtleScale + (1 - Motion.subtleScale) * openProgress
     transformOrigin: Item.Bottom
-
-    Behavior on scale {
-        NumberAnimation {
-            duration: Motion.surfaceOpenDuration
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: Motion.morphCurve
-        }
-    }
-
-    opacity: menuVisible ? 1 : 0
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: Motion.contentFadeDuration
-            easing.type: Motion.standardInOut
-        }
-    }
+    opacity: openProgress
 
     QsMenuOpener {
         id: opener

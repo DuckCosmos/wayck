@@ -21,17 +21,9 @@ RowLayout {
             highlighted: active
             implicitWidth: 34
             implicitHeight: 34
-            scale: active ? 1.10 : 1.0
+            emphasisScale: active ? 1.10 : 1.0
             z: active ? 1 : 0
             transformOrigin: Item.Center
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: Motion.normal
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: Motion.selectionCurve
-                }
-            }
 
             horizontalPadding: 4
             verticalPadding: 4

@@ -100,3 +100,36 @@ Keep content transitions separate from geometry transitions. Geometry should est
 ## Design references
 
 The implementation takes inspiration from Caelestia's fluid visual language, HakuSpace's coordinated surface and navigation transitions, and Serpantinum's shared-host approach. These are design references, not a requirement to duplicate their source code. Check each upstream project's license before copying implementation code.
+
+
+## One progress value per transition
+
+When a component has several animated properties that describe one visual state, prefer one normalized progress value and derive the properties from it. This keeps geometry and content phase-locked and makes an interrupted transition retarget cleanly.
+
+The clipboard surface uses this pattern:
+
+```qml
+property real revealProgress: 0
+
+Behavior on revealProgress {
+    NumberAnimation {
+        duration: root.closing
+            ? Motion.surfaceCloseDuration
+            : Motion.surfaceOpenDuration
+        easing.type: Easing.BezierSpline
+        easing.bezierCurve: root.closing
+            ? Motion.surfaceCloseCurve
+            : Motion.surfaceOpenCurve
+    }
+}
+
+Item {
+    height: root.height * root.revealProgress
+    y: root.height * (1 - root.revealProgress)
+    opacity: root.revealProgress
+}
+```
+
+Use this for a single surface transition. Do not force unrelated interactions (for example, a list item's hover state and a panel's open state) into the same progress value.
+
+Notification cards use one progress for opacity, scale and vertical offset. Tray menus use one progress for reveal height, scale and opacity. BarCard.emphasisScale lets a module express selection emphasis without replacing the shared hover behavior.
