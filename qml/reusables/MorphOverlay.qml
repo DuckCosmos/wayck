@@ -96,8 +96,8 @@ PanelWindow {
 
         x: root.sourceX
         y: root.sourceY
-        width: MorphController.sourceWidth
-        height: MorphController.sourceHeight
+        width: MorphController.surfaceId === "player" ? MorphController.sourceWidth : 0
+        height: MorphController.surfaceId === "player" ? MorphController.sourceHeight : 0
         visible: MorphController.active && MorphController.surfaceId === "player"
 
         HoverHandler {
