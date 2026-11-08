@@ -67,7 +67,7 @@ Singleton {
             root.active = true
 
             Qt.callLater(function() {
-                if (token !== root.requestSerial || !root.active || !root.sourceItem)
+                if (token !== root.requestSerial || !root.active || root.closing || !root.sourceItem)
                     return
 
                 root.sourceItem.opacity = 0
@@ -87,10 +87,11 @@ Singleton {
         if (!active)
             return
 
+        const alreadyCollapsed = progress <= 0.001
         closing = true
         progress = 0
 
-        if (progress <= 0.001)
+        if (alreadyCollapsed)
             Qt.callLater(root.finish)
     }
 
