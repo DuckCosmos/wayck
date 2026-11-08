@@ -262,7 +262,7 @@ PanelWindow {
             x: 0
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData, QsWindow.window)
         }
 
         BarSection {
@@ -279,7 +279,7 @@ PanelWindow {
             x: Math.max(barContent.leftEdge, Math.min(barContent.idealCenterX, barContent.maxCenterX))
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData, QsWindow.window)
         }
 
         BarSection {
@@ -296,7 +296,7 @@ PanelWindow {
             x: barContent.width - width
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => MorphController.open(sourceItem, surfaceId, surfaceData, QsWindow.window)
         }
     }
 }

@@ -61,6 +61,8 @@ BarCard {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
+                MorphController.setSourceHovered(iconArea, hovered)
+
                 if (root.debug)
                     console.log("[WAYCK INPUT] tray hover:",
                         root.trayItem.title || root.trayItem.id,

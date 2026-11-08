@@ -13,7 +13,7 @@ Singleton {
     property bool closing: false
     property bool closeOnHoverExit: true
     property bool surfaceHovered: false
-    property bool surfaceWasHovered: false
+    property bool sourceHovered: false
 
     // The endpoint is requested here; MorphSurface reports interpolated progress.
     property real progress: 0
@@ -38,15 +38,15 @@ Singleton {
     Timer {
         id: hoverCloseTimer
 
-        interval: 260
+        interval: 420
         repeat: false
 
         onTriggered: {
             if (root.active
                     && !root.closing
                     && root.closeOnHoverExit
-                    && root.surfaceWasHovered
                     && !root.surfaceHovered
+                    && !root.sourceHovered
                     && root.animationProgress >= 0.98) {
                 root.close()
             }
@@ -151,7 +151,7 @@ Singleton {
         closing = false
         closeOnHoverExit = true
         surfaceHovered = false
-        surfaceWasHovered = false
+        sourceHovered = true
         animationProgress = 0
         progress = 0
         grabResult = null
@@ -193,7 +193,6 @@ Singleton {
         surfaceHovered = hovered
 
         if (hovered) {
-            surfaceWasHovered = true
             hoverCloseTimer.stop()
             log("ponteiro entrou na superfície")
         } else {
@@ -207,12 +206,27 @@ Singleton {
         evaluateHoverExit()
     }
 
+    function setSourceHovered(item, hovered: bool): void {
+        if (item !== sourceItem)
+            return
+
+        sourceHovered = hovered
+
+        if (hovered) {
+            hoverCloseTimer.stop()
+            log("ponteiro sobre a origem")
+        } else {
+            log("ponteiro saiu da origem")
+            evaluateHoverExit()
+        }
+    }
+
     function evaluateHoverExit(): void {
         if (active
                 && !closing
                 && closeOnHoverExit
-                && surfaceWasHovered
                 && !surfaceHovered
+                && !sourceHovered
                 && animationProgress >= 0.98) {
             hoverCloseTimer.restart()
         }
@@ -245,7 +259,7 @@ Singleton {
         closing = false
         closeOnHoverExit = true
         surfaceHovered = false
-        surfaceWasHovered = false
+        sourceHovered = false
         progress = 0
         animationProgress = 0
         sourceItem = null

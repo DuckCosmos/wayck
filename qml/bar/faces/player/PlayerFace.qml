@@ -76,6 +76,8 @@ BarCard {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
+                MorphController.setSourceHovered(albumArea, hovered)
+
                 if (root.debug)
                     console.log("[WAYCK INPUT] player hover:", hovered,
                         "area=", albumArea.width + "x" + albumArea.height)
