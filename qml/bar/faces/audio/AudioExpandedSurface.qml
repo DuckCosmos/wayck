@@ -129,6 +129,22 @@ Item {
                 model: root.audioStreams
                 boundsBehavior: Flickable.StopAtBounds
 
+                add: Transition {
+                    ParallelAnimation {
+                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Motion.contentFadeDuration }
+                        NumberAnimation { property: "y"; from: 12; duration: Motion.menuContentDuration; easing.type: Motion.standard }
+                    }
+                }
+
+                displaced: Transition {
+                    NumberAnimation {
+                        properties: "x,y"
+                        duration: Motion.menuContentDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Motion.layoutCurve
+                    }
+                }
+
                 delegate: Item {
                     id: streamDelegate
                     required property var modelData
@@ -166,23 +182,28 @@ Item {
 
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 5
+                                spacing: 6
 
-                                Text {
+                                ColumnLayout {
                                     Layout.fillWidth: true
-                                    text: root.appName(streamDelegate.node)
-                                    color: Theme.onSurface
-                                    font.pixelSize: 11
-                                    font.bold: true
-                                    elide: Text.ElideRight
-                                }
+                                    spacing: 1
 
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: root.streamDescription(streamDelegate.node)
-                                    color: Theme.outline
-                                    font.pixelSize: 9
-                                    elide: Text.ElideRight
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: root.appName(streamDelegate.node)
+                                        color: Theme.onSurface
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: root.streamDescription(streamDelegate.node)
+                                        color: Theme.outline
+                                        font.pixelSize: 9
+                                        elide: Text.ElideRight
+                                    }
                                 }
 
                                 Text {
