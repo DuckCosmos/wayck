@@ -66,6 +66,14 @@ PanelWindow {
             return
 
         closing = true
+
+        if (revealProgress <= 0.001) {
+            _winVisible = false
+            closing = false
+            dismissed()
+            return
+        }
+
         revealProgress = 0
     }
 

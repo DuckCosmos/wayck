@@ -23,7 +23,11 @@ Item {
     opacity: motionProgress
     scale: Motion.entranceScale + (1 - Motion.entranceScale) * motionProgress
 
-    transform: Translate { y: root.enterOffset * (1 - root.motionProgress) }
+    transform: Translate {
+        y: root.exiting
+            ? -10 * (1 - root.motionProgress)
+            : root.enterOffset * (1 - root.motionProgress)
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -118,6 +122,15 @@ Item {
             return
 
         exiting = true
+
+        if (motionProgress <= 0.001) {
+            if (!removalScheduled) {
+                removalScheduled = true
+                Qt.callLater(() => SysNotif.removeNotification(root.notification.id))
+            }
+            return
+        }
+
         motionProgress = 0
     }
 
