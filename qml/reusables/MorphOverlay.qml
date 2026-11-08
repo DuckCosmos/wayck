@@ -106,16 +106,16 @@ PanelWindow {
 
         x: root.sourceX
         y: root.sourceY
-        width: MorphController.surfaceId === "player" ? MorphController.sourceWidth : 0
-        height: MorphController.surfaceId === "player" ? MorphController.sourceHeight : 0
-        visible: MorphController.active && MorphController.surfaceId === "player"
+        width: MorphController.surfaceId !== "tray" ? MorphController.sourceWidth : 0
+        height: MorphController.surfaceId !== "tray" ? MorphController.sourceHeight : 0
+        visible: MorphController.active && MorphController.surfaceId !== "tray"
 
         HoverHandler {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
                 if (MorphController.debug)
-                    console.log("[WAYCK MORPH] player source hotspot hover:", hovered)
+                    console.log("[WAYCK MORPH] source hotspot hover:", hovered)
 
                 if (MorphController.sourceItem)
                     MorphController.setSourceHovered(MorphController.sourceItem, hovered)

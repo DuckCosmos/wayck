@@ -541,6 +541,10 @@ update_dot() {
         "$ROOT/scripts/wayck-wallpaper.sh" \
         "$UPDATE_STAGE/wayck-wallpaper"
 
+    install -m 755 \
+        "$ROOT/install.sh" \
+        "$UPDATE_STAGE/install.sh"
+
     printf '%b%s%b\n' "$YELLOW" "$(msg update.stopping)" "$RESET"
 
     quickshell -c wayck kill 2>/dev/null || true
@@ -601,6 +605,7 @@ build_and_install() {
 
     install -m 755 "$ROOT/target/release/wayck-backend" "$stage/wayck-backend"
     install -m 755 "$ROOT/scripts/wayck-wallpaper.sh" "$stage/wayck-wallpaper"
+    install -m 755 "$ROOT/install.sh" "$stage/install.sh"
 
     printf '%b%s%b\n' "$GREEN" "$(msg installing path "$DEST")" "$RESET"
 

@@ -154,7 +154,7 @@ PanelWindow {
 
             if (selectedWallpaper &&
                 selectedWallpaper !== previewedWallpaper) {
-                previewTimer.restart()
+                previewSelected()
             }
         })
     }
@@ -162,10 +162,15 @@ PanelWindow {
     function previewSelected(): void {
         const path = selectedWallpaper
 
-        if (!path || path === previewedWallpaper)
+        if (!path)
             return
 
-        previewedWallpaper = path
+        if (path === previewedWallpaper
+                && (!previewProcess.running || activePreviewPath === path)
+                && pendingPreviewPath === "") {
+            return
+        }
+
         pendingPreviewPath = path
         previewTimer.restart()
     }
@@ -176,6 +181,10 @@ PanelWindow {
 
         const path = pendingPreviewPath
         pendingPreviewPath = ""
+
+        if (path === previewedWallpaper)
+            return
+
         activePreviewPath = path
         previewProcess.exec([wallpaperCommand, "set", path])
     }
@@ -190,16 +199,16 @@ PanelWindow {
             return
         }
 
-        // Previews already run through wayck-wallpaper, so Matugen and the
-        // palette are current before confirmation. Enter only commits the UI.
-        if (path !== previewedWallpaper) {
-            previewedWallpaper = path
+        // Selection changes already preview through wayck-wallpaper (including
+        // Matugen). Enter commits the highlighted item and closes the selector.
+        previewTimer.stop()
+
+        if (path !== previewedWallpaper && path !== activePreviewPath) {
             pendingPreviewPath = path
-            previewTimer.stop()
-            runPreview()
-        } else {
+            if (!previewProcess.running)
+                runPreview()
+        } else if (pendingPreviewPath !== path) {
             pendingPreviewPath = ""
-            previewTimer.stop()
         }
 
         originalWallpaper = path
@@ -212,10 +221,12 @@ PanelWindow {
 
         previewTimer.stop()
 
-        if (originalWallpaper && previewedWallpaper !== originalWallpaper) {
-            previewedWallpaper = originalWallpaper
+        if (originalWallpaper
+                && (previewedWallpaper !== originalWallpaper
+                    || (previewProcess.running && activePreviewPath !== originalWallpaper))) {
             pendingPreviewPath = originalWallpaper
-            runPreview()
+            if (!previewProcess.running)
+                runPreview()
         } else {
             pendingPreviewPath = ""
         }
@@ -333,7 +344,7 @@ PanelWindow {
                         if (root.initializing || !root.opened)
                             return
 
-                        previewTimer.restart()
+                        previewSelected()
                     }
 
                     Keys.onLeftPressed: event => {
@@ -592,7 +603,9 @@ PanelWindow {
         }
 
         onExited: (exitCode, exitStatus) => {
-            if (exitCode !== 0) {
+            if (exitCode === 0) {
+                root.previewedWallpaper = activePath
+            } else {
                 console.warn(
                     "[WallpaperSelector] falha ao pré-visualizar/aplicar Matugen:",
                     previewErrors.text.trim()
@@ -601,6 +614,8 @@ PanelWindow {
 
             if (root.pendingPreviewPath && root.pendingPreviewPath !== activePath)
                 root.runPreview()
+            else if (root.pendingPreviewPath === activePath)
+                root.pendingPreviewPath = ""
         }
     }
 

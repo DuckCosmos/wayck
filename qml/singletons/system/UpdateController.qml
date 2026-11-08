@@ -15,10 +15,7 @@ Singleton {
     property string error: ""
 
     readonly property string backend: Quickshell.shellPath("wayck-backend")
-    readonly property string dataHome: Quickshell.env("XDG_DATA_HOME")
-        || (Quickshell.env("HOME") + "/.local/share")
-    readonly property string sourceDirectory: dataHome + "/wayck-src"
-    readonly property string installerPath: sourceDirectory + "/install.sh"
+    readonly property string installerPath: Quickshell.shellPath("install.sh")
 
     function check(): void {
         if (checking || installing)

@@ -178,10 +178,17 @@ Item {
                                 }
 
                                 Text {
+                                    Layout.fillWidth: true
+                                    text: root.streamDescription(streamDelegate.node)
+                                    color: Theme.outline
+                                    font.pixelSize: 9
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
                                     text: Math.round(streamDelegate.volume * 100) + "%"
                                     color: Theme.outline
                                     font.pixelSize: 10
-                                    font.tabularNumbers: true
                                 }
                             }
 
