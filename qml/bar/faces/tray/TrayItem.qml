@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import "../../../"
 
 BarCard {
@@ -11,6 +12,7 @@ BarCard {
     signal pointerLeft()
 
     property bool iconFailed: false
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
     horizontalPadding: 6
     verticalPadding: 6
@@ -55,23 +57,33 @@ BarCard {
             visible: root.iconFailed || root.trayItem.icon === ""
         }
 
-        MouseArea {
-            anchors.fill: parent
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
-            hoverEnabled: true
-            acceptedButtons: Qt.LeftButton
-            cursorShape: root.trayItem.hasMenu
-                ? Qt.PointingHandCursor
-                : Qt.ArrowCursor
+            onHoveredChanged: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray hover:",
+                        root.trayItem.title || root.trayItem.id,
+                        hovered,
+                        "area=", iconArea.width + "x" + iconArea.height,
+                        "hasMenu=", root.trayItem.hasMenu)
 
-            onEntered: {
-                if (root.trayItem.hasMenu)
+                if (hovered && root.trayItem.hasMenu)
                     root.menuRequested(root.trayItem, iconArea, false)
+                else if (!hovered)
+                    root.pointerLeft()
             }
+        }
 
-            onExited: root.pointerLeft()
+        TapHandler {
+            acceptedButtons: Qt.LeftButton
 
-            onClicked: {
+            onTapped: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray tapped:",
+                        root.trayItem.title || root.trayItem.id,
+                        "hasMenu=", root.trayItem.hasMenu)
+
                 if (root.trayItem.hasMenu)
                     root.menuRequested(root.trayItem, iconArea, true)
                 else

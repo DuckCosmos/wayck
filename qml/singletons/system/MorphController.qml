@@ -58,27 +58,6 @@ Singleton {
             console.log("[WAYCK MORPH]", message)
     }
 
-    function resolveScreen(item, center, windowRef): var {
-        if (windowRef && windowRef.screen)
-            return windowRef.screen
-
-        const sourceWindow = item.window
-
-        if (sourceWindow && sourceWindow.screen)
-            return sourceWindow.screen
-
-        for (const candidate of Quickshell.screens) {
-            if (center.x >= candidate.x
-                    && center.x < candidate.x + candidate.width
-                    && center.y >= candidate.y
-                    && center.y < candidate.y + candidate.height) {
-                return candidate
-            }
-        }
-
-        return null
-    }
-
     function activate(token, result): void {
         if (token !== requestSerial || !sourceItem)
             return
@@ -107,6 +86,8 @@ Singleton {
     }
 
     function open(item, requestedSurfaceId, data, windowRef): void {
+        log("open() chamado: " + requestedSurfaceId + " item=" + !!item)
+
         if (active || opening) {
             log("pedido ignorado: já existe uma superfície ativa")
             return
@@ -118,6 +99,11 @@ Singleton {
         }
 
         const sourceWindow = windowRef || item.window
+
+        log("open() recebido: " + requestedSurfaceId
+            + " window=" + !!sourceWindow
+            + " visible=" + item.visible
+            + " rect=" + item.width + "x" + item.height)
 
         if (!sourceWindow || !item.visible || item.width <= 0 || item.height <= 0) {
             console.warn("[WAYCK MORPH] origem indisponível:", requestedSurfaceId,
@@ -132,17 +118,21 @@ Singleton {
             return
         }
 
-        const topLeft = item.mapToGlobal(0, 0)
-        const bottomRight = item.mapToGlobal(item.width, item.height)
-        const center = Qt.point(
-            (topLeft.x + bottomRight.x) / 2,
-            (topLeft.y + bottomRight.y) / 2
-        )
-        const screen = resolveScreen(item, center, sourceWindow)
+        const screen = sourceWindow.screen
+        let localRect = null
 
-        if (!screen) {
-            console.warn("[WAYCK MORPH] não foi possível resolver o monitor da origem:",
-                requestedSurfaceId, "at", center.x, center.y)
+        try {
+            localRect = sourceWindow.itemRect(item)
+        } catch (error) {
+            console.warn("[WAYCK MORPH] QsWindow.itemRect falhou:", error)
+            return
+        }
+
+        if (!screen || !localRect || localRect.width <= 0 || localRect.height <= 0) {
+            console.warn("[WAYCK MORPH] geometria inválida:", requestedSurfaceId,
+                "screen:", !!screen,
+                "rect:", localRect ? localRect.x + "," + localRect.y + " "
+                    + localRect.width + "x" + localRect.height : "null")
             return
         }
 
@@ -150,10 +140,10 @@ Singleton {
 
         sourceItem = item
         targetScreen = screen
-        sourceGlobalX = topLeft.x
-        sourceGlobalY = topLeft.y
-        sourceWidth = Math.max(1, bottomRight.x - topLeft.x)
-        sourceHeight = Math.max(1, bottomRight.y - topLeft.y)
+        sourceGlobalX = screen.x + localRect.x
+        sourceGlobalY = screen.y + localRect.y
+        sourceWidth = Math.max(1, localRect.width)
+        sourceHeight = Math.max(1, localRect.height)
         sourceOpacity = item.opacity
 
         surfaceId = requestedSurfaceId

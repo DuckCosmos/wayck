@@ -8,12 +8,20 @@ BarCard {
     id: root
 
     property var player: MprisController.activePlayer
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
     implicitHeight: 36
     horizontalPadding: 8
 
     function openExpanded(): void {
         expandDelay.stop()
+
+        if (debug)
+            console.log("[WAYCK INPUT] player open request:",
+                "album=", albumArea.width + "x" + albumArea.height,
+                "visible=", albumArea.visible,
+                "window=", !!QsWindow.window)
+
         MorphController.open(albumArea, "player", null, QsWindow.window)
     }
 
@@ -63,15 +71,31 @@ BarCard {
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            acceptedButtons: Qt.LeftButton
-            cursorShape: Qt.PointingHandCursor
+        HoverHandler {
+            id: albumHover
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
-            onEntered: expandDelay.restart()
-            onExited: expandDelay.stop()
-            onClicked: root.openExpanded()
+            onHoveredChanged: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] player hover:", hovered,
+                        "area=", albumArea.width + "x" + albumArea.height)
+
+                if (hovered)
+                    expandDelay.restart()
+                else
+                    expandDelay.stop()
+            }
+        }
+
+        TapHandler {
+            acceptedButtons: Qt.LeftButton
+
+            onTapped: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] player tapped")
+
+                root.openExpanded()
+            }
         }
 
         Timer {
@@ -80,7 +104,12 @@ BarCard {
             interval: 220
             repeat: false
 
-            onTriggered: root.openExpanded()
+            onTriggered: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] player hover dwell elapsed")
+
+                root.openExpanded()
+            }
         }
     }
 

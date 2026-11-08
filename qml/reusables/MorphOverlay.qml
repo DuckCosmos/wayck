@@ -47,6 +47,13 @@ PanelWindow {
     screen: monitor
     visible: MorphController.active && MorphController.targetScreen === monitor
 
+    onVisibleChanged: {
+        if (MorphController.debug)
+            console.log("[WAYCK MORPH] overlay visible:", visible,
+                "monitor=", monitor ? monitor.name : "null",
+                "target=", MorphController.surfaceId)
+    }
+
     anchors {
         top: true
         bottom: true
@@ -98,7 +105,12 @@ PanelWindow {
         }
 
         HoverHandler {
-            onHoveredChanged: MorphController.setSurfaceHovered(hovered)
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+            onHoveredChanged: {
+                if (MorphController.debug)
+                    console.log("[WAYCK MORPH] overlay surface hover:", hovered)
+                MorphController.setSurfaceHovered(hovered)
+            }
         }
 
         onProgressChanged: {

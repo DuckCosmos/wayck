@@ -6,6 +6,7 @@ BarCard {
     id: root
 
     property var items: TrayController.items
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
     property var activeTrayItem: null
     property var activeAnchor: null
 
@@ -18,6 +19,12 @@ BarCard {
     minimumHeight: 0
 
     function openMenu(item, anchor, immediate) {
+        if (debug)
+            console.log("[WAYCK INPUT] tray menu request:",
+                item ? (item.title || item.id) : "null",
+                "immediate=", immediate,
+                "anchor=", !!anchor)
+
         if (!item || !item.hasMenu)
             return
 
@@ -53,6 +60,10 @@ BarCard {
         repeat: false
 
         onTriggered: {
+            if (root.debug)
+                console.log("[WAYCK INPUT] tray hover dwell elapsed:",
+                    root.activeTrayItem ? (root.activeTrayItem.title || root.activeTrayItem.id) : "null")
+
             if (root.activeTrayItem
                     && root.activeTrayItem.hasMenu
                     && root.activeAnchor

@@ -230,6 +230,15 @@ PanelWindow {
 
         onWidthChanged: root.scheduleLayout()
 
+        HoverHandler {
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] bar content hover:", hovered)
+            }
+        }
+
         readonly property real leftEdge:
             leftSection.width > 0 ? leftSection.width + root.sectionGap : 0
 
