@@ -1,0 +1,40 @@
+# Entradas
+Bar 1.0 bar/Bar.qml
+Clipboard 1.0 clipboard/Clipboard.qml
+Launcher 1.0 launcher/Launcher.qml
+
+# Barra
+BarModule 1.0 bar/BarModule.qml
+BarSection 1.0 bar/BarSection.qml
+singleton BarConfig 1.0 bar/BarConfig.qml
+singleton BarModuleRegistry 1.0 bar/BarModuleRegistry.qml
+
+# Wallpaper
+WallpaperSelector 1.0 wallpaper/WallpaperSelector.qml
+singleton WallpaperService 1.0 singletons/system/WallpaperService.qml
+
+# Reutilizáveis
+BarCard 1.0 reusables/BarCard.qml
+
+# Notificações
+NotificationCard 1.0 notifications/NotificationCard.qml
+NotificationPopup 1.0 notifications/NotificationPopup.qml
+
+# Singletons: sistema
+singleton Config 1.0 singletons/system/Config.qml
+singleton I18n 1.0 singletons/system/I18n.qml
+singleton SysNotif 1.0 singletons/system/SysNotif.qml
+
+# Singletons: tema, áudio e dados
+singleton Theme 1.0 singletons/theme/Theme.qml
+singleton MprisController 1.0 singletons/audio/MprisController.qml
+singleton SysData 1.0 singletons/info/SysData.qml
+
+# Singletons: controle dos widgets (IPC)
+singleton BarController 1.0 singletons/widgetcontrols/BarController.qml
+singleton ClipboardController 1.0 singletons/widgetcontrols/ClipboardController.qml
+singleton LanguageController 1.0 singletons/widgetcontrols/LanguageController.qml
+singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qml
+singleton ScreenshotController 1.0 singletons/widgetcontrols/ScreenshotController.qml
+singleton TrayController 1.0 singletons/widgetcontrols/TrayController.qml
+singleton UserController 1.0 singletons/widgetcontrols/UserController.qml

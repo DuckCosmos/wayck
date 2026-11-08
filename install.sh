@@ -21,139 +21,158 @@ readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
     quickshell qt6-declarative qt6-wayland git base-devel
-    kitty papirus-icon-theme wl-clipboard cliphist micro jq
+    kitty papirus-icon-theme wl-clipboard cliphist micro jq hyprpaper
 )
 
 readonly PERSONAL_REPO_PKGS=(
-    obs-studio micro zsh steam heroic-games-launcher lutris
+    micro zsh steam heroic-games-launcher lutris
 )
 
 readonly PERSONAL_AUR_PKGS=(
-    vesktop-bin vscodium-bin brave-bin
+    vesktop-bin vscodium-bin brave-bin fastzap-bin
+)
+
+readonly PERSONAL_FLATPAK_PKGS=(
+    com.dec05eba.gpu_screen_recorder
 )
 
 LANGUAGE="en"
+LANG_EXPLICIT=0
 AUR_HELPER=""
 ROOT=""
 TERMINAL_STATE=""
 
-OPTIONS=(required blur apps hypr build)
-SELECTED=(1 1 0 0 1)
+OPTIONS=(required blur apps hypr update build)
+SELECTED=(1 1 0 0 0 1)
 CURSOR=0
 
-# ============================================================
-# TRANSLATIONS
-# ============================================================
+readonly SUPPORTED_LANGS=(
+    ar az bg de en es fa fr hi hy id it ja ko nl pl pt ru tr ua vi zh zh_tw
+)
+
+# código | sistema não suportado | falha ao preparar (dependências/repositório)
+readonly EARLY_MESSAGES='en|This installer only supports Arch Linux and pacman-based distributions.|Could not prepare the installation (dependencies or repository).
+pt|Este instalador suporta apenas Arch Linux e derivados com pacman.|Não foi possível preparar a instalação (dependências ou repositório).
+es|Este instalador solo es compatible con Arch Linux y derivados que usen pacman.|No se pudo preparar la instalación (dependencias o repositorio).
+fr|Cet installateur ne prend en charge qu'"'"'Arch Linux et les distributions basées sur pacman.|Impossible de préparer l'"'"'installation (dépendances ou dépôt).
+de|Dieser Installer unterstützt nur Arch Linux und pacman-basierte Distributionen.|Die Installation konnte nicht vorbereitet werden (Abhängigkeiten oder Repository).
+it|Questo installer supporta solo Arch Linux e le distribuzioni basate su pacman.|Impossibile preparare l'"'"'installazione (dipendenze o repository).
+nl|Dit installatieprogramma ondersteunt alleen Arch Linux en distributies op basis van pacman.|De installatie kon niet worden voorbereid (afhankelijkheden of repository).
+pl|Ten instalator obsługuje tylko Arch Linux i dystrybucje oparte na pacmanie.|Nie udało się przygotować instalacji (zależności lub repozytorium).
+ru|Этот установщик поддерживает только Arch Linux и дистрибутивы на основе pacman.|Не удалось подготовить установку (зависимости или репозиторий).
+ua|Цей інсталятор підтримує лише Arch Linux і дистрибутиви на основі pacman.|Не вдалося підготувати встановлення (залежності або репозиторій).
+bg|Този инсталатор поддържа само Arch Linux и дистрибуции, базирани на pacman.|Инсталацията не можа да бъде подготвена (зависимости или хранилище).
+tr|Bu yükleyici yalnızca Arch Linux ve pacman tabanlı dağıtımları destekler.|Kurulum hazırlanamadı (bağımlılıklar veya depo).
+az|Bu quraşdırıcı yalnız Arch Linux və pacman əsaslı distributivləri dəstəkləyir.|Quraşdırmanı hazırlamaq mümkün olmadı (asılılıqlar və ya anbar).
+id|Penginstal ini hanya mendukung Arch Linux dan distribusi berbasis pacman.|Tidak dapat menyiapkan instalasi (dependensi atau repositori).
+vi|Trình cài đặt này chỉ hỗ trợ Arch Linux và các bản phân phối dùng pacman.|Không thể chuẩn bị cài đặt (phụ thuộc hoặc kho lưu trữ).
+ja|このインストーラーは Arch Linux と pacman ベースのディストリビューションのみに対応しています。|インストールの準備に失敗しました（依存関係またはリポジトリ）。
+ko|이 설치 관리자는 Arch Linux 및 pacman 기반 배포판만 지원합니다.|설치를 준비하지 못했습니다(종속성 또는 저장소).
+zh|此安装程序仅支持 Arch Linux 及基于 pacman 的发行版。|无法准备安装（依赖项或仓库）。
+zh_tw|此安裝程式僅支援 Arch Linux 及以 pacman 為基礎的發行版。|無法準備安裝（相依套件或儲存庫）。
+ar|يدعم هذا المثبّت نظام Arch Linux والتوزيعات المعتمدة على pacman فقط.|تعذّر تجهيز التثبيت (التبعيات أو المستودع).
+fa|این نصب‌کننده فقط از Arch Linux و توزیع‌های مبتنی بر pacman پشتیبانی می‌کند.|آماده‌سازی نصب ممکن نبود (وابستگی‌ها یا مخزن).
+hi|यह इंस्टॉलर केवल Arch Linux और pacman आधारित डिस्ट्रिब्यूशन को सपोर्ट करता है।|इंस्टॉलेशन तैयार नहीं किया जा सका (डिपेंडेंसी या रिपॉज़िटरी)।
+hy|Այս տեղադրիչը աջակցում է միայն Arch Linux-ին և pacman-ի վրա հիմնված բաշխումներին։|Չհաջողվեց պատրաստել տեղադրումը (կախվածություններ կամ պահոց)։'
+
+declare -A MSG=()
+declare -a YES_WORDS=()
+
+# pt_BR.UTF-8 -> pt | uk_UA -> ua | zh_TW -> zh_tw | desconhecido -> en
+normalize_lang() {
+    local raw="${1,,}"
+
+    raw="${raw%%.*}"
+    raw="${raw%%@*}"
+    raw="${raw//-/_}"
+
+    local lang="${raw%%_*}"
+
+    [[ "$lang" == uk ]] && lang="ua"
+
+    if [[ "$lang" == zh && "$raw" =~ ^zh_(tw|hk|mo) ]]; then
+        lang="zh_tw"
+    fi
+
+    local supported
+    for supported in "${SUPPORTED_LANGS[@]}"; do
+        if [[ "$supported" == "$lang" ]]; then
+            printf '%s' "$lang"
+            return 0
+        fi
+    done
+
+    printf 'en'
+}
 
 pick_lang() {
-    local code="${WAYCK_LANG:-${LANG:-en}}"
+    local code="${WAYCK_LANG:-}"
+
+    [[ -n "$code" ]] && LANG_EXPLICIT=1
 
     while (($#)); do
         case "$1" in
             --lang)
                 code="${2:-en}"
+                LANG_EXPLICIT=1
                 shift
                 ;;
             --lang=*)
                 code="${1#*=}"
+                LANG_EXPLICIT=1
                 ;;
         esac
         shift
     done
 
-    [[ "${code,,}" == pt* ]] && LANGUAGE="pt" || LANGUAGE="en"
+    LANGUAGE="$(normalize_lang "${code:-${LC_ALL:-${LC_MESSAGES:-${LANG:-en}}}}")"
 }
 
-msg() {
-    local key="$1"
+# Mensagens de antes do clone (ainda não existe JSON pra ler).
+early_msg() {
+    local key="$1" code no_pacman prepare_failed
 
-    if [[ "$LANGUAGE" == pt ]]; then
+    while IFS='|' read -r code no_pacman prepare_failed; do
+        [[ "$code" == "$LANGUAGE" ]] || continue
+
         case "$key" in
-            title) printf 'INSTALADOR WAYCK' ;;
-            help) printf 'Use as setas para navegar, ESPAÇO para selecionar e ENTER para continuar. ESC para sair.' ;;
-            required) printf 'Instalar pacotes necessários' ;;
-            blur) printf 'Configurar blur' ;;
-            apps) printf 'Instalar meus aplicativos' ;;
-            hypr) printf 'Instalar configurações do Hyprland' ;;
-            build) printf 'Compilar e instalar Wayck' ;;
-            confirm) printf 'ENTER: continuar | ESPAÇO: selecionar | ESC: sair' ;;
-            no_pacman) printf 'Este instalador suporta apenas Arch Linux e derivados com pacman.' ;;
-            abort) printf 'Instalação cancelada.' ;;
-            pkgs_installing) printf 'Instalando pacotes necessários...' ;;
-            pkgs_ok) printf 'Pacotes necessários instalados.' ;;
-            blur_info) printf 'Blur: aplica desfoque ao fundo do launcher.' ;;
-            blur_warn) printf 'Aviso: o blur também pode afetar outras janelas translúcidas do Hyprland.' ;;
-            q_blur) printf 'Ativar blur? [S/n]' ;;
-            cfg_kept) printf 'Configuração atualizada:' ;;
-            invalid_config) printf 'O config.json existente não contém um objeto JSON válido.' ;;
-            build_msg) printf 'Compilando o backend em Rust...' ;;
-            installing) printf 'Instalando em' ;;
-            build_failed) printf 'Falha ao compilar o backend.' ;;
-            hypr_q) printf 'Instalar o preset do Wayck em ~/.config/hypr? Um backup será criado. [s/N]' ;;
-            hypr_backup) printf 'BACKUP SALVO EM' ;;
-            hypr_done) printf 'Configuração do Hyprland instalada.' ;;
-            hypr_missing) printf 'Hyprland não encontrado ou pasta hypr/ ausente. Pulando configuração.' ;;
-            aur_installing) printf 'Instalando' ;;
-            aur_already) printf 'já está instalado. Pulando.' ;;
-            aur_clone_failed) printf 'Falha ao baixar o repositório AUR.' ;;
-            aur_build_failed) printf 'Falha ao compilar ou instalar um pacote AUR.' ;;
-            aur_install_failed) printf 'O helper AUR não foi instalado corretamente.' ;;
-            aur_installed) printf 'instalado com sucesso.' ;;
-            personal_installing) printf 'Instalando aplicativos pessoais...' ;;
-            personal_failed) printf 'Falha ao instalar os aplicativos pessoais.' ;;
-            zsh_changed) printf 'Zsh configurado como shell padrão. A alteração vale no próximo login.' ;;
-            zsh_failed) printf 'Não foi possível alterar o shell padrão para Zsh.' ;;
-            steam_note) printf 'O Steam pode exigir que o repositório multilib esteja habilitado no pacman.conf.' ;;
-            final_title) printf 'INSTALAÇÃO CONCLUÍDA' ;;
-            final_exec) printf 'O Wayck será iniciado pelo seu exec.lua após a reinicialização.' ;;
-            reboot) printf 'REINICIE O COMPUTADOR. ESTA ETAPA É OBRIGATÓRIA.' ;;
-            good) printf 'Obrigado por instalar o Wayck.' ;;
-            *) printf '%s' "$key" ;;
+            no_pacman) printf '%s' "$no_pacman" ;;
+            *) printf '%s' "$prepare_failed" ;;
         esac
-    else
-        case "$key" in
-            title) printf 'WAYCK INSTALLER' ;;
-            help) printf 'Use arrow keys to navigate, SPACE to select and ENTER to continue. ESC to exit.' ;;
-            required) printf 'Install required packages' ;;
-            blur) printf 'Configure blur' ;;
-            apps) printf 'Install my applications' ;;
-            hypr) printf 'Install Hyprland configuration' ;;
-            build) printf 'Build and install Wayck' ;;
-            confirm) printf 'ENTER: continue | SPACE: select | ESC: exit' ;;
-            no_pacman) printf 'This installer only supports Arch Linux and pacman-based distributions.' ;;
-            abort) printf 'Installation cancelled.' ;;
-            pkgs_installing) printf 'Installing required packages...' ;;
-            pkgs_ok) printf 'Required packages installed.' ;;
-            blur_info) printf 'Blur: applies background blur to the launcher.' ;;
-            blur_warn) printf 'Warning: blur may also affect other translucent Hyprland windows.' ;;
-            q_blur) printf 'Enable blur? [Y/n]' ;;
-            cfg_kept) printf 'Configuration updated:' ;;
-            invalid_config) printf 'The existing config.json does not contain a valid JSON object.' ;;
-            build_msg) printf 'Building the Rust backend...' ;;
-            installing) printf 'Installing to' ;;
-            build_failed) printf 'Failed to build the backend.' ;;
-            hypr_q) printf 'Install the Wayck preset into ~/.config/hypr? A backup will be created. [y/N]' ;;
-            hypr_backup) printf 'BACKUP SAVED TO' ;;
-            hypr_done) printf 'Hyprland configuration installed.' ;;
-            hypr_missing) printf 'Hyprland not found or hypr/ directory missing. Skipping configuration.' ;;
-            aur_installing) printf 'Installing' ;;
-            aur_already) printf 'is already installed. Skipping.' ;;
-            aur_clone_failed) printf 'Failed to clone the AUR repository.' ;;
-            aur_build_failed) printf 'Failed to build or install an AUR package.' ;;
-            aur_install_failed) printf 'The AUR helper was not installed correctly.' ;;
-            aur_installed) printf 'installed successfully.' ;;
-            personal_installing) printf 'Installing personal applications...' ;;
-            personal_failed) printf 'Failed to install personal applications.' ;;
-            zsh_changed) printf 'Zsh set as the default shell. The change takes effect at the next login.' ;;
-            zsh_failed) printf 'Could not change the default shell to Zsh.' ;;
-            steam_note) printf 'Steam may require the multilib repository to be enabled in pacman.conf.' ;;
-            final_title) printf 'INSTALLATION COMPLETED' ;;
-            final_exec) printf 'Wayck will be started by your exec.lua after reboot.' ;;
-            reboot) printf 'REBOOT YOUR COMPUTER. THIS STEP IS REQUIRED.' ;;
-            good) printf 'Thank you for installing Wayck.' ;;
-            *) printf '%s' "$key" ;;
-        esac
-    fi
+
+        return 0
+    done <<< "$EARLY_MESSAGES"
+}
+
+# Carrega as chaves "installer.*" do inglês e depois do idioma escolhido por cima
+# (o que faltar num idioma cai pro inglês, igual ao I18n.qml).
+load_messages() {
+    local dir="$ROOT/qml/assets/languages" file key value
+
+    [[ -f "$dir/en.json" ]] || die "$(early_msg prepare_failed)"
+
+    for file in "$dir/en.json" "$dir/$LANGUAGE.json"; do
+        [[ -f "$file" ]] || continue
+
+        while IFS=$'\t' read -r key value; do
+            [[ -n "$key" ]] && MSG["$key"]="$value"
+        done < <(jq -r '.installer | paths(scalars) as $p | "\($p | map(tostring) | join("."))\t\(getpath($p))"' "$file")
+    done
+
+    read -r -a YES_WORDS <<< "${MSG[yes_words]:-y yes}"
+}
+
+# msg chave [nome valor]...   ->  msg cfg_kept path "$config"
+msg() {
+    local text="${MSG[$1]:-$1}"
+    shift
+
+    while (($# >= 2)); do
+        text="${text//\{$1\}/"$2"}"
+        shift 2
+    done
+
+    printf '%s' "$text"
 }
 
 # ============================================================
@@ -194,19 +213,24 @@ trap 'exit 143' TERM
 ask() {
     local prompt="$1"
     local default_yes="${2:-false}"
-    local reply=""
+    local reply="" word
 
     printf '%s ' "$prompt"
 
     [[ -r /dev/tty ]] && IFS= read -r reply </dev/tty || true
     reply="${reply,,}"
+    reply="${reply//[[:space:]]/}"
 
     if [[ -z "$reply" ]]; then
         [[ "$default_yes" == true ]]
         return
     fi
 
-    [[ "$reply" =~ ^(s|y|sim|yes)$ ]]
+    for word in "${YES_WORDS[@]}" y yes; do
+        [[ "$reply" == "${word,,}" ]] && return 0
+    done
+
+    return 1
 }
 
 backup_path() {
@@ -233,16 +257,17 @@ copy_dir() {
 # ============================================================
 
 bootstrap() {
-    have pacman || die "$(msg no_pacman)"
+    have pacman || die "$(early_msg no_pacman)"
 
     local -a missing=()
 
     have git || missing+=(git)
     have cargo || missing+=(rust)
     have cc || missing+=(base-devel)
+    have jq || missing+=(jq)
 
     if ((${#missing[@]})); then
-        must "Failed to install dependencies." \
+        must "$(early_msg prepare_failed)" \
             sudo pacman -S --needed "${missing[@]}"
     fi
 
@@ -259,10 +284,10 @@ bootstrap() {
         mkdir -p -- "$(dirname "$SRC_DIR")"
 
         if [[ -d "$SRC_DIR/.git" ]]; then
-            must "Failed to update Wayck repository." \
+            must "$(early_msg prepare_failed)" \
                 git -C "$SRC_DIR" pull --ff-only
         else
-            must "Failed to clone Wayck repository." \
+            must "$(early_msg prepare_failed)" \
                 git clone --depth 1 "$REPO_URL" "$SRC_DIR"
         fi
 
@@ -270,7 +295,9 @@ bootstrap() {
     fi
 
     [[ -f "$ROOT/Cargo.toml" && -d "$ROOT/qml" ]] ||
-        die "Invalid Wayck repository."
+        die "$(early_msg prepare_failed)"
+
+    load_messages
 }
 
 # ============================================================
@@ -278,11 +305,11 @@ bootstrap() {
 # ============================================================
 
 menu_label() {
-    msg "$1"
+    msg "menu.$1"
 }
 
 interactive_menu() {
-    [[ -t 0 ]] || die "Interactive terminal required."
+    [[ -t 0 ]] || die "$(msg tty_required)"
 
     TERMINAL_STATE="$(stty -g)"
     tput civis 2>/dev/null || true
@@ -350,7 +377,7 @@ interactive_menu() {
 install_packages() {
     printf '%b%s%b\n' "$BLUE" "$(msg pkgs_installing)" "$RESET"
 
-    must "$(msg personal_failed)" \
+    must "$(msg pkgs_failed)" \
         sudo pacman -S --needed "${REQUIRED_PKGS[@]}"
 
     printf '%b%s%b\n' "$GREEN" "$(msg pkgs_ok)" "$RESET"
@@ -360,26 +387,21 @@ install_packages() {
 # BLUR CONFIGURATION
 # ============================================================
 
-setup_blur() {
-    printf '\n%b%s%b\n' "$MAGENTA" "$(msg blur_info)" "$RESET"
-    printf '%b%s%b\n' "$YELLOW" "$(msg blur_warn)" "$RESET"
+# config_set <chave> <valor-json>   (mexe só nessa chave, o resto do config.json fica intacto)
+config_set() {
+    local key="$1" value="$2"
+    local config="$CFG_DIR/config.json" temp
 
     mkdir -p -- "$CFG_DIR"
 
-    local config="$CFG_DIR/config.json"
-    local blur=false
-
-    ask "$(msg q_blur)" true && blur=true
-
     if [[ -f "$config" ]]; then
-        have jq || die "jq is required to modify config.json safely."
+        have jq || die "$(msg missing_tool name jq)"
         jq -e 'type == "object"' "$config" >/dev/null ||
             die "$(msg invalid_config)"
 
-        local temp
         temp="$(mktemp "$CFG_DIR/.config.XXXXXX")"
 
-        if ! jq --argjson blur "$blur" '.blur = $blur' "$config" > "$temp"; then
+        if ! jq --arg key "$key" --argjson value "$value" '.[$key] = $value' "$config" > "$temp"; then
             rm -f -- "$temp"
             die "$(msg invalid_config)"
         fi
@@ -387,10 +409,28 @@ setup_blur() {
         chmod --reference="$config" "$temp" 2>/dev/null || true
         mv -- "$temp" "$config"
     else
-        printf '{\n  "blur": %s\n}\n' "$blur" > "$config"
+        jq -n --arg key "$key" --argjson value "$value" '{($key): $value}' > "$config" ||
+            die "$(msg invalid_config)"
     fi
 
-    printf '%b%s %s%b\n' "$GREEN" "$(msg cfg_kept)" "$config" "$RESET"
+    printf '%b%s%b\n' "$GREEN" "$(msg cfg_kept path "$config")" "$RESET"
+}
+
+setup_blur() {
+    printf '\n%b%s%b\n' "$MAGENTA" "$(msg blur_info)" "$RESET"
+    printf '%b%s%b\n' "$YELLOW" "$(msg blur_warn)" "$RESET"
+
+    local blur=false
+
+    ask "$(msg q_blur) $(msg hint_yes)" true && blur=true
+
+    config_set blur "$blur"
+}
+
+persist_language() {
+    ((LANG_EXPLICIT)) || return 0
+
+    config_set language "\"$LANGUAGE\""
 }
 
 # ============================================================
@@ -408,11 +448,11 @@ install_aur_helper() {
 
     AUR_HELPER=paru
 
-    printf '%b%s %s...%b\n' \
-        "$BLUE" "$(msg aur_installing)" "$AUR_HELPER" "$RESET"
+    printf '%b%s%b\n' \
+        "$BLUE" "$(msg aur_installing name "$AUR_HELPER")" "$RESET"
 
-    have git || die "Git is required."
-    have makepkg || die "makepkg is required."
+    have git || die "$(msg missing_tool name git)"
+    have makepkg || die "$(msg missing_tool name makepkg)"
 
     local build_dir
     build_dir="$(mktemp -d "${TMPDIR:-/tmp}/wayck-aur.XXXXXX")"
@@ -433,7 +473,7 @@ install_aur_helper() {
     rm -rf -- "$build_dir"
     have "$AUR_HELPER" || die "$(msg aur_install_failed)"
 
-    printf '%b%s %s%b\n' "$GREEN" "$AUR_HELPER" "$(msg aur_installed)" "$RESET"
+    printf '%b%s%b\n' "$GREEN" "$(msg aur_installed name "$AUR_HELPER")" "$RESET"
 }
 
 # ============================================================
@@ -451,6 +491,8 @@ install_personal_apps() {
 
     must "$(msg personal_failed)" \
         "$AUR_HELPER" -S --needed "${PERSONAL_AUR_PKGS[@]}"
+    must "$(msg personal_failed)" \
+        flatpak install flathub "${PERSONAL_FLATPAK_PKGS[@]}"
 
     if have zsh; then
         local zsh_path
@@ -461,6 +503,78 @@ install_personal_apps() {
             printf '%b%s%b\n' "$GREEN" "$(msg zsh_changed)" "$RESET"
         fi
     fi
+}
+
+# ============================================================
+# BUILD AND INSTALL
+# ============================================================
+update_dot() {
+    printf '\n%b%s%b\n' "$BLUE" "$(msg update.pulling)" "$RESET"
+
+    must "$(msg update.pull_failed)" \
+        git -C "$ROOT" pull --ff-only
+
+    printf '%b%s%b\n' "$BLUE" "$(msg update.compiling)" "$RESET"
+
+    must "$(msg update.compile_failed)" \
+        cargo build --release --bin wayck-backend \
+        --manifest-path "$ROOT/Cargo.toml"
+
+    local parent
+    parent="$(dirname "$DEST")"
+
+    mkdir -p -- "$parent"
+
+    UPDATE_STAGE="$(mktemp -d "$parent/.wayck.XXXXXX")"
+
+    if ! copy_dir "$ROOT/qml" "$UPDATE_STAGE"; then
+        rm -rf -- "$UPDATE_STAGE"
+        UPDATE_STAGE=""
+        die "$(msg update.copy_failed)"
+    fi
+
+    install -m 755 \
+        "$ROOT/target/release/wayck-backend" \
+        "$UPDATE_STAGE/wayck-backend"
+
+    install -m 755 \
+        "$ROOT/scripts/wayck-wallpaper.sh" \
+        "$UPDATE_STAGE/wayck-wallpaper"
+
+    printf '%b%s%b\n' "$YELLOW" "$(msg update.stopping)" "$RESET"
+
+    quickshell -c wayck kill 2>/dev/null || true
+
+    if [[ -e "$DEST" || -L "$DEST" ]]; then
+        UPDATE_BACKUP="${DEST}.backup-$(date +%Y%m%d-%H%M%S)"
+
+        must "$(msg update.backup_failed)" \
+            mv -- "$DEST" "$UPDATE_BACKUP"
+    fi
+
+    printf '%b%s%b\n' "$GREEN" "$(msg update.installing)" "$RESET"
+
+    if ! mv -- "$UPDATE_STAGE" "$DEST"; then
+        [[ -n "$UPDATE_BACKUP" ]] &&
+            mv -- "$UPDATE_BACKUP" "$DEST" || true
+
+        rm -rf -- "$UPDATE_STAGE"
+        UPDATE_STAGE=""
+
+        die "$(msg update.install_failed)"
+    fi
+
+    UPDATE_STAGE=""
+
+    mkdir -p -- "$HOME/.local/bin"
+
+    ln -sf -- "$DEST/wayck-wallpaper" \
+        "$HOME/.local/bin/wayck-wallpaper"
+
+    printf '%b%s%b\n' "$GREEN" "$(msg update.done)" "$RESET"
+
+    [[ -n "$UPDATE_BACKUP" ]] &&
+        printf '%s: %s\n' "$(msg update.backup)" "$UPDATE_BACKUP"
 }
 
 # ============================================================
@@ -482,27 +596,45 @@ build_and_install() {
 
     if ! copy_dir "$ROOT/qml" "$stage"; then
         rm -rf -- "$stage"
-        die "Failed to copy QML files."
+        die "$(msg fail_copy)"
     fi
 
     install -m 755 "$ROOT/target/release/wayck-backend" "$stage/wayck-backend"
+    install -m 755 "$ROOT/scripts/wayck-wallpaper.sh" "$stage/wayck-wallpaper"
 
-    printf '%b%s %s%b\n' "$GREEN" "$(msg installing)" "$DEST" "$RESET"
+    printf '%b%s%b\n' "$GREEN" "$(msg installing path "$DEST")" "$RESET"
 
     if [[ -e "$DEST" || -L "$DEST" ]]; then
         backup="${DEST}.backup-$(date +%Y%m%d-%H%M%S)"
 
         mv -- "$DEST" "$backup" || {
             rm -rf -- "$stage"
-            die "Failed to backup existing installation."
+            die "$(msg fail_backup)"
         }
     fi
 
     if ! mv -- "$stage" "$DEST"; then
         [[ -n "$backup" ]] && mv -- "$backup" "$DEST" || true
         rm -rf -- "$stage"
-        die "Failed to install Wayck."
+        die "$(msg fail_install)"
     fi
+
+    # Atalho "wayck-wallpaper" no PATH (o menu e o exec.lua usam o do DEST direto).
+    mkdir -p -- "$HOME/.local/bin"
+    ln -sf -- "$DEST/wayck-wallpaper" "$HOME/.local/bin/wayck-wallpaper"
+
+    install_matugen
+}
+
+# matugen gera as cores a partir do wallpaper. É opcional: sem ele o Wayck usa
+# as cores padrão do Theme.qml, então se só o pacote falhar a instalação continua.
+install_matugen() {
+    have matugen && return 0
+
+    install_aur_helper
+
+    "$AUR_HELPER" -S --needed matugen-bin ||
+        printf '%b%s%b\n' "$YELLOW" "$(msg aur_install_failed)" "$RESET"
 }
 
 # ============================================================
@@ -523,15 +655,15 @@ install_hypr() {
     if [[ -e "$destination" || -L "$destination" ]]; then
         local backup
         backup="$(backup_path "$destination")" ||
-            die "Failed to backup Hyprland configuration."
+            die "$(msg fail_backup)"
 
-        printf '%b%s: %s%b\n' "$GREEN" "$(msg hypr_backup)" "$backup" "$RESET"
+        printf '%b%s%b\n' "$GREEN" "$(msg hypr_backup path "$backup")" "$RESET"
     fi
 
     mkdir -p -- "$CONFIG_HOME"
 
     cp -a -- "$source" "$CONFIG_HOME/" ||
-        die "Failed to install Hyprland configuration."
+        die "$(msg fail_install)"
 
     printf '%b%s%b\n' "$GREEN" "$(msg hypr_done)" "$RESET"
 }
@@ -547,7 +679,7 @@ print_final() {
 
     printf '\n%b%s%b\n' "$BLUE" "$(msg final_exec)" "$RESET"
 
-    printf '\nUseful commands:\n'
+    printf '\n%s\n' "$(msg useful_commands)"
     printf '  quickshell -c wayck\n'
     printf '  quickshell -c wayck ipc call launcher toggle\n'
     printf '  pkill -f "quickshell -c wayck"\n'
@@ -572,9 +704,14 @@ main() {
     (( SELECTED[2] )) && install_personal_apps
     (( SELECTED[1] )) && setup_blur
     (( SELECTED[3] )) && install_hypr
-    (( SELECTED[4] )) && build_and_install
+    (( SELECTED[4] )) && update_dot
+    (( SELECTED[5] )) && build_and_install
+
+    persist_language
 
     print_final
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]:-$0}" == "$0" ]]; then
+    main "$@"
+fi

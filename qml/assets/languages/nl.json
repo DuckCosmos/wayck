@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Zoeken..."
+    },
+    "clipboard": {
+        "search": "Klembord doorzoeken...",
+        "clear": "Wissen"
+    },
+    "player": {
+        "title": "Speler",
+        "none": "Geen speler",
+        "waiting": "Wachten op MPRIS",
+        "unknownArtist": "Onbekende artiest"
+    },
+    "tray": {
+        "back": "Terug"
+    },
+    "common": {
+        "na": "n.v.t."
+    },
+    "clock": {
+        "dateFormat": "dd-MM-yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Bediening",
+            "power": "Energie"
+        },
+        "sections": {
+            "settings": "Instellingen",
+            "power": "Energie en sessie"
+        },
+        "footer": "Controlecentrum",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Configuratie"
+            },
+            "displays": {
+                "title": "Beeldschermen",
+                "subtitle": "Resolutie en schermen"
+            },
+            "network": {
+                "title": "Netwerk",
+                "subtitle": "Verbindingen"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Uitvoer en microfoon"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Apparaten"
+            },
+            "appearance": {
+                "title": "Uiterlijk",
+                "subtitle": "Thema en lettertypen"
+            },
+            "system": {
+                "title": "Systeem",
+                "subtitle": "Algemene instellingen"
+            },
+            "monitor": {
+                "title": "Systeemmonitor",
+                "subtitle": "Processen en bronnen"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Vergrendelen",
+                "subtitle": "De sessie vergrendelen"
+            },
+            "suspend": {
+                "title": "Slaapstand",
+                "subtitle": "In slaapstand zetten"
+            },
+            "reboot": {
+                "title": "Herstarten",
+                "subtitle": "De computer herstarten"
+            },
+            "poweroff": {
+                "title": "Afsluiten",
+                "subtitle": "De computer uitschakelen"
+            },
+            "logout": {
+                "title": "Afmelden",
+                "subtitle": "De Hyprland-sessie beëindigen"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Actie bevestigen?"
+            },
+            "suspend": {
+                "title": "De computer in slaapstand zetten?",
+                "description": "De computer gaat in slaapstand."
+            },
+            "reboot": {
+                "title": "De computer herstarten?",
+                "description": "Alle toepassingen worden afgesloten."
+            },
+            "poweroff": {
+                "title": "De computer afsluiten?",
+                "description": "De computer wordt uitgeschakeld."
+            },
+            "logout": {
+                "title": "De sessie beëindigen?",
+                "description": "Je wordt afgemeld bij Hyprland."
+            },
+            "cancel": "Annuleren",
+            "ok": "Bevestigen"
+        }
+    },
+    "modules": {
+        "workspaces": "Werkruimten",
+        "player": "Speler",
+        "audio": "Audio",
+        "clock": "Klok",
+        "tray": "Systeemvak",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Schijf",
+        "network": "Netwerk",
+        "temperature": "Temperatuur",
+        "usermenu": "Gebruikersmenu"
+    },
+    "launch": {
+        "notInstalled": "{name} is niet geïnstalleerd.",
+        "labels": {
+            "displays": "Beeldschermbeheer",
+            "network": "Netwerkbeheer",
+            "audio": "Audiobediening",
+            "bluetooth": "Bluetooth-beheer",
+            "system": "Systeeminstellingen",
+            "monitor": "Systeemmonitor"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Updates downloaden...",
+            "compiling": "Rust-backend compileren...",
+            "preparing": "Installatie voorbereiden...",
+            "stopping": "Wayck stoppen...",
+            "installing": "Update installeren...",
+            "done": "Wayck is succesvol bijgewerkt!",
+            "backup": "Back-up van de vorige installatie",
+            "missing_jq": "Ontbrekende afhankelijkheid: jq",
+            "missing_dependency": "Een vereiste afhankelijkheid ontbreekt.",
+            "invalid_repository": "Ongeldige Git-repository.",
+            "pull_failed": "Updates downloaden is mislukt.",
+            "compile_failed": "Backend compileren is mislukt.",
+            "copy_failed": "QML-bestanden kopiëren is mislukt.",
+            "backup_failed": "Back-up maken is mislukt.",
+            "install_failed": "Installatie mislukt. De vorige versie is hersteld.",
+            "symlink_failed": "Kan geen symbolische koppeling maken voor de achtergrondopdracht."
+        },
+        "menu": {
+            "required": "Benodigde pakketten installeren",
+            "blur": "Blur configureren",
+            "apps": "Mijn toepassingen installeren",
+            "hypr": "Hyprland-configuratie installeren",
+            "build": "Wayck compileren en installeren"
+        },
+        "title": "WAYCK-INSTALLATIEPROGRAMMA",
+        "help": "Gebruik de pijltjestoetsen om te navigeren, SPATIE om te selecteren en ENTER om door te gaan. ESC om af te sluiten.",
+        "confirm": "ENTER: doorgaan | SPATIE: selecteren | ESC: afsluiten",
+        "abort": "Installatie geannuleerd.",
+        "pkgs_installing": "Benodigde pakketten worden geïnstalleerd...",
+        "pkgs_ok": "Benodigde pakketten geïnstalleerd.",
+        "pkgs_failed": "De benodigde pakketten konden niet worden geïnstalleerd.",
+        "blur_info": "Blur: past een achtergrondvervaging toe op de launcher.",
+        "blur_warn": "Let op: blur kan ook andere doorzichtige Hyprland-vensters beïnvloeden.",
+        "q_blur": "Blur inschakelen?",
+        "cfg_kept": "Configuratie bijgewerkt: {path}",
+        "invalid_config": "Het bestaande config.json bevat geen geldig JSON-object.",
+        "build_msg": "De Rust-backend wordt gecompileerd...",
+        "installing": "Installeren in {path}",
+        "build_failed": "De backend kon niet worden gecompileerd.",
+        "hypr_q": "De Wayck-preset installeren in ~/.config/hypr? Er wordt een back-up gemaakt.",
+        "hypr_backup": "Back-up opgeslagen in: {path}",
+        "hypr_done": "Hyprland-configuratie geïnstalleerd.",
+        "hypr_missing": "Hyprland niet gevonden of map hypr/ ontbreekt. Configuratie overgeslagen.",
+        "aur_installing": "{name} wordt geïnstalleerd...",
+        "aur_installed": "{name} is succesvol geïnstalleerd.",
+        "aur_clone_failed": "De AUR-repository kon niet worden gekloond.",
+        "aur_build_failed": "Een AUR-pakket kon niet worden gecompileerd of geïnstalleerd.",
+        "aur_install_failed": "De AUR-helper is niet correct geïnstalleerd.",
+        "personal_installing": "Persoonlijke toepassingen worden geïnstalleerd...",
+        "personal_failed": "De persoonlijke toepassingen konden niet worden geïnstalleerd.",
+        "zsh_changed": "Zsh is ingesteld als standaardshell. De wijziging gaat in bij de volgende aanmelding.",
+        "zsh_failed": "Zsh kon niet als standaardshell worden ingesteld.",
+        "steam_note": "Voor Steam moet mogelijk de multilib-repository zijn ingeschakeld in pacman.conf.",
+        "final_title": "INSTALLATIE VOLTOOID",
+        "final_exec": "Wayck wordt na het herstarten gestart via je exec.lua.",
+        "reboot": "HERSTART JE COMPUTER. DEZE STAP IS VERPLICHT.",
+        "good": "Bedankt voor het installeren van Wayck.",
+        "tty_required": "Een interactieve terminal is vereist.",
+        "missing_tool": "{name} is vereist.",
+        "fail_copy": "De bestanden konden niet worden gekopieerd.",
+        "fail_backup": "De bestaande installatie kon niet worden geback-upt.",
+        "fail_install": "De bestanden konden niet worden geïnstalleerd.",
+        "useful_commands": "Handige opdrachten:",
+        "yes_words": "j ja y yes",
+        "hint_yes": "[J/n]",
+        "hint_no": "[j/N]"
+    }
+}

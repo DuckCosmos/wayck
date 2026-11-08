@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "検索..."
+    },
+    "clipboard": {
+        "search": "クリップボードを検索...",
+        "clear": "クリア"
+    },
+    "player": {
+        "title": "プレイヤー",
+        "none": "プレイヤーなし",
+        "waiting": "MPRIS を待機中",
+        "unknownArtist": "不明なアーティスト"
+    },
+    "tray": {
+        "back": "戻る"
+    },
+    "common": {
+        "na": "N/A"
+    },
+    "clock": {
+        "dateFormat": "yy/MM/dd"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "コントロール",
+            "power": "電源"
+        },
+        "sections": {
+            "settings": "設定",
+            "power": "電源とセッション"
+        },
+        "footer": "コントロールセンター",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "設定ファイル"
+            },
+            "displays": {
+                "title": "ディスプレイ",
+                "subtitle": "解像度と画面"
+            },
+            "network": {
+                "title": "ネットワーク",
+                "subtitle": "接続"
+            },
+            "audio": {
+                "title": "オーディオ",
+                "subtitle": "出力とマイク"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "デバイス"
+            },
+            "appearance": {
+                "title": "外観",
+                "subtitle": "テーマとフォント"
+            },
+            "system": {
+                "title": "システム",
+                "subtitle": "一般設定"
+            },
+            "monitor": {
+                "title": "システムモニター",
+                "subtitle": "プロセスとリソース"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "ロック",
+                "subtitle": "セッションをロック"
+            },
+            "suspend": {
+                "title": "スリープ",
+                "subtitle": "スリープ状態にする"
+            },
+            "reboot": {
+                "title": "再起動",
+                "subtitle": "コンピューターを再起動"
+            },
+            "poweroff": {
+                "title": "シャットダウン",
+                "subtitle": "コンピューターの電源を切る"
+            },
+            "logout": {
+                "title": "ログアウト",
+                "subtitle": "Hyprland のセッションを終了"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "操作を確認しますか？"
+            },
+            "suspend": {
+                "title": "コンピューターをスリープしますか？",
+                "description": "コンピューターはスリープ状態になります。"
+            },
+            "reboot": {
+                "title": "コンピューターを再起動しますか？",
+                "description": "すべてのアプリケーションが終了します。"
+            },
+            "poweroff": {
+                "title": "コンピューターをシャットダウンしますか？",
+                "description": "コンピューターの電源が切れます。"
+            },
+            "logout": {
+                "title": "セッションを終了しますか？",
+                "description": "Hyprland からログアウトします。"
+            },
+            "cancel": "キャンセル",
+            "ok": "確認"
+        }
+    },
+    "modules": {
+        "workspaces": "ワークスペース",
+        "player": "プレイヤー",
+        "audio": "オーディオ",
+        "clock": "時計",
+        "tray": "システムトレイ",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "ディスク",
+        "network": "ネットワーク",
+        "temperature": "温度",
+        "usermenu": "ユーザーメニュー"
+    },
+    "launch": {
+        "notInstalled": "{name} がインストールされていません。",
+        "labels": {
+            "displays": "ディスプレイ管理",
+            "network": "ネットワーク管理",
+            "audio": "オーディオ設定",
+            "bluetooth": "Bluetooth 管理",
+            "system": "システム設定",
+            "monitor": "システムモニター"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "アップデートをダウンロードしています...",
+            "compiling": "Rustバックエンドをコンパイルしています...",
+            "preparing": "インストールを準備しています...",
+            "stopping": "Wayckを停止しています...",
+            "installing": "アップデートをインストールしています...",
+            "done": "Wayckのアップデートが完了しました！",
+            "backup": "以前のインストールのバックアップ",
+            "missing_jq": "依存関係が見つかりません: jq",
+            "missing_dependency": "必要な依存関係が不足しています。",
+            "invalid_repository": "無効なGitリポジトリです。",
+            "pull_failed": "アップデートのダウンロードに失敗しました。",
+            "compile_failed": "バックエンドのコンパイルに失敗しました。",
+            "copy_failed": "QMLファイルのコピーに失敗しました。",
+            "backup_failed": "バックアップの作成に失敗しました。",
+            "install_failed": "インストールに失敗しました。以前のバージョンを復元しました。",
+            "symlink_failed": "壁紙コマンドのシンボリックリンクを作成できませんでした。"
+        },
+        "menu": {
+            "required": "必要なパッケージをインストール",
+            "blur": "ブラーを設定",
+            "apps": "自分のアプリケーションをインストール",
+            "hypr": "Hyprland の設定をインストール",
+            "build": "Wayck をビルドしてインストール"
+        },
+        "title": "WAYCK インストーラー",
+        "help": "矢印キーで移動、スペースキーで選択、ENTER で続行します。ESC で終了。",
+        "confirm": "ENTER: 続行 | スペース: 選択 | ESC: 終了",
+        "abort": "インストールをキャンセルしました。",
+        "pkgs_installing": "必要なパッケージをインストールしています...",
+        "pkgs_ok": "必要なパッケージをインストールしました。",
+        "pkgs_failed": "必要なパッケージのインストールに失敗しました。",
+        "blur_info": "ブラー: ランチャーの背景にぼかしを適用します。",
+        "blur_warn": "注意: ブラーは Hyprland の他の半透明ウィンドウにも影響する場合があります。",
+        "q_blur": "ブラーを有効にしますか？",
+        "cfg_kept": "設定を更新しました: {path}",
+        "invalid_config": "既存の config.json に有効な JSON オブジェクトがありません。",
+        "build_msg": "Rust バックエンドをビルドしています...",
+        "installing": "{path} にインストールしています",
+        "build_failed": "バックエンドのビルドに失敗しました。",
+        "hypr_q": "Wayck のプリセットを ~/.config/hypr にインストールしますか？ バックアップが作成されます。",
+        "hypr_backup": "バックアップを保存しました: {path}",
+        "hypr_done": "Hyprland の設定をインストールしました。",
+        "hypr_missing": "Hyprland が見つからないか、hypr/ ディレクトリがありません。設定をスキップします。",
+        "aur_installing": "{name} をインストールしています...",
+        "aur_installed": "{name} のインストールに成功しました。",
+        "aur_clone_failed": "AUR リポジトリのクローンに失敗しました。",
+        "aur_build_failed": "AUR パッケージのビルドまたはインストールに失敗しました。",
+        "aur_install_failed": "AUR ヘルパーが正しくインストールされませんでした。",
+        "personal_installing": "個人用アプリケーションをインストールしています...",
+        "personal_failed": "個人用アプリケーションのインストールに失敗しました。",
+        "zsh_changed": "Zsh を既定のシェルに設定しました。変更は次回ログイン時に反映されます。",
+        "zsh_failed": "既定のシェルを Zsh に変更できませんでした。",
+        "steam_note": "Steam を使うには、pacman.conf で multilib リポジトリを有効にする必要がある場合があります。",
+        "final_title": "インストール完了",
+        "final_exec": "再起動後、Wayck はあなたの exec.lua から起動されます。",
+        "reboot": "コンピューターを再起動してください。この手順は必須です。",
+        "good": "Wayck をインストールしていただきありがとうございます。",
+        "tty_required": "対話型ターミナルが必要です。",
+        "missing_tool": "{name} が必要です。",
+        "fail_copy": "ファイルのコピーに失敗しました。",
+        "fail_backup": "既存のインストールのバックアップに失敗しました。",
+        "fail_install": "ファイルのインストールに失敗しました。",
+        "useful_commands": "便利なコマンド:",
+        "yes_words": "y yes はい h hai",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

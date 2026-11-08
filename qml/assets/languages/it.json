@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Cerca..."
+    },
+    "clipboard": {
+        "search": "Cerca negli appunti...",
+        "clear": "Svuota"
+    },
+    "player": {
+        "title": "Lettore",
+        "none": "Nessun lettore",
+        "waiting": "In attesa di MPRIS",
+        "unknownArtist": "Artista sconosciuto"
+    },
+    "tray": {
+        "back": "Indietro"
+    },
+    "common": {
+        "na": "N/D"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Controllo",
+            "power": "Alimentazione"
+        },
+        "sections": {
+            "settings": "Impostazioni",
+            "power": "Alimentazione e sessione"
+        },
+        "footer": "Centro di controllo",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Configurazione"
+            },
+            "displays": {
+                "title": "Schermi",
+                "subtitle": "Risoluzione e monitor"
+            },
+            "network": {
+                "title": "Rete",
+                "subtitle": "Connessioni"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Uscita e microfono"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Dispositivi"
+            },
+            "appearance": {
+                "title": "Aspetto",
+                "subtitle": "Tema e caratteri"
+            },
+            "system": {
+                "title": "Sistema",
+                "subtitle": "Impostazioni generali"
+            },
+            "monitor": {
+                "title": "Monitor di sistema",
+                "subtitle": "Processi e risorse"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Blocca",
+                "subtitle": "Blocca la sessione"
+            },
+            "suspend": {
+                "title": "Sospendi",
+                "subtitle": "Metti in standby"
+            },
+            "reboot": {
+                "title": "Riavvia",
+                "subtitle": "Riavvia il computer"
+            },
+            "poweroff": {
+                "title": "Spegni",
+                "subtitle": "Spegni il computer"
+            },
+            "logout": {
+                "title": "Esci",
+                "subtitle": "Termina la sessione di Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Confermare l'azione?"
+            },
+            "suspend": {
+                "title": "Sospendere il computer?",
+                "description": "Il computer passerà in modalità sospensione."
+            },
+            "reboot": {
+                "title": "Riavviare il computer?",
+                "description": "Tutte le applicazioni verranno chiuse."
+            },
+            "poweroff": {
+                "title": "Spegnere il computer?",
+                "description": "Il computer verrà spento."
+            },
+            "logout": {
+                "title": "Terminare la sessione?",
+                "description": "Verrai disconnesso da Hyprland."
+            },
+            "cancel": "Annulla",
+            "ok": "Conferma"
+        }
+    },
+    "modules": {
+        "workspaces": "Spazi di lavoro",
+        "player": "Lettore",
+        "audio": "Audio",
+        "clock": "Orologio",
+        "tray": "Area di notifica",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disco",
+        "network": "Rete",
+        "temperature": "Temperatura",
+        "usermenu": "Menu utente"
+    },
+    "launch": {
+        "notInstalled": "{name} non è installato.",
+        "labels": {
+            "displays": "Gestione schermi",
+            "network": "Gestione rete",
+            "audio": "Controllo audio",
+            "bluetooth": "Gestione Bluetooth",
+            "system": "Impostazioni di sistema",
+            "monitor": "Monitor di sistema"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Download degli aggiornamenti in corso...",
+            "compiling": "Compilazione del backend Rust...",
+            "preparing": "Preparazione dell'installazione...",
+            "stopping": "Arresto di Wayck...",
+            "installing": "Installazione dell'aggiornamento...",
+            "done": "Wayck è stato aggiornato con successo!",
+            "backup": "Backup dell'installazione precedente",
+            "missing_jq": "Dipendenza mancante: jq",
+            "missing_dependency": "Manca una dipendenza necessaria.",
+            "invalid_repository": "Repository Git non valido.",
+            "pull_failed": "Impossibile scaricare gli aggiornamenti.",
+            "compile_failed": "Impossibile compilare il backend.",
+            "copy_failed": "Impossibile copiare i file QML.",
+            "backup_failed": "Impossibile creare il backup.",
+            "install_failed": "Installazione non riuscita. La versione precedente è stata ripristinata.",
+            "symlink_failed": "Impossibile creare il collegamento simbolico per il comando dello sfondo."
+        },
+        "menu": {
+            "required": "Installa i pacchetti necessari",
+            "blur": "Configura il blur",
+            "apps": "Installa le mie applicazioni",
+            "hypr": "Installa la configurazione di Hyprland",
+            "build": "Compila e installa Wayck"
+        },
+        "title": "INSTALLER DI WAYCK",
+        "help": "Usa le frecce per spostarti, SPAZIO per selezionare e INVIO per continuare. ESC per uscire.",
+        "confirm": "INVIO: continua | SPAZIO: seleziona | ESC: esci",
+        "abort": "Installazione annullata.",
+        "pkgs_installing": "Installazione dei pacchetti necessari...",
+        "pkgs_ok": "Pacchetti necessari installati.",
+        "pkgs_failed": "Impossibile installare i pacchetti necessari.",
+        "blur_info": "Blur: applica la sfocatura allo sfondo del launcher.",
+        "blur_warn": "Attenzione: il blur può influire anche su altre finestre traslucide di Hyprland.",
+        "q_blur": "Attivare il blur?",
+        "cfg_kept": "Configurazione aggiornata: {path}",
+        "invalid_config": "Il config.json esistente non contiene un oggetto JSON valido.",
+        "build_msg": "Compilazione del backend Rust...",
+        "installing": "Installazione in {path}",
+        "build_failed": "Impossibile compilare il backend.",
+        "hypr_q": "Installare il preset di Wayck in ~/.config/hypr? Verrà creato un backup.",
+        "hypr_backup": "Backup salvato in: {path}",
+        "hypr_done": "Configurazione di Hyprland installata.",
+        "hypr_missing": "Hyprland non trovato o cartella hypr/ mancante. Configurazione saltata.",
+        "aur_installing": "Installazione di {name}...",
+        "aur_installed": "{name} installato con successo.",
+        "aur_clone_failed": "Impossibile clonare il repository AUR.",
+        "aur_build_failed": "Impossibile compilare o installare un pacchetto AUR.",
+        "aur_install_failed": "L'helper AUR non è stato installato correttamente.",
+        "personal_installing": "Installazione delle applicazioni personali...",
+        "personal_failed": "Impossibile installare le applicazioni personali.",
+        "zsh_changed": "Zsh impostata come shell predefinita. La modifica avrà effetto al prossimo accesso.",
+        "zsh_failed": "Impossibile impostare Zsh come shell predefinita.",
+        "steam_note": "Steam potrebbe richiedere l'abilitazione del repository multilib in pacman.conf.",
+        "final_title": "INSTALLAZIONE COMPLETATA",
+        "final_exec": "Wayck verrà avviato dal tuo exec.lua dopo il riavvio.",
+        "reboot": "RIAVVIA IL COMPUTER. QUESTO PASSAGGIO È OBBLIGATORIO.",
+        "good": "Grazie per aver installato Wayck.",
+        "tty_required": "Serve un terminale interattivo.",
+        "missing_tool": "{name} è necessario.",
+        "fail_copy": "Impossibile copiare i file.",
+        "fail_backup": "Impossibile creare il backup dell'installazione esistente.",
+        "fail_install": "Impossibile installare i file.",
+        "useful_commands": "Comandi utili:",
+        "yes_words": "s si sì y yes",
+        "hint_yes": "[S/n]",
+        "hint_no": "[s/N]"
+    }
+}

@@ -10,6 +10,7 @@ hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("qs -c wayck kill"))
 hl.bind(mainMod .. " + SHIFT +  T",		hl.dsp.exec_cmd("qs -c wayck"))
 hl.bind(mainMod .. " + W",		hl.dsp.exec_cmd("brave"))
 hl.bind(mainMod .. " + E",		hl.dsp.exec_cmd("xdg-open \"$HOME\""))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("qs -c wayck ipc call wallpaper select"))
 
 -- Janelas
 hl.bind(mainMod .. " + Q",         hl.dsp.window.close())
@@ -26,7 +27,7 @@ hl.bind(mainMod .. " + ALT + P",      hl.dsp.exec_cmd("playerctl previous"))
 -- Screenshot e replay do OBS
 hl.bind("CTRL + ALT + RETURN",         hl.dsp.exec_cmd("qs -c wayck ipc call screenshot full"))
 hl.bind("CTRL + SHIFT + ALT + RETURN", hl.dsp.exec_cmd("qs -c wayck ipc call screenshot region"))
-hl.bind("F8", hl.dsp.exec_cmd("/usr/bin/obs-cmd --websocket obsws://localhost:4455/ replay save"))
+hl.bind("CTRL + SHIFT + ALT + S + RETURN", hl.dsp.exec_cmd("qs -c wayck ipc call screenshot regionOCR"))
 
 -- Foco
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Rechercher..."
+    },
+    "clipboard": {
+        "search": "Rechercher dans le presse-papiers...",
+        "clear": "Effacer"
+    },
+    "player": {
+        "title": "Lecteur",
+        "none": "Aucun lecteur",
+        "waiting": "En attente de MPRIS",
+        "unknownArtist": "Artiste inconnu"
+    },
+    "tray": {
+        "back": "Retour"
+    },
+    "common": {
+        "na": "N/D"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Contrôle",
+            "power": "Alimentation"
+        },
+        "sections": {
+            "settings": "Paramètres",
+            "power": "Alimentation et session"
+        },
+        "footer": "Centre de contrôle",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Configuration"
+            },
+            "displays": {
+                "title": "Écrans",
+                "subtitle": "Résolution et écrans"
+            },
+            "network": {
+                "title": "Réseau",
+                "subtitle": "Connexions"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Sortie et microphone"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Périphériques"
+            },
+            "appearance": {
+                "title": "Apparence",
+                "subtitle": "Thème et polices"
+            },
+            "system": {
+                "title": "Système",
+                "subtitle": "Paramètres généraux"
+            },
+            "monitor": {
+                "title": "Moniteur système",
+                "subtitle": "Processus et ressources"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Verrouiller",
+                "subtitle": "Verrouiller la session"
+            },
+            "suspend": {
+                "title": "Mettre en veille",
+                "subtitle": "Passer en veille"
+            },
+            "reboot": {
+                "title": "Redémarrer",
+                "subtitle": "Redémarrer l'ordinateur"
+            },
+            "poweroff": {
+                "title": "Éteindre",
+                "subtitle": "Éteindre l'ordinateur"
+            },
+            "logout": {
+                "title": "Se déconnecter",
+                "subtitle": "Terminer la session Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Confirmer l'action ?"
+            },
+            "suspend": {
+                "title": "Mettre l'ordinateur en veille ?",
+                "description": "L'ordinateur passera en mode veille."
+            },
+            "reboot": {
+                "title": "Redémarrer l'ordinateur ?",
+                "description": "Toutes les applications seront fermées."
+            },
+            "poweroff": {
+                "title": "Éteindre l'ordinateur ?",
+                "description": "L'ordinateur sera éteint."
+            },
+            "logout": {
+                "title": "Fermer la session ?",
+                "description": "Vous serez déconnecté de Hyprland."
+            },
+            "cancel": "Annuler",
+            "ok": "Confirmer"
+        }
+    },
+    "modules": {
+        "workspaces": "Espaces de travail",
+        "player": "Lecteur",
+        "audio": "Audio",
+        "clock": "Horloge",
+        "tray": "Zone de notification",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disque",
+        "network": "Réseau",
+        "temperature": "Température",
+        "usermenu": "Menu utilisateur"
+    },
+    "launch": {
+        "notInstalled": "{name} n'est pas installé.",
+        "labels": {
+            "displays": "Gestionnaire d'écrans",
+            "network": "Gestionnaire de réseau",
+            "audio": "Contrôle audio",
+            "bluetooth": "Gestionnaire Bluetooth",
+            "system": "Paramètres système",
+            "monitor": "Moniteur système"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Téléchargement des mises à jour...",
+            "compiling": "Compilation du backend Rust...",
+            "preparing": "Préparation de l'installation...",
+            "stopping": "Arrêt de Wayck...",
+            "installing": "Installation de la mise à jour...",
+            "done": "Wayck a été mis à jour avec succès !",
+            "backup": "Sauvegarde de l'installation précédente",
+            "missing_jq": "Dépendance manquante : jq",
+            "missing_dependency": "Une dépendance requise est manquante.",
+            "invalid_repository": "Dépôt Git invalide.",
+            "pull_failed": "Échec du téléchargement des mises à jour.",
+            "compile_failed": "Échec de la compilation du backend.",
+            "copy_failed": "Échec de la copie des fichiers QML.",
+            "backup_failed": "Échec de la création de la sauvegarde.",
+            "install_failed": "Échec de l'installation. La version précédente a été restaurée.",
+            "symlink_failed": "Impossible de créer le lien symbolique de la commande de fond d'écran."
+        },
+        "menu": {
+            "required": "Installer les paquets requis",
+            "blur": "Configurer le flou",
+            "apps": "Installer mes applications",
+            "hypr": "Installer la configuration Hyprland",
+            "build": "Compiler et installer Wayck"
+        },
+        "title": "INSTALLATEUR WAYCK",
+        "help": "Utilisez les flèches pour naviguer, ESPACE pour sélectionner et ENTRÉE pour continuer. ÉCHAP pour quitter.",
+        "confirm": "ENTRÉE : continuer | ESPACE : sélectionner | ÉCHAP : quitter",
+        "abort": "Installation annulée.",
+        "pkgs_installing": "Installation des paquets requis...",
+        "pkgs_ok": "Paquets requis installés.",
+        "pkgs_failed": "Échec de l'installation des paquets requis.",
+        "blur_info": "Flou : applique un flou à l'arrière-plan du lanceur.",
+        "blur_warn": "Attention : le flou peut aussi affecter d'autres fenêtres translucides de Hyprland.",
+        "q_blur": "Activer le flou ?",
+        "cfg_kept": "Configuration mise à jour : {path}",
+        "invalid_config": "Le config.json existant ne contient pas d'objet JSON valide.",
+        "build_msg": "Compilation du backend Rust...",
+        "installing": "Installation dans {path}",
+        "build_failed": "Échec de la compilation du backend.",
+        "hypr_q": "Installer le préréglage Wayck dans ~/.config/hypr ? Une sauvegarde sera créée.",
+        "hypr_backup": "Sauvegarde enregistrée dans : {path}",
+        "hypr_done": "Configuration Hyprland installée.",
+        "hypr_missing": "Hyprland introuvable ou dossier hypr/ manquant. Configuration ignorée.",
+        "aur_installing": "Installation de {name}...",
+        "aur_installed": "{name} installé avec succès.",
+        "aur_clone_failed": "Échec du clonage du dépôt AUR.",
+        "aur_build_failed": "Échec de la compilation ou de l'installation d'un paquet AUR.",
+        "aur_install_failed": "L'assistant AUR n'a pas été installé correctement.",
+        "personal_installing": "Installation des applications personnelles...",
+        "personal_failed": "Échec de l'installation des applications personnelles.",
+        "zsh_changed": "Zsh défini comme shell par défaut. Le changement prendra effet à la prochaine connexion.",
+        "zsh_failed": "Impossible de définir Zsh comme shell par défaut.",
+        "steam_note": "Steam peut nécessiter l'activation du dépôt multilib dans pacman.conf.",
+        "final_title": "INSTALLATION TERMINÉE",
+        "final_exec": "Wayck sera lancé par votre exec.lua après le redémarrage.",
+        "reboot": "REDÉMARREZ VOTRE ORDINATEUR. CETTE ÉTAPE EST OBLIGATOIRE.",
+        "good": "Merci d'avoir installé Wayck.",
+        "tty_required": "Un terminal interactif est requis.",
+        "missing_tool": "{name} est requis.",
+        "fail_copy": "Échec de la copie des fichiers.",
+        "fail_backup": "Échec de la sauvegarde de l'installation existante.",
+        "fail_install": "Échec de l'installation des fichiers.",
+        "useful_commands": "Commandes utiles :",
+        "yes_words": "o oui y yes",
+        "hint_yes": "[O/n]",
+        "hint_no": "[o/N]"
+    }
+}

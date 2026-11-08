@@ -1,0 +1,209 @@
+{
+    "launcher": {
+        "search": "Search..."
+    },
+    "clipboard": {
+        "search": "Search clipboard...",
+        "clear": "Clear"
+    },
+    "player": {
+        "title": "Player",
+        "none": "No player",
+        "waiting": "Waiting for MPRIS",
+        "unknownArtist": "Unknown artist"
+    },
+    "tray": {
+        "back": "Back"
+    },
+    "common": {
+        "na": "N/A"
+    },
+    "clock": {
+        "dateFormat": "MM/dd/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Control",
+            "power": "Power"
+        },
+        "sections": {
+            "settings": "Settings",
+            "power": "Power and session"
+        },
+        "footer": "Control Center",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Configuration"
+            },
+            "displays": {
+                "title": "Displays",
+                "subtitle": "Resolution and screens"
+            },
+            "network": {
+                "title": "Network",
+                "subtitle": "Connections"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Output and microphone"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Devices"
+            },
+            "appearance": {
+                "title": "Appearance",
+                "subtitle": "Theme and fonts"
+            },
+            "system": {
+                "title": "System",
+                "subtitle": "General settings"
+            },
+            "monitor": {
+                "title": "System monitor",
+                "subtitle": "Processes and resources"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Lock",
+                "subtitle": "Lock the session"
+            },
+            "suspend": {
+                "title": "Suspend",
+                "subtitle": "Put to sleep"
+            },
+            "reboot": {
+                "title": "Restart",
+                "subtitle": "Restart the computer"
+            },
+            "poweroff": {
+                "title": "Shut down",
+                "subtitle": "Turn off the computer"
+            },
+            "logout": {
+                "title": "Log out",
+                "subtitle": "End the Hyprland session"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Confirm action?"
+            },
+            "suspend": {
+                "title": "Suspend the computer?",
+                "description": "The computer will go to sleep."
+            },
+            "reboot": {
+                "title": "Restart the computer?",
+                "description": "All applications will be closed."
+            },
+            "poweroff": {
+                "title": "Shut down the computer?",
+                "description": "The computer will be turned off."
+            },
+            "logout": {
+                "title": "End the session?",
+                "description": "You will be logged out of Hyprland."
+            },
+            "cancel": "Cancel",
+            "ok": "Confirm"
+        }
+    },
+    "modules": {
+        "workspaces": "Workspaces",
+        "player": "Player",
+        "audio": "Audio",
+        "clock": "Clock",
+        "tray": "System Tray",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disk",
+        "network": "Network",
+        "temperature": "Temperature",
+        "usermenu": "User Menu"
+    },
+    "launch": {
+        "notInstalled": "{name} is not installed.",
+        "labels": {
+            "displays": "Display manager",
+            "network": "Network manager",
+            "audio": "Audio control",
+            "bluetooth": "Bluetooth manager",
+            "system": "System settings",
+            "monitor": "System monitor"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Downloading updates...",
+            "compiling": "Compiling Rust backend...",
+            "preparing": "Preparing installation...",
+            "stopping": "Stopping Wayck...",
+            "installing": "Installing update...",
+            "done": "Wayck updated successfully!",
+            "backup": "Previous installation backup",
+            "missing_jq": "Missing dependency: jq",
+            "missing_dependency": "A required dependency is missing.",
+            "invalid_repository": "Invalid Git repository.",
+            "pull_failed": "Failed to download updates.",
+            "compile_failed": "Failed to compile backend.",
+            "copy_failed": "Failed to copy QML files.",
+            "backup_failed": "Failed to create backup.",
+            "install_failed": "Installation failed. Previous version restored.",
+            "symlink_failed": "Could not create wallpaper command symlink."
+        },
+        "menu": {
+            "required": "Install required packages",
+            "blur": "Configure blur",
+            "apps": "Install my applications",
+            "hypr": "Install Hyprland configuration",
+            "update": "Update wayck",
+            "build": "Build and install Wayck"
+        },
+        "title": "WAYCK INSTALLER",
+        "help": "Use arrow keys to navigate, SPACE to select and ENTER to continue. ESC to exit.",
+        "confirm": "ENTER: continue | SPACE: select | ESC: exit",
+        "abort": "Installation cancelled.",
+        "pkgs_installing": "Installing required packages...",
+        "pkgs_ok": "Required packages installed.",
+        "pkgs_failed": "Failed to install the required packages.",
+        "blur_info": "Blur: applies background blur to the launcher.",
+        "blur_warn": "Warning: blur may also affect other translucent Hyprland windows.",
+        "q_blur": "Enable blur?",
+        "cfg_kept": "Configuration updated: {path}",
+        "invalid_config": "The existing config.json does not contain a valid JSON object.",
+        "build_msg": "Building the Rust backend...",
+        "installing": "Installing to {path}",
+        "build_failed": "Failed to build the backend.",
+        "hypr_q": "Install the Wayck preset into ~/.config/hypr? A backup will be created.",
+        "hypr_backup": "Backup saved to: {path}",
+        "hypr_done": "Hyprland configuration installed.",
+        "hypr_missing": "Hyprland not found or hypr/ directory missing. Skipping configuration.",
+        "aur_installing": "Installing {name}...",
+        "aur_installed": "{name} installed successfully.",
+        "aur_clone_failed": "Failed to clone the AUR repository.",
+        "aur_build_failed": "Failed to build or install an AUR package.",
+        "aur_install_failed": "The AUR helper was not installed correctly.",
+        "personal_installing": "Installing personal applications...",
+        "personal_failed": "Failed to install personal applications.",
+        "zsh_changed": "Zsh set as the default shell. The change takes effect at the next login.",
+        "zsh_failed": "Could not change the default shell to Zsh.",
+        "steam_note": "Steam may require the multilib repository to be enabled in pacman.conf.",
+        "final_title": "INSTALLATION COMPLETED",
+        "final_exec": "Wayck will be started by your exec.lua after reboot.",
+        "reboot": "REBOOT YOUR COMPUTER. THIS STEP IS REQUIRED.",
+        "good": "Thank you for installing Wayck.",
+        "tty_required": "Interactive terminal required.",
+        "missing_tool": "{name} is required.",
+        "fail_copy": "Failed to copy the files.",
+        "fail_backup": "Failed to back up the existing installation.",
+        "fail_install": "Failed to install the files.",
+        "useful_commands": "Useful commands:",
+        "yes_words": "y yes",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

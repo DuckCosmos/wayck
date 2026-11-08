@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Tìm kiếm..."
+    },
+    "clipboard": {
+        "search": "Tìm trong bộ nhớ tạm...",
+        "clear": "Xóa"
+    },
+    "player": {
+        "title": "Trình phát",
+        "none": "Không có trình phát",
+        "waiting": "Đang chờ MPRIS",
+        "unknownArtist": "Nghệ sĩ không xác định"
+    },
+    "tray": {
+        "back": "Quay lại"
+    },
+    "common": {
+        "na": "N/A"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Điều khiển",
+            "power": "Nguồn"
+        },
+        "sections": {
+            "settings": "Cài đặt",
+            "power": "Nguồn và phiên"
+        },
+        "footer": "Trung tâm điều khiển",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Cấu hình"
+            },
+            "displays": {
+                "title": "Màn hình",
+                "subtitle": "Độ phân giải và màn hình"
+            },
+            "network": {
+                "title": "Mạng",
+                "subtitle": "Kết nối"
+            },
+            "audio": {
+                "title": "Âm thanh",
+                "subtitle": "Đầu ra và micrô"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Thiết bị"
+            },
+            "appearance": {
+                "title": "Giao diện",
+                "subtitle": "Chủ đề và phông chữ"
+            },
+            "system": {
+                "title": "Hệ thống",
+                "subtitle": "Cài đặt chung"
+            },
+            "monitor": {
+                "title": "Trình giám sát hệ thống",
+                "subtitle": "Tiến trình và tài nguyên"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Khóa",
+                "subtitle": "Khóa phiên"
+            },
+            "suspend": {
+                "title": "Treo máy",
+                "subtitle": "Chuyển sang chế độ ngủ"
+            },
+            "reboot": {
+                "title": "Khởi động lại",
+                "subtitle": "Khởi động lại máy tính"
+            },
+            "poweroff": {
+                "title": "Tắt máy",
+                "subtitle": "Tắt máy tính"
+            },
+            "logout": {
+                "title": "Đăng xuất",
+                "subtitle": "Kết thúc phiên Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Xác nhận thao tác?"
+            },
+            "suspend": {
+                "title": "Treo máy tính?",
+                "description": "Máy tính sẽ chuyển sang chế độ ngủ."
+            },
+            "reboot": {
+                "title": "Khởi động lại máy tính?",
+                "description": "Tất cả ứng dụng sẽ bị đóng."
+            },
+            "poweroff": {
+                "title": "Tắt máy tính?",
+                "description": "Máy tính sẽ được tắt."
+            },
+            "logout": {
+                "title": "Kết thúc phiên?",
+                "description": "Bạn sẽ bị đăng xuất khỏi Hyprland."
+            },
+            "cancel": "Hủy",
+            "ok": "Xác nhận"
+        }
+    },
+    "modules": {
+        "workspaces": "Không gian làm việc",
+        "player": "Trình phát",
+        "audio": "Âm thanh",
+        "clock": "Đồng hồ",
+        "tray": "Khay hệ thống",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Ổ đĩa",
+        "network": "Mạng",
+        "temperature": "Nhiệt độ",
+        "usermenu": "Menu người dùng"
+    },
+    "launch": {
+        "notInstalled": "{name} chưa được cài đặt.",
+        "labels": {
+            "displays": "Trình quản lý màn hình",
+            "network": "Trình quản lý mạng",
+            "audio": "Điều khiển âm thanh",
+            "bluetooth": "Trình quản lý Bluetooth",
+            "system": "Cài đặt hệ thống",
+            "monitor": "Trình giám sát hệ thống"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Đang tải xuống các bản cập nhật...",
+            "compiling": "Đang biên dịch backend Rust...",
+            "preparing": "Đang chuẩn bị cài đặt...",
+            "stopping": "Đang dừng Wayck...",
+            "installing": "Đang cài đặt bản cập nhật...",
+            "done": "Wayck đã được cập nhật thành công!",
+            "backup": "Bản sao lưu của phiên bản đã cài đặt trước đó",
+            "missing_jq": "Thiếu phần phụ thuộc: jq",
+            "missing_dependency": "Thiếu một phần phụ thuộc bắt buộc.",
+            "invalid_repository": "Kho Git không hợp lệ.",
+            "pull_failed": "Không thể tải xuống các bản cập nhật.",
+            "compile_failed": "Không thể biên dịch backend.",
+            "copy_failed": "Không thể sao chép các tệp QML.",
+            "backup_failed": "Không thể tạo bản sao lưu.",
+            "install_failed": "Cài đặt thất bại. Phiên bản trước đã được khôi phục.",
+            "symlink_failed": "Không thể tạo liên kết tượng trưng cho lệnh hình nền."
+        },
+        "menu": {
+            "required": "Cài đặt các gói cần thiết",
+            "blur": "Cấu hình blur",
+            "apps": "Cài đặt các ứng dụng của tôi",
+            "hypr": "Cài đặt cấu hình Hyprland",
+            "build": "Biên dịch và cài đặt Wayck"
+        },
+        "title": "TRÌNH CÀI ĐẶT WAYCK",
+        "help": "Dùng phím mũi tên để di chuyển, PHÍM CÁCH để chọn và ENTER để tiếp tục. ESC để thoát.",
+        "confirm": "ENTER: tiếp tục | PHÍM CÁCH: chọn | ESC: thoát",
+        "abort": "Đã hủy cài đặt.",
+        "pkgs_installing": "Đang cài đặt các gói cần thiết...",
+        "pkgs_ok": "Đã cài đặt các gói cần thiết.",
+        "pkgs_failed": "Không thể cài đặt các gói cần thiết.",
+        "blur_info": "Blur: áp dụng hiệu ứng làm mờ cho nền của launcher.",
+        "blur_warn": "Cảnh báo: blur cũng có thể ảnh hưởng đến các cửa sổ trong suốt khác của Hyprland.",
+        "q_blur": "Bật blur?",
+        "cfg_kept": "Đã cập nhật cấu hình: {path}",
+        "invalid_config": "config.json hiện có không chứa đối tượng JSON hợp lệ.",
+        "build_msg": "Đang biên dịch backend Rust...",
+        "installing": "Đang cài đặt vào {path}",
+        "build_failed": "Không thể biên dịch backend.",
+        "hypr_q": "Cài đặt preset Wayck vào ~/.config/hypr? Một bản sao lưu sẽ được tạo.",
+        "hypr_backup": "Đã lưu bản sao lưu tại: {path}",
+        "hypr_done": "Đã cài đặt cấu hình Hyprland.",
+        "hypr_missing": "Không tìm thấy Hyprland hoặc thiếu thư mục hypr/. Bỏ qua cấu hình.",
+        "aur_installing": "Đang cài đặt {name}...",
+        "aur_installed": "Đã cài đặt {name} thành công.",
+        "aur_clone_failed": "Không thể clone kho AUR.",
+        "aur_build_failed": "Không thể biên dịch hoặc cài đặt gói AUR.",
+        "aur_install_failed": "Trình hỗ trợ AUR chưa được cài đặt đúng cách.",
+        "personal_installing": "Đang cài đặt các ứng dụng cá nhân...",
+        "personal_failed": "Không thể cài đặt các ứng dụng cá nhân.",
+        "zsh_changed": "Đã đặt Zsh làm shell mặc định. Thay đổi có hiệu lực từ lần đăng nhập tiếp theo.",
+        "zsh_failed": "Không thể đổi shell mặc định sang Zsh.",
+        "steam_note": "Steam có thể yêu cầu bật kho multilib trong pacman.conf.",
+        "final_title": "CÀI ĐẶT HOÀN TẤT",
+        "final_exec": "Wayck sẽ được khởi chạy bởi exec.lua của bạn sau khi khởi động lại.",
+        "reboot": "HÃY KHỞI ĐỘNG LẠI MÁY TÍNH. BƯỚC NÀY LÀ BẮT BUỘC.",
+        "good": "Cảm ơn bạn đã cài đặt Wayck.",
+        "tty_required": "Cần có terminal tương tác.",
+        "missing_tool": "Cần có {name}.",
+        "fail_copy": "Không thể sao chép các tệp.",
+        "fail_backup": "Không thể sao lưu bản cài đặt hiện có.",
+        "fail_install": "Không thể cài đặt các tệp.",
+        "useful_commands": "Các lệnh hữu ích:",
+        "yes_words": "c có y yes",
+        "hint_yes": "[C/n]",
+        "hint_no": "[c/N]"
+    }
+}

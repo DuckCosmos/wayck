@@ -1,0 +1,5 @@
+Bar 1.0 Bar.qml
+BarModule 1.0 BarModule.qml
+BarSection 1.0 BarSection.qml
+singleton BarConfig 1.0 BarConfig.qml
+singleton BarModuleRegistry 1.0 BarModuleRegistry.qml

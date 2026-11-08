@@ -75,3 +75,30 @@ pub fn deletar(id: &str) {
         .arg(format!("echo '{}' | cliphist delete", id))
         .spawn();
 }
+
+pub fn limpar() -> Result<(), Box<dyn std::error::Error>> {
+    let status = Command::new("wl-copy").arg("--clear").status()?;
+
+    if !status.success() {
+        return Err("Falha ao limpar clipboard".into());
+    }
+
+    let status = Command::new("cliphist").arg("wipe").status()?;
+
+    if !status.success() {
+        return Err("Falha ao apagar histórico do cliphist".into());
+    }
+
+    if let Ok(entries) = std::fs::read_dir("/tmp") {
+        for entry in entries.flatten() {
+            let name = entry.file_name();
+            let name = name.to_string_lossy();
+
+            if name.starts_with("wayck_clip_") && name.ends_with(".png") {
+                let _ = std::fs::remove_file(entry.path());
+            }
+        }
+    }
+
+    Ok(())
+}

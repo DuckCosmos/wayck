@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Axtar..."
+    },
+    "clipboard": {
+        "search": "Mübadilə buferində axtar...",
+        "clear": "Təmizlə"
+    },
+    "player": {
+        "title": "Pleyer",
+        "none": "Pleyer yoxdur",
+        "waiting": "MPRIS gözlənilir",
+        "unknownArtist": "Naməlum ifaçı"
+    },
+    "tray": {
+        "back": "Geri"
+    },
+    "common": {
+        "na": "Yoxdur"
+    },
+    "clock": {
+        "dateFormat": "dd.MM.yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "İdarəetmə",
+            "power": "Enerji"
+        },
+        "sections": {
+            "settings": "Ayarlar",
+            "power": "Enerji və sessiya"
+        },
+        "footer": "İdarəetmə Mərkəzi",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Konfiqurasiya"
+            },
+            "displays": {
+                "title": "Ekranlar",
+                "subtitle": "Ayırdetmə və ekranlar"
+            },
+            "network": {
+                "title": "Şəbəkə",
+                "subtitle": "Bağlantılar"
+            },
+            "audio": {
+                "title": "Səs",
+                "subtitle": "Çıxış və mikrofon"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Cihazlar"
+            },
+            "appearance": {
+                "title": "Görünüş",
+                "subtitle": "Mövzu və şriftlər"
+            },
+            "system": {
+                "title": "Sistem",
+                "subtitle": "Ümumi ayarlar"
+            },
+            "monitor": {
+                "title": "Sistem monitoru",
+                "subtitle": "Proseslər və resurslar"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Kilidlə",
+                "subtitle": "Sessiyanı kilidlə"
+            },
+            "suspend": {
+                "title": "Dayandır",
+                "subtitle": "Yuxu rejiminə keçir"
+            },
+            "reboot": {
+                "title": "Yenidən başlat",
+                "subtitle": "Kompüteri yenidən başlat"
+            },
+            "poweroff": {
+                "title": "Söndür",
+                "subtitle": "Kompüteri söndür"
+            },
+            "logout": {
+                "title": "Çıxış",
+                "subtitle": "Hyprland sessiyasını bitir"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Əməliyyat təsdiqlənsin?"
+            },
+            "suspend": {
+                "title": "Kompüter dayandırılsın?",
+                "description": "Kompüter yuxu rejiminə keçəcək."
+            },
+            "reboot": {
+                "title": "Kompüter yenidən başladılsın?",
+                "description": "Bütün tətbiqlər bağlanacaq."
+            },
+            "poweroff": {
+                "title": "Kompüter söndürülsün?",
+                "description": "Kompüter söndürüləcək."
+            },
+            "logout": {
+                "title": "Sessiya bitirilsin?",
+                "description": "Hyprland sessiyasından çıxacaqsınız."
+            },
+            "cancel": "Ləğv et",
+            "ok": "Təsdiqlə"
+        }
+    },
+    "modules": {
+        "workspaces": "İş sahələri",
+        "player": "Pleyer",
+        "audio": "Səs",
+        "clock": "Saat",
+        "tray": "Sistem tepsisi",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disk",
+        "network": "Şəbəkə",
+        "temperature": "Temperatur",
+        "usermenu": "İstifadəçi menyusu"
+    },
+    "launch": {
+        "notInstalled": "{name} quraşdırılmayıb.",
+        "labels": {
+            "displays": "Ekran meneceri",
+            "network": "Şəbəkə meneceri",
+            "audio": "Səs idarəetməsi",
+            "bluetooth": "Bluetooth meneceri",
+            "system": "Sistem ayarları",
+            "monitor": "Sistem monitoru"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Yeniləmələr endirilir...",
+            "compiling": "Rust backend-i kompilyasiya edilir...",
+            "preparing": "Quraşdırma hazırlanır...",
+            "stopping": "Wayck dayandırılır...",
+            "installing": "Yeniləmə quraşdırılır...",
+            "done": "Wayck uğurla yeniləndi!",
+            "backup": "Əvvəlki quraşdırmanın ehtiyat nüsxəsi",
+            "missing_jq": "Çatışmayan asılılıq: jq",
+            "missing_dependency": "Tələb olunan asılılıq çatışmır.",
+            "invalid_repository": "Yanlış Git deposu.",
+            "pull_failed": "Yeniləmələri endirmək mümkün olmadı.",
+            "compile_failed": "Backend-in kompilyasiyası uğursuz oldu.",
+            "copy_failed": "QML fayllarını köçürmək mümkün olmadı.",
+            "backup_failed": "Ehtiyat nüsxə yaratmaq mümkün olmadı.",
+            "install_failed": "Quraşdırma uğursuz oldu. Əvvəlki versiya bərpa edildi.",
+            "symlink_failed": "Divar kağızı əmri üçün simvolik keçid yaratmaq mümkün olmadı."
+        },
+        "menu": {
+            "required": "Lazımi paketləri quraşdır",
+            "blur": "Blur-u konfiqurasiya et",
+            "apps": "Tətbiqlərimi quraşdır",
+            "hypr": "Hyprland konfiqurasiyasını quraşdır",
+            "build": "Wayck-i tərtib et və quraşdır"
+        },
+        "title": "WAYCK QURAŞDIRICISI",
+        "help": "Gəzmək üçün ox düymələrindən, seçmək üçün BOŞLUQ düyməsindən, davam etmək üçün ENTER düyməsindən istifadə edin. Çıxmaq üçün ESC.",
+        "confirm": "ENTER: davam et | BOŞLUQ: seç | ESC: çıx",
+        "abort": "Quraşdırma ləğv edildi.",
+        "pkgs_installing": "Lazımi paketlər quraşdırılır...",
+        "pkgs_ok": "Lazımi paketlər quraşdırıldı.",
+        "pkgs_failed": "Lazımi paketləri quraşdırmaq alınmadı.",
+        "blur_info": "Blur: launcher-in arxa fonuna bulanıqlıq tətbiq edir.",
+        "blur_warn": "Xəbərdarlıq: blur Hyprland-dakı digər yarışəffaf pəncərələrə də təsir edə bilər.",
+        "q_blur": "Blur aktiv edilsin?",
+        "cfg_kept": "Konfiqurasiya yeniləndi: {path}",
+        "invalid_config": "Mövcud config.json etibarlı JSON obyekti ehtiva etmir.",
+        "build_msg": "Rust backend-i tərtib edilir...",
+        "installing": "{path} qovluğuna quraşdırılır",
+        "build_failed": "Backend-i tərtib etmək alınmadı.",
+        "hypr_q": "Wayck preseti ~/.config/hypr qovluğuna quraşdırılsın? Ehtiyat nüsxə yaradılacaq.",
+        "hypr_backup": "Ehtiyat nüsxə burada saxlanıldı: {path}",
+        "hypr_done": "Hyprland konfiqurasiyası quraşdırıldı.",
+        "hypr_missing": "Hyprland tapılmadı və ya hypr/ qovluğu yoxdur. Konfiqurasiya ötürülür.",
+        "aur_installing": "{name} quraşdırılır...",
+        "aur_installed": "{name} uğurla quraşdırıldı.",
+        "aur_clone_failed": "AUR anbarını klonlamaq alınmadı.",
+        "aur_build_failed": "AUR paketini tərtib etmək və ya quraşdırmaq alınmadı.",
+        "aur_install_failed": "AUR köməkçisi düzgün quraşdırılmadı.",
+        "personal_installing": "Şəxsi tətbiqlər quraşdırılır...",
+        "personal_failed": "Şəxsi tətbiqləri quraşdırmaq alınmadı.",
+        "zsh_changed": "Zsh susmaya görə qabıq olaraq təyin edildi. Dəyişiklik növbəti girişdə qüvvəyə minəcək.",
+        "zsh_failed": "Susmaya görə qabığı Zsh-a dəyişmək alınmadı.",
+        "steam_note": "Steam üçün pacman.conf-da multilib anbarının aktiv edilməsi tələb oluna bilər.",
+        "final_title": "QURAŞDIRMA TAMAMLANDI",
+        "final_exec": "Wayck yenidən başladıqdan sonra exec.lua faylınız tərəfindən işə salınacaq.",
+        "reboot": "KOMPÜTERINIZI YENIDƏN BAŞLADIN. BU ADDIM MƏCBURIDIR.",
+        "good": "Wayck-i quraşdırdığınız üçün təşəkkürlər.",
+        "tty_required": "İnteraktiv terminal tələb olunur.",
+        "missing_tool": "{name} tələb olunur.",
+        "fail_copy": "Faylları kopyalamaq alınmadı.",
+        "fail_backup": "Mövcud quraşdırmanın ehtiyat nüsxəsini yaratmaq alınmadı.",
+        "fail_install": "Faylları quraşdırmaq alınmadı.",
+        "useful_commands": "Faydalı əmrlər:",
+        "yes_words": "b bəli y yes",
+        "hint_yes": "[B/x]",
+        "hint_no": "[b/X]"
+    }
+}

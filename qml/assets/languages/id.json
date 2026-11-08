@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Cari..."
+    },
+    "clipboard": {
+        "search": "Cari di papan klip...",
+        "clear": "Hapus"
+    },
+    "player": {
+        "title": "Pemutar",
+        "none": "Tidak ada pemutar",
+        "waiting": "Menunggu MPRIS",
+        "unknownArtist": "Artis tidak dikenal"
+    },
+    "tray": {
+        "back": "Kembali"
+    },
+    "common": {
+        "na": "T/A"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Kontrol",
+            "power": "Daya"
+        },
+        "sections": {
+            "settings": "Pengaturan",
+            "power": "Daya dan sesi"
+        },
+        "footer": "Pusat Kontrol",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Konfigurasi"
+            },
+            "displays": {
+                "title": "Layar",
+                "subtitle": "Resolusi dan layar"
+            },
+            "network": {
+                "title": "Jaringan",
+                "subtitle": "Koneksi"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Output dan mikrofon"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Perangkat"
+            },
+            "appearance": {
+                "title": "Tampilan",
+                "subtitle": "Tema dan font"
+            },
+            "system": {
+                "title": "Sistem",
+                "subtitle": "Pengaturan umum"
+            },
+            "monitor": {
+                "title": "Monitor sistem",
+                "subtitle": "Proses dan sumber daya"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Kunci",
+                "subtitle": "Kunci sesi"
+            },
+            "suspend": {
+                "title": "Tangguhkan",
+                "subtitle": "Masuk ke mode tidur"
+            },
+            "reboot": {
+                "title": "Mulai ulang",
+                "subtitle": "Mulai ulang komputer"
+            },
+            "poweroff": {
+                "title": "Matikan",
+                "subtitle": "Matikan komputer"
+            },
+            "logout": {
+                "title": "Keluar",
+                "subtitle": "Akhiri sesi Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Konfirmasi tindakan?"
+            },
+            "suspend": {
+                "title": "Tangguhkan komputer?",
+                "description": "Komputer akan masuk ke mode tidur."
+            },
+            "reboot": {
+                "title": "Mulai ulang komputer?",
+                "description": "Semua aplikasi akan ditutup."
+            },
+            "poweroff": {
+                "title": "Matikan komputer?",
+                "description": "Komputer akan dimatikan."
+            },
+            "logout": {
+                "title": "Akhiri sesi?",
+                "description": "Anda akan keluar dari Hyprland."
+            },
+            "cancel": "Batal",
+            "ok": "Konfirmasi"
+        }
+    },
+    "modules": {
+        "workspaces": "Ruang kerja",
+        "player": "Pemutar",
+        "audio": "Audio",
+        "clock": "Jam",
+        "tray": "Baki sistem",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disk",
+        "network": "Jaringan",
+        "temperature": "Suhu",
+        "usermenu": "Menu pengguna"
+    },
+    "launch": {
+        "notInstalled": "{name} belum terpasang.",
+        "labels": {
+            "displays": "Pengelola layar",
+            "network": "Pengelola jaringan",
+            "audio": "Kontrol audio",
+            "bluetooth": "Pengelola Bluetooth",
+            "system": "Pengaturan sistem",
+            "monitor": "Monitor sistem"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Mengunduh pembaruan...",
+            "compiling": "Mengompilasi backend Rust...",
+            "preparing": "Menyiapkan instalasi...",
+            "stopping": "Menghentikan Wayck...",
+            "installing": "Menginstal pembaruan...",
+            "done": "Wayck berhasil diperbarui!",
+            "backup": "Cadangan instalasi sebelumnya",
+            "missing_jq": "Dependensi tidak ditemukan: jq",
+            "missing_dependency": "Dependensi yang diperlukan tidak ditemukan.",
+            "invalid_repository": "Repositori Git tidak valid.",
+            "pull_failed": "Gagal mengunduh pembaruan.",
+            "compile_failed": "Gagal mengompilasi backend.",
+            "copy_failed": "Gagal menyalin file QML.",
+            "backup_failed": "Gagal membuat cadangan.",
+            "install_failed": "Instalasi gagal. Versi sebelumnya telah dipulihkan.",
+            "symlink_failed": "Tidak dapat membuat tautan simbolis untuk perintah wallpaper."
+        },
+        "menu": {
+            "required": "Pasang paket yang diperlukan",
+            "blur": "Konfigurasi blur",
+            "apps": "Pasang aplikasi saya",
+            "hypr": "Pasang konfigurasi Hyprland",
+            "build": "Kompilasi dan pasang Wayck"
+        },
+        "title": "PENGINSTAL WAYCK",
+        "help": "Gunakan tombol panah untuk bernavigasi, SPASI untuk memilih, dan ENTER untuk melanjutkan. ESC untuk keluar.",
+        "confirm": "ENTER: lanjut | SPASI: pilih | ESC: keluar",
+        "abort": "Instalasi dibatalkan.",
+        "pkgs_installing": "Memasang paket yang diperlukan...",
+        "pkgs_ok": "Paket yang diperlukan telah terpasang.",
+        "pkgs_failed": "Gagal memasang paket yang diperlukan.",
+        "blur_info": "Blur: menerapkan efek buram pada latar belakang launcher.",
+        "blur_warn": "Peringatan: blur juga dapat memengaruhi jendela Hyprland transparan lainnya.",
+        "q_blur": "Aktifkan blur?",
+        "cfg_kept": "Konfigurasi diperbarui: {path}",
+        "invalid_config": "config.json yang ada tidak berisi objek JSON yang valid.",
+        "build_msg": "Mengompilasi backend Rust...",
+        "installing": "Memasang ke {path}",
+        "build_failed": "Gagal mengompilasi backend.",
+        "hypr_q": "Pasang preset Wayck ke ~/.config/hypr? Cadangan akan dibuat.",
+        "hypr_backup": "Cadangan disimpan di: {path}",
+        "hypr_done": "Konfigurasi Hyprland terpasang.",
+        "hypr_missing": "Hyprland tidak ditemukan atau folder hypr/ tidak ada. Konfigurasi dilewati.",
+        "aur_installing": "Memasang {name}...",
+        "aur_installed": "{name} berhasil dipasang.",
+        "aur_clone_failed": "Gagal meng-clone repositori AUR.",
+        "aur_build_failed": "Gagal mengompilasi atau memasang paket AUR.",
+        "aur_install_failed": "Helper AUR tidak terpasang dengan benar.",
+        "personal_installing": "Memasang aplikasi pribadi...",
+        "personal_failed": "Gagal memasang aplikasi pribadi.",
+        "zsh_changed": "Zsh diatur sebagai shell default. Perubahan berlaku pada login berikutnya.",
+        "zsh_failed": "Tidak dapat mengubah shell default ke Zsh.",
+        "steam_note": "Steam mungkin memerlukan repositori multilib yang diaktifkan di pacman.conf.",
+        "final_title": "INSTALASI SELESAI",
+        "final_exec": "Wayck akan dijalankan oleh exec.lua Anda setelah reboot.",
+        "reboot": "MULAI ULANG KOMPUTER ANDA. LANGKAH INI WAJIB.",
+        "good": "Terima kasih telah memasang Wayck.",
+        "tty_required": "Terminal interaktif diperlukan.",
+        "missing_tool": "{name} diperlukan.",
+        "fail_copy": "Gagal menyalin file.",
+        "fail_backup": "Gagal membuat cadangan instalasi yang ada.",
+        "fail_install": "Gagal memasang file.",
+        "useful_commands": "Perintah berguna:",
+        "yes_words": "y ya yes",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

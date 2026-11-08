@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "جستجو..."
+    },
+    "clipboard": {
+        "search": "جستجو در کلیپ‌بورد...",
+        "clear": "پاک کردن"
+    },
+    "player": {
+        "title": "پخش‌کننده",
+        "none": "بدون پخش‌کننده",
+        "waiting": "در انتظار MPRIS",
+        "unknownArtist": "هنرمند ناشناس"
+    },
+    "tray": {
+        "back": "بازگشت"
+    },
+    "common": {
+        "na": "در دسترس نیست"
+    },
+    "clock": {
+        "dateFormat": "yy/MM/dd"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "کنترل",
+            "power": "توان"
+        },
+        "sections": {
+            "settings": "تنظیمات",
+            "power": "توان و نشست"
+        },
+        "footer": "مرکز کنترل",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "پیکربندی"
+            },
+            "displays": {
+                "title": "نمایشگرها",
+                "subtitle": "وضوح و صفحه‌نمایش‌ها"
+            },
+            "network": {
+                "title": "شبکه",
+                "subtitle": "اتصال‌ها"
+            },
+            "audio": {
+                "title": "صدا",
+                "subtitle": "خروجی و میکروفون"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "دستگاه‌ها"
+            },
+            "appearance": {
+                "title": "ظاهر",
+                "subtitle": "پوسته و قلم‌ها"
+            },
+            "system": {
+                "title": "سیستم",
+                "subtitle": "تنظیمات عمومی"
+            },
+            "monitor": {
+                "title": "نمایشگر سیستم",
+                "subtitle": "فرایندها و منابع"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "قفل",
+                "subtitle": "قفل کردن نشست"
+            },
+            "suspend": {
+                "title": "تعلیق",
+                "subtitle": "قرار دادن در حالت خواب"
+            },
+            "reboot": {
+                "title": "راه‌اندازی مجدد",
+                "subtitle": "راه‌اندازی مجدد رایانه"
+            },
+            "poweroff": {
+                "title": "خاموش کردن",
+                "subtitle": "خاموش کردن رایانه"
+            },
+            "logout": {
+                "title": "خروج",
+                "subtitle": "پایان دادن به نشست Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "عملیات تأیید شود؟"
+            },
+            "suspend": {
+                "title": "رایانه به حالت تعلیق برود؟",
+                "description": "رایانه به حالت خواب می‌رود."
+            },
+            "reboot": {
+                "title": "رایانه دوباره راه‌اندازی شود؟",
+                "description": "همهٔ برنامه‌ها بسته خواهند شد."
+            },
+            "poweroff": {
+                "title": "رایانه خاموش شود؟",
+                "description": "رایانه خاموش خواهد شد."
+            },
+            "logout": {
+                "title": "نشست پایان یابد؟",
+                "description": "از Hyprland خارج خواهید شد."
+            },
+            "cancel": "لغو",
+            "ok": "تأیید"
+        }
+    },
+    "modules": {
+        "workspaces": "فضاهای کاری",
+        "player": "پخش‌کننده",
+        "audio": "صدا",
+        "clock": "ساعت",
+        "tray": "سینی سیستم",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "دیسک",
+        "network": "شبکه",
+        "temperature": "دما",
+        "usermenu": "منوی کاربر"
+    },
+    "launch": {
+        "notInstalled": "{name} نصب نشده است.",
+        "labels": {
+            "displays": "مدیر نمایشگرها",
+            "network": "مدیر شبکه",
+            "audio": "کنترل صدا",
+            "bluetooth": "مدیر Bluetooth",
+            "system": "تنظیمات سیستم",
+            "monitor": "نمایشگر سیستم"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "در حال دریافت به‌روزرسانی‌ها...",
+            "compiling": "در حال کامپایل بک‌اند Rust...",
+            "preparing": "در حال آماده‌سازی نصب...",
+            "stopping": "در حال متوقف کردن Wayck...",
+            "installing": "در حال نصب به‌روزرسانی...",
+            "done": "Wayck با موفقیت به‌روزرسانی شد!",
+            "backup": "نسخه پشتیبان از نصب قبلی",
+            "missing_jq": "وابستگی یافت نشد: jq",
+            "missing_dependency": "یک وابستگی ضروری وجود ندارد.",
+            "invalid_repository": "مخزن Git نامعتبر است.",
+            "pull_failed": "دریافت به‌روزرسانی‌ها ناموفق بود.",
+            "compile_failed": "کامپایل بک‌اند ناموفق بود.",
+            "copy_failed": "کپی فایل‌های QML ناموفق بود.",
+            "backup_failed": "ایجاد نسخه پشتیبان ناموفق بود.",
+            "install_failed": "نصب ناموفق بود. نسخه قبلی بازیابی شد.",
+            "symlink_failed": "ایجاد پیوند نمادین برای فرمان تصویر پس‌زمینه ناموفق بود."
+        },
+        "menu": {
+            "required": "نصب بسته‌های موردنیاز",
+            "blur": "پیکربندی محو شدگی",
+            "apps": "نصب برنامه‌های من",
+            "hypr": "نصب پیکربندی Hyprland",
+            "build": "ساخت و نصب Wayck"
+        },
+        "title": "نصب‌کنندهٔ WAYCK",
+        "help": "برای حرکت از کلیدهای جهت‌نما، برای انتخاب از Space و برای ادامه از Enter استفاده کنید. برای خروج ESC را بزنید.",
+        "confirm": "ENTER: ادامه | SPACE: انتخاب | ESC: خروج",
+        "abort": "نصب لغو شد.",
+        "pkgs_installing": "در حال نصب بسته‌های موردنیاز...",
+        "pkgs_ok": "بسته‌های موردنیاز نصب شدند.",
+        "pkgs_failed": "نصب بسته‌های موردنیاز ناموفق بود.",
+        "blur_info": "محو شدگی: پس‌زمینهٔ لانچر را محو می‌کند.",
+        "blur_warn": "هشدار: محو شدگی ممکن است بر سایر پنجره‌های نیمه‌شفاف Hyprland نیز اثر بگذارد.",
+        "q_blur": "محو شدگی فعال شود؟",
+        "cfg_kept": "پیکربندی به‌روزرسانی شد: {path}",
+        "invalid_config": "فایل config.json موجود شامل یک شیء JSON معتبر نیست.",
+        "build_msg": "در حال ساخت بک‌اند Rust...",
+        "installing": "در حال نصب در {path}",
+        "build_failed": "ساخت بک‌اند ناموفق بود.",
+        "hypr_q": "پیش‌تنظیم Wayck در ~/.config/hypr نصب شود؟ یک نسخهٔ پشتیبان ساخته می‌شود.",
+        "hypr_backup": "نسخهٔ پشتیبان ذخیره شد در: {path}",
+        "hypr_done": "پیکربندی Hyprland نصب شد.",
+        "hypr_missing": "Hyprland پیدا نشد یا پوشهٔ hypr/ وجود ندارد. پیکربندی رد می‌شود.",
+        "aur_installing": "در حال نصب {name}...",
+        "aur_installed": "{name} با موفقیت نصب شد.",
+        "aur_clone_failed": "کلون کردن مخزن AUR ناموفق بود.",
+        "aur_build_failed": "ساخت یا نصب بستهٔ AUR ناموفق بود.",
+        "aur_install_failed": "دستیار AUR به درستی نصب نشد.",
+        "personal_installing": "در حال نصب برنامه‌های شخصی...",
+        "personal_failed": "نصب برنامه‌های شخصی ناموفق بود.",
+        "zsh_changed": "Zsh به‌عنوان پوستهٔ پیش‌فرض تنظیم شد. تغییر از ورود بعدی اعمال می‌شود.",
+        "zsh_failed": "تغییر پوستهٔ پیش‌فرض به Zsh ممکن نبود.",
+        "steam_note": "Steam ممکن است نیاز داشته باشد مخزن multilib در pacman.conf فعال شود.",
+        "final_title": "نصب کامل شد",
+        "final_exec": "Wayck پس از راه‌اندازی مجدد توسط exec.lua شما اجرا خواهد شد.",
+        "reboot": "رایانهٔ خود را دوباره راه‌اندازی کنید. این مرحله الزامی است.",
+        "good": "از اینکه Wayck را نصب کردید سپاسگزاریم.",
+        "tty_required": "یک ترمینال تعاملی لازم است.",
+        "missing_tool": "{name} لازم است.",
+        "fail_copy": "کپی فایل‌ها ناموفق بود.",
+        "fail_backup": "تهیهٔ نسخهٔ پشتیبان از نصب موجود ناموفق بود.",
+        "fail_install": "نصب فایل‌ها ناموفق بود.",
+        "useful_commands": "دستورهای مفید:",
+        "yes_words": "y yes ب بله",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

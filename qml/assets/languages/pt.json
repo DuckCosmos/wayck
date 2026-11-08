@@ -1,0 +1,209 @@
+{
+    "launcher": {
+        "search": "Buscar..."
+    },
+    "clipboard": {
+        "search": "Buscar no clipboard...",
+        "clear": "Limpar"
+    },
+    "player": {
+        "title": "Player",
+        "none": "Sem player",
+        "waiting": "Aguardando MPRIS",
+        "unknownArtist": "Artista desconhecido"
+    },
+    "tray": {
+        "back": "Voltar"
+    },
+    "common": {
+        "na": "N/A"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Controle",
+            "power": "Energia"
+        },
+        "sections": {
+            "settings": "Configurações",
+            "power": "Energia e sessão"
+        },
+        "footer": "Control Center",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Configuração"
+            },
+            "displays": {
+                "title": "Monitores",
+                "subtitle": "Resolução e telas"
+            },
+            "network": {
+                "title": "Rede",
+                "subtitle": "Conexões"
+            },
+            "audio": {
+                "title": "Áudio",
+                "subtitle": "Saída e microfone"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Dispositivos"
+            },
+            "appearance": {
+                "title": "Aparência",
+                "subtitle": "Tema e fontes"
+            },
+            "system": {
+                "title": "Sistema",
+                "subtitle": "Configurações gerais"
+            },
+            "monitor": {
+                "title": "Monitor do sistema",
+                "subtitle": "Processos e recursos"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Bloquear",
+                "subtitle": "Bloquear a sessão"
+            },
+            "suspend": {
+                "title": "Suspender",
+                "subtitle": "Colocar em repouso"
+            },
+            "reboot": {
+                "title": "Reiniciar",
+                "subtitle": "Reiniciar o computador"
+            },
+            "poweroff": {
+                "title": "Desligar",
+                "subtitle": "Desligar o computador"
+            },
+            "logout": {
+                "title": "Sair da sessão",
+                "subtitle": "Encerrar o Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Confirmar ação?"
+            },
+            "suspend": {
+                "title": "Suspender o computador?",
+                "description": "O computador entrará em modo de suspensão."
+            },
+            "reboot": {
+                "title": "Reiniciar o computador?",
+                "description": "Todos os aplicativos serão encerrados."
+            },
+            "poweroff": {
+                "title": "Desligar o computador?",
+                "description": "O computador será desligado."
+            },
+            "logout": {
+                "title": "Encerrar a sessão?",
+                "description": "Você será desconectado do Hyprland."
+            },
+            "cancel": "Cancelar",
+            "ok": "Confirmar"
+        }
+    },
+    "modules": {
+        "workspaces": "Workspaces",
+        "player": "Player",
+        "audio": "Áudio",
+        "clock": "Relógio",
+        "tray": "Bandeja do sistema",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disco",
+        "network": "Rede",
+        "temperature": "Temperatura",
+        "usermenu": "Menu do usuário"
+    },
+    "launch": {
+        "notInstalled": "{name} não está instalado.",
+        "labels": {
+            "displays": "Gerenciador de monitores",
+            "network": "Gerenciador de rede",
+            "audio": "Controle de áudio",
+            "bluetooth": "Gerenciador Bluetooth",
+            "system": "Configurações do sistema",
+            "monitor": "Monitor do sistema"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Baixando atualizações...",
+            "compiling": "Compilando o backend Rust...",
+            "preparing": "Preparando a instalação...",
+            "stopping": "Parando o Wayck...",
+            "installing": "Instalando atualização...",
+            "done": "Wayck atualizado com sucesso!",
+            "backup": "Backup da instalação anterior",
+            "missing_jq": "Dependência ausente: jq",
+            "missing_dependency": "Uma dependência necessária está ausente.",
+            "invalid_repository": "Repositório Git inválido.",
+            "pull_failed": "Falha ao baixar as atualizações.",
+            "compile_failed": "Falha ao compilar o backend.",
+            "copy_failed": "Falha ao copiar os arquivos QML.",
+            "backup_failed": "Falha ao criar o backup.",
+            "install_failed": "Falha na instalação. A versão anterior foi restaurada.",
+            "symlink_failed": "Não foi possível criar o link simbólico do comando de papel de parede."
+        },
+        "menu": {
+            "required": "Instalar pacotes necessários",
+            "blur": "Configurar blur",
+            "apps": "Instalar meus aplicativos",
+            "hypr": "Instalar configurações do Hyprland",
+            "update": "Atualizar wayck",
+            "build": "Compilar e instalar Wayck"
+        },
+        "title": "INSTALADOR WAYCK",
+        "help": "Use as setas para navegar, ESPAÇO para selecionar e ENTER para continuar. ESC para sair.",
+        "confirm": "ENTER: continuar | ESPAÇO: selecionar | ESC: sair",
+        "abort": "Instalação cancelada.",
+        "pkgs_installing": "Instalando pacotes necessários...",
+        "pkgs_ok": "Pacotes necessários instalados.",
+        "pkgs_failed": "Falha ao instalar os pacotes necessários.",
+        "blur_info": "Blur: aplica desfoque ao fundo do launcher.",
+        "blur_warn": "Aviso: o blur também pode afetar outras janelas translúcidas do Hyprland.",
+        "q_blur": "Ativar blur?",
+        "cfg_kept": "Configuração atualizada: {path}",
+        "invalid_config": "O config.json existente não contém um objeto JSON válido.",
+        "build_msg": "Compilando o backend em Rust...",
+        "installing": "Instalando em {path}",
+        "build_failed": "Falha ao compilar o backend.",
+        "hypr_q": "Instalar o preset do Wayck em ~/.config/hypr? Um backup será criado.",
+        "hypr_backup": "Backup salvo em: {path}",
+        "hypr_done": "Configuração do Hyprland instalada.",
+        "hypr_missing": "Hyprland não encontrado ou pasta hypr/ ausente. Pulando configuração.",
+        "aur_installing": "Instalando {name}...",
+        "aur_installed": "{name} instalado com sucesso.",
+        "aur_clone_failed": "Falha ao baixar o repositório AUR.",
+        "aur_build_failed": "Falha ao compilar ou instalar um pacote AUR.",
+        "aur_install_failed": "O helper AUR não foi instalado corretamente.",
+        "personal_installing": "Instalando aplicativos pessoais...",
+        "personal_failed": "Falha ao instalar os aplicativos pessoais.",
+        "zsh_changed": "Zsh configurado como shell padrão. A alteração vale no próximo login.",
+        "zsh_failed": "Não foi possível alterar o shell padrão para Zsh.",
+        "steam_note": "O Steam pode exigir que o repositório multilib esteja habilitado no pacman.conf.",
+        "final_title": "INSTALAÇÃO CONCLUÍDA",
+        "final_exec": "O Wayck será iniciado pelo seu exec.lua após a reinicialização.",
+        "reboot": "REINICIE O COMPUTADOR. ESTA ETAPA É OBRIGATÓRIA.",
+        "good": "Obrigado por instalar o Wayck.",
+        "tty_required": "É necessário um terminal interativo.",
+        "missing_tool": "{name} é necessário.",
+        "fail_copy": "Falha ao copiar os arquivos.",
+        "fail_backup": "Falha ao criar o backup da instalação existente.",
+        "fail_install": "Falha ao instalar os arquivos.",
+        "useful_commands": "Comandos úteis:",
+        "yes_words": "s sim y yes",
+        "hint_yes": "[S/n]",
+        "hint_no": "[s/N]"
+    }
+}

@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Ara..."
+    },
+    "clipboard": {
+        "search": "Panoda ara...",
+        "clear": "Temizle"
+    },
+    "player": {
+        "title": "Oynatıcı",
+        "none": "Oynatıcı yok",
+        "waiting": "MPRIS bekleniyor",
+        "unknownArtist": "Bilinmeyen sanatçı"
+    },
+    "tray": {
+        "back": "Geri"
+    },
+    "common": {
+        "na": "Yok"
+    },
+    "clock": {
+        "dateFormat": "dd.MM.yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Denetim",
+            "power": "Güç"
+        },
+        "sections": {
+            "settings": "Ayarlar",
+            "power": "Güç ve oturum"
+        },
+        "footer": "Denetim Merkezi",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Yapılandırma"
+            },
+            "displays": {
+                "title": "Ekranlar",
+                "subtitle": "Çözünürlük ve ekranlar"
+            },
+            "network": {
+                "title": "Ağ",
+                "subtitle": "Bağlantılar"
+            },
+            "audio": {
+                "title": "Ses",
+                "subtitle": "Çıkış ve mikrofon"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Aygıtlar"
+            },
+            "appearance": {
+                "title": "Görünüm",
+                "subtitle": "Tema ve yazı tipleri"
+            },
+            "system": {
+                "title": "Sistem",
+                "subtitle": "Genel ayarlar"
+            },
+            "monitor": {
+                "title": "Sistem izleyici",
+                "subtitle": "İşlemler ve kaynaklar"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Kilitle",
+                "subtitle": "Oturumu kilitle"
+            },
+            "suspend": {
+                "title": "Askıya al",
+                "subtitle": "Uyku moduna geçir"
+            },
+            "reboot": {
+                "title": "Yeniden başlat",
+                "subtitle": "Bilgisayarı yeniden başlat"
+            },
+            "poweroff": {
+                "title": "Kapat",
+                "subtitle": "Bilgisayarı kapat"
+            },
+            "logout": {
+                "title": "Oturumu kapat",
+                "subtitle": "Hyprland oturumunu sonlandır"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "İşlem onaylansın mı?"
+            },
+            "suspend": {
+                "title": "Bilgisayar askıya alınsın mı?",
+                "description": "Bilgisayar uyku moduna geçecek."
+            },
+            "reboot": {
+                "title": "Bilgisayar yeniden başlatılsın mı?",
+                "description": "Tüm uygulamalar kapatılacak."
+            },
+            "poweroff": {
+                "title": "Bilgisayar kapatılsın mı?",
+                "description": "Bilgisayar kapatılacak."
+            },
+            "logout": {
+                "title": "Oturum sonlandırılsın mı?",
+                "description": "Hyprland oturumunuz kapatılacak."
+            },
+            "cancel": "İptal",
+            "ok": "Onayla"
+        }
+    },
+    "modules": {
+        "workspaces": "Çalışma alanları",
+        "player": "Oynatıcı",
+        "audio": "Ses",
+        "clock": "Saat",
+        "tray": "Sistem tepsisi",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Disk",
+        "network": "Ağ",
+        "temperature": "Sıcaklık",
+        "usermenu": "Kullanıcı menüsü"
+    },
+    "launch": {
+        "notInstalled": "{name} yüklü değil.",
+        "labels": {
+            "displays": "Ekran yöneticisi",
+            "network": "Ağ yöneticisi",
+            "audio": "Ses denetimi",
+            "bluetooth": "Bluetooth yöneticisi",
+            "system": "Sistem ayarları",
+            "monitor": "Sistem izleyici"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Загрузка обновлений...",
+            "compiling": "Компиляция бэкенда Rust...",
+            "preparing": "Подготовка к установке...",
+            "stopping": "Остановка Wayck...",
+            "installing": "Установка обновления...",
+            "done": "Wayck успешно обновлён!",
+            "backup": "Резервная копия предыдущей установки",
+            "missing_jq": "Отсутствует зависимость: jq",
+            "missing_dependency": "Отсутствует необходимая зависимость.",
+            "invalid_repository": "Недопустимый репозиторий Git.",
+            "pull_failed": "Не удалось загрузить обновления.",
+            "compile_failed": "Не удалось скомпилировать бэкенд.",
+            "copy_failed": "Не удалось скопировать файлы QML.",
+            "backup_failed": "Не удалось создать резервную копию.",
+            "install_failed": "Ошибка установки. Предыдущая версия восстановлена.",
+            "symlink_failed": "Не удалось создать символическую ссылку для команды обоев."
+        },
+        "menu": {
+            "required": "Gerekli paketleri yükle",
+            "blur": "Bulanıklığı yapılandır",
+            "apps": "Uygulamalarımı yükle",
+            "hypr": "Hyprland yapılandırmasını yükle",
+            "build": "Wayck'i derle ve yükle"
+        },
+        "title": "WAYCK YÜKLEYICI",
+        "help": "Gezinmek için ok tuşlarını, seçmek için BOŞLUK tuşunu, devam etmek için ENTER tuşunu kullanın. Çıkmak için ESC.",
+        "confirm": "ENTER: devam et | BOŞLUK: seç | ESC: çık",
+        "abort": "Kurulum iptal edildi.",
+        "pkgs_installing": "Gerekli paketler yükleniyor...",
+        "pkgs_ok": "Gerekli paketler yüklendi.",
+        "pkgs_failed": "Gerekli paketler yüklenemedi.",
+        "blur_info": "Bulanıklık: başlatıcının arka planına bulanıklık uygular.",
+        "blur_warn": "Uyarı: bulanıklık, Hyprland'daki diğer yarı saydam pencereleri de etkileyebilir.",
+        "q_blur": "Bulanıklık etkinleştirilsin mi?",
+        "cfg_kept": "Yapılandırma güncellendi: {path}",
+        "invalid_config": "Mevcut config.json geçerli bir JSON nesnesi içermiyor.",
+        "build_msg": "Rust arka ucu derleniyor...",
+        "installing": "{path} konumuna yükleniyor",
+        "build_failed": "Arka uç derlenemedi.",
+        "hypr_q": "Wayck ön ayarı ~/.config/hypr içine yüklensin mi? Bir yedek oluşturulacak.",
+        "hypr_backup": "Yedek şuraya kaydedildi: {path}",
+        "hypr_done": "Hyprland yapılandırması yüklendi.",
+        "hypr_missing": "Hyprland bulunamadı veya hypr/ klasörü eksik. Yapılandırma atlanıyor.",
+        "aur_installing": "{name} yükleniyor...",
+        "aur_installed": "{name} başarıyla yüklendi.",
+        "aur_clone_failed": "AUR deposu klonlanamadı.",
+        "aur_build_failed": "Bir AUR paketi derlenemedi veya yüklenemedi.",
+        "aur_install_failed": "AUR yardımcısı doğru yüklenmedi.",
+        "personal_installing": "Kişisel uygulamalar yükleniyor...",
+        "personal_failed": "Kişisel uygulamalar yüklenemedi.",
+        "zsh_changed": "Zsh varsayılan kabuk olarak ayarlandı. Değişiklik bir sonraki oturum açışta geçerli olur.",
+        "zsh_failed": "Varsayılan kabuk Zsh olarak değiştirilemedi.",
+        "steam_note": "Steam için pacman.conf içinde multilib deposunun etkinleştirilmesi gerekebilir.",
+        "final_title": "KURULUM TAMAMLANDI",
+        "final_exec": "Wayck, yeniden başlatmadan sonra exec.lua dosyanız tarafından başlatılacak.",
+        "reboot": "BILGISAYARINIZI YENIDEN BAŞLATIN. BU ADIM ZORUNLUDUR.",
+        "good": "Wayck'i yüklediğiniz için teşekkürler.",
+        "tty_required": "Etkileşimli bir terminal gerekli.",
+        "missing_tool": "{name} gerekli.",
+        "fail_copy": "Dosyalar kopyalanamadı.",
+        "fail_backup": "Mevcut kurulumun yedeği alınamadı.",
+        "fail_install": "Dosyalar yüklenemedi.",
+        "useful_commands": "Faydalı komutlar:",
+        "yes_words": "e evet y yes",
+        "hint_yes": "[E/h]",
+        "hint_no": "[e/H]"
+    }
+}

@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "搜索..."
+    },
+    "clipboard": {
+        "search": "搜索剪贴板...",
+        "clear": "清空"
+    },
+    "player": {
+        "title": "播放器",
+        "none": "无播放器",
+        "waiting": "正在等待 MPRIS",
+        "unknownArtist": "未知艺术家"
+    },
+    "tray": {
+        "back": "返回"
+    },
+    "common": {
+        "na": "暂无"
+    },
+    "clock": {
+        "dateFormat": "yy/MM/dd"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "控制",
+            "power": "电源"
+        },
+        "sections": {
+            "settings": "设置",
+            "power": "电源与会话"
+        },
+        "footer": "控制中心",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "配置"
+            },
+            "displays": {
+                "title": "显示器",
+                "subtitle": "分辨率与屏幕"
+            },
+            "network": {
+                "title": "网络",
+                "subtitle": "连接"
+            },
+            "audio": {
+                "title": "音频",
+                "subtitle": "输出与麦克风"
+            },
+            "bluetooth": {
+                "title": "蓝牙",
+                "subtitle": "设备"
+            },
+            "appearance": {
+                "title": "外观",
+                "subtitle": "主题与字体"
+            },
+            "system": {
+                "title": "系统",
+                "subtitle": "常规设置"
+            },
+            "monitor": {
+                "title": "系统监视器",
+                "subtitle": "进程与资源"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "锁定",
+                "subtitle": "锁定会话"
+            },
+            "suspend": {
+                "title": "挂起",
+                "subtitle": "进入睡眠状态"
+            },
+            "reboot": {
+                "title": "重启",
+                "subtitle": "重启计算机"
+            },
+            "poweroff": {
+                "title": "关机",
+                "subtitle": "关闭计算机"
+            },
+            "logout": {
+                "title": "注销",
+                "subtitle": "结束 Hyprland 会话"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "确认操作？"
+            },
+            "suspend": {
+                "title": "挂起计算机？",
+                "description": "计算机将进入睡眠状态。"
+            },
+            "reboot": {
+                "title": "重启计算机？",
+                "description": "所有应用程序都将被关闭。"
+            },
+            "poweroff": {
+                "title": "关闭计算机？",
+                "description": "计算机将被关闭。"
+            },
+            "logout": {
+                "title": "结束会话？",
+                "description": "您将从 Hyprland 注销。"
+            },
+            "cancel": "取消",
+            "ok": "确认"
+        }
+    },
+    "modules": {
+        "workspaces": "工作区",
+        "player": "播放器",
+        "audio": "音频",
+        "clock": "时钟",
+        "tray": "系统托盘",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "磁盘",
+        "network": "网络",
+        "temperature": "温度",
+        "usermenu": "用户菜单"
+    },
+    "launch": {
+        "notInstalled": "未安装 {name}。",
+        "labels": {
+            "displays": "显示器管理器",
+            "network": "网络管理器",
+            "audio": "音频控制",
+            "bluetooth": "蓝牙管理器",
+            "system": "系统设置",
+            "monitor": "系统监视器"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "正在下载更新...",
+            "compiling": "正在编译 Rust 后端...",
+            "preparing": "正在准备安装...",
+            "stopping": "正在停止 Wayck...",
+            "installing": "正在安装更新...",
+            "done": "Wayck 更新成功！",
+            "backup": "之前安装版本的备份",
+            "missing_jq": "缺少依赖项：jq",
+            "missing_dependency": "缺少必需的依赖项。",
+            "invalid_repository": "无效的 Git 仓库。",
+            "pull_failed": "下载更新失败。",
+            "compile_failed": "编译后端失败。",
+            "copy_failed": "复制 QML 文件失败。",
+            "backup_failed": "创建备份失败。",
+            "install_failed": "安装失败。已恢复之前的版本。",
+            "symlink_failed": "无法为壁纸命令创建符号链接。"
+        },
+        "menu": {
+            "required": "安装所需软件包",
+            "blur": "配置模糊效果",
+            "apps": "安装我的应用程序",
+            "hypr": "安装 Hyprland 配置",
+            "build": "编译并安装 Wayck"
+        },
+        "title": "WAYCK 安装程序",
+        "help": "使用方向键导航，空格键选择，回车键继续。按 ESC 退出。",
+        "confirm": "回车：继续 | 空格：选择 | ESC：退出",
+        "abort": "安装已取消。",
+        "pkgs_installing": "正在安装所需软件包...",
+        "pkgs_ok": "所需软件包已安装。",
+        "pkgs_failed": "安装所需软件包失败。",
+        "blur_info": "模糊效果：为启动器背景应用模糊。",
+        "blur_warn": "警告：模糊效果也可能影响 Hyprland 中其他半透明窗口。",
+        "q_blur": "启用模糊效果？",
+        "cfg_kept": "配置已更新：{path}",
+        "invalid_config": "现有的 config.json 不包含有效的 JSON 对象。",
+        "build_msg": "正在编译 Rust 后端...",
+        "installing": "正在安装到 {path}",
+        "build_failed": "编译后端失败。",
+        "hypr_q": "将 Wayck 预设安装到 ~/.config/hypr？将创建备份。",
+        "hypr_backup": "备份已保存到：{path}",
+        "hypr_done": "Hyprland 配置已安装。",
+        "hypr_missing": "未找到 Hyprland 或缺少 hypr/ 目录。已跳过配置。",
+        "aur_installing": "正在安装 {name}...",
+        "aur_installed": "{name} 安装成功。",
+        "aur_clone_failed": "克隆 AUR 仓库失败。",
+        "aur_build_failed": "编译或安装 AUR 软件包失败。",
+        "aur_install_failed": "AUR 助手未正确安装。",
+        "personal_installing": "正在安装个人应用程序...",
+        "personal_failed": "安装个人应用程序失败。",
+        "zsh_changed": "已将 Zsh 设为默认 shell。更改将在下次登录时生效。",
+        "zsh_failed": "无法将默认 shell 更改为 Zsh。",
+        "steam_note": "Steam 可能需要在 pacman.conf 中启用 multilib 仓库。",
+        "final_title": "安装完成",
+        "final_exec": "重启后，Wayck 将由你的 exec.lua 启动。",
+        "reboot": "请重启计算机。此步骤是必需的。",
+        "good": "感谢你安装 Wayck。",
+        "tty_required": "需要交互式终端。",
+        "missing_tool": "需要 {name}。",
+        "fail_copy": "复制文件失败。",
+        "fail_backup": "备份现有安装失败。",
+        "fail_install": "安装文件失败。",
+        "useful_commands": "常用命令：",
+        "yes_words": "y yes 是 s",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

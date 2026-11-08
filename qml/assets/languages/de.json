@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "Suchen..."
+    },
+    "clipboard": {
+        "search": "Zwischenablage durchsuchen...",
+        "clear": "Leeren"
+    },
+    "player": {
+        "title": "Player",
+        "none": "Kein Player",
+        "waiting": "Warte auf MPRIS",
+        "unknownArtist": "Unbekannter Künstler"
+    },
+    "tray": {
+        "back": "Zurück"
+    },
+    "common": {
+        "na": "k. A."
+    },
+    "clock": {
+        "dateFormat": "dd.MM.yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "Steuerung",
+            "power": "Energie"
+        },
+        "sections": {
+            "settings": "Einstellungen",
+            "power": "Energie und Sitzung"
+        },
+        "footer": "Kontrollzentrum",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "Konfiguration"
+            },
+            "displays": {
+                "title": "Bildschirme",
+                "subtitle": "Auflösung und Monitore"
+            },
+            "network": {
+                "title": "Netzwerk",
+                "subtitle": "Verbindungen"
+            },
+            "audio": {
+                "title": "Audio",
+                "subtitle": "Ausgabe und Mikrofon"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "Geräte"
+            },
+            "appearance": {
+                "title": "Erscheinungsbild",
+                "subtitle": "Design und Schriften"
+            },
+            "system": {
+                "title": "System",
+                "subtitle": "Allgemeine Einstellungen"
+            },
+            "monitor": {
+                "title": "Systemmonitor",
+                "subtitle": "Prozesse und Ressourcen"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "Sperren",
+                "subtitle": "Sitzung sperren"
+            },
+            "suspend": {
+                "title": "Bereitschaft",
+                "subtitle": "In den Ruhezustand versetzen"
+            },
+            "reboot": {
+                "title": "Neustarten",
+                "subtitle": "Computer neu starten"
+            },
+            "poweroff": {
+                "title": "Herunterfahren",
+                "subtitle": "Computer ausschalten"
+            },
+            "logout": {
+                "title": "Abmelden",
+                "subtitle": "Hyprland-Sitzung beenden"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "Aktion bestätigen?"
+            },
+            "suspend": {
+                "title": "Computer in Bereitschaft versetzen?",
+                "description": "Der Computer wechselt in den Bereitschaftsmodus."
+            },
+            "reboot": {
+                "title": "Computer neu starten?",
+                "description": "Alle Anwendungen werden beendet."
+            },
+            "poweroff": {
+                "title": "Computer herunterfahren?",
+                "description": "Der Computer wird ausgeschaltet."
+            },
+            "logout": {
+                "title": "Sitzung beenden?",
+                "description": "Du wirst von Hyprland abgemeldet."
+            },
+            "cancel": "Abbrechen",
+            "ok": "Bestätigen"
+        }
+    },
+    "modules": {
+        "workspaces": "Arbeitsbereiche",
+        "player": "Player",
+        "audio": "Audio",
+        "clock": "Uhr",
+        "tray": "Systemtray",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "Datenträger",
+        "network": "Netzwerk",
+        "temperature": "Temperatur",
+        "usermenu": "Benutzermenü"
+    },
+    "launch": {
+        "notInstalled": "{name} ist nicht installiert.",
+        "labels": {
+            "displays": "Bildschirmverwaltung",
+            "network": "Netzwerkverwaltung",
+            "audio": "Audiosteuerung",
+            "bluetooth": "Bluetooth-Verwaltung",
+            "system": "Systemeinstellungen",
+            "monitor": "Systemmonitor"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "Updates werden heruntergeladen...",
+            "compiling": "Rust-Backend wird kompiliert...",
+            "preparing": "Installation wird vorbereitet...",
+            "stopping": "Wayck wird beendet...",
+            "installing": "Update wird installiert...",
+            "done": "Wayck wurde erfolgreich aktualisiert!",
+            "backup": "Sicherung der vorherigen Installation",
+            "missing_jq": "Fehlende Abhängigkeit: jq",
+            "missing_dependency": "Eine erforderliche Abhängigkeit fehlt.",
+            "invalid_repository": "Ungültiges Git-Repository.",
+            "pull_failed": "Updates konnten nicht heruntergeladen werden.",
+            "compile_failed": "Rust-Backend konnte nicht kompiliert werden.",
+            "copy_failed": "QML-Dateien konnten nicht kopiert werden.",
+            "backup_failed": "Sicherung konnte nicht erstellt werden.",
+            "install_failed": "Installation fehlgeschlagen. Vorherige Version wiederhergestellt.",
+            "symlink_failed": "Symlink für den Hintergrundbild-Befehl konnte nicht erstellt werden."
+        },
+        "menu": {
+            "required": "Benötigte Pakete installieren",
+            "blur": "Blur konfigurieren",
+            "apps": "Meine Anwendungen installieren",
+            "hypr": "Hyprland-Konfiguration installieren",
+            "build": "Wayck kompilieren und installieren"
+        },
+        "title": "WAYCK-INSTALLER",
+        "help": "Mit den Pfeiltasten navigieren, mit LEERTASTE auswählen und mit EINGABE fortfahren. ESC zum Beenden.",
+        "confirm": "EINGABE: weiter | LEERTASTE: auswählen | ESC: beenden",
+        "abort": "Installation abgebrochen.",
+        "pkgs_installing": "Benötigte Pakete werden installiert...",
+        "pkgs_ok": "Benötigte Pakete installiert.",
+        "pkgs_failed": "Die benötigten Pakete konnten nicht installiert werden.",
+        "blur_info": "Blur: wendet einen Hintergrundunschärfe-Effekt auf den Launcher an.",
+        "blur_warn": "Achtung: Blur kann sich auch auf andere transparente Hyprland-Fenster auswirken.",
+        "q_blur": "Blur aktivieren?",
+        "cfg_kept": "Konfiguration aktualisiert: {path}",
+        "invalid_config": "Die vorhandene config.json enthält kein gültiges JSON-Objekt.",
+        "build_msg": "Rust-Backend wird kompiliert...",
+        "installing": "Installation nach {path}",
+        "build_failed": "Das Backend konnte nicht kompiliert werden.",
+        "hypr_q": "Wayck-Preset nach ~/.config/hypr installieren? Es wird eine Sicherung erstellt.",
+        "hypr_backup": "Sicherung gespeichert unter: {path}",
+        "hypr_done": "Hyprland-Konfiguration installiert.",
+        "hypr_missing": "Hyprland nicht gefunden oder Ordner hypr/ fehlt. Konfiguration wird übersprungen.",
+        "aur_installing": "{name} wird installiert...",
+        "aur_installed": "{name} wurde erfolgreich installiert.",
+        "aur_clone_failed": "Das AUR-Repository konnte nicht geklont werden.",
+        "aur_build_failed": "Ein AUR-Paket konnte nicht kompiliert oder installiert werden.",
+        "aur_install_failed": "Der AUR-Helper wurde nicht korrekt installiert.",
+        "personal_installing": "Persönliche Anwendungen werden installiert...",
+        "personal_failed": "Die persönlichen Anwendungen konnten nicht installiert werden.",
+        "zsh_changed": "Zsh wurde als Standard-Shell festgelegt. Die Änderung gilt ab der nächsten Anmeldung.",
+        "zsh_failed": "Zsh konnte nicht als Standard-Shell festgelegt werden.",
+        "steam_note": "Für Steam muss eventuell das multilib-Repository in der pacman.conf aktiviert sein.",
+        "final_title": "INSTALLATION ABGESCHLOSSEN",
+        "final_exec": "Wayck wird nach dem Neustart von deiner exec.lua gestartet.",
+        "reboot": "STARTE DEINEN COMPUTER NEU. DIESER SCHRITT IST ERFORDERLICH.",
+        "good": "Danke, dass du Wayck installiert hast.",
+        "tty_required": "Ein interaktives Terminal ist erforderlich.",
+        "missing_tool": "{name} ist erforderlich.",
+        "fail_copy": "Die Dateien konnten nicht kopiert werden.",
+        "fail_backup": "Die vorhandene Installation konnte nicht gesichert werden.",
+        "fail_install": "Die Dateien konnten nicht installiert werden.",
+        "useful_commands": "Nützliche Befehle:",
+        "yes_words": "j ja y yes",
+        "hint_yes": "[J/n]",
+        "hint_no": "[j/N]"
+    }
+}

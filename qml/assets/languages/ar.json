@@ -1,0 +1,208 @@
+{
+    "launcher": {
+        "search": "بحث..."
+    },
+    "clipboard": {
+        "search": "البحث في الحافظة...",
+        "clear": "مسح"
+    },
+    "player": {
+        "title": "المشغّل",
+        "none": "لا يوجد مشغّل",
+        "waiting": "بانتظار MPRIS",
+        "unknownArtist": "فنان غير معروف"
+    },
+    "tray": {
+        "back": "رجوع"
+    },
+    "common": {
+        "na": "غير متاح"
+    },
+    "clock": {
+        "dateFormat": "dd/MM/yy"
+    },
+    "usermenu": {
+        "tabs": {
+            "control": "التحكم",
+            "power": "الطاقة"
+        },
+        "sections": {
+            "settings": "الإعدادات",
+            "power": "الطاقة والجلسة"
+        },
+        "footer": "مركز التحكم",
+        "settings": {
+            "hyprland": {
+                "title": "Hyprland",
+                "subtitle": "الإعدادات"
+            },
+            "displays": {
+                "title": "الشاشات",
+                "subtitle": "الدقة والشاشات"
+            },
+            "network": {
+                "title": "الشبكة",
+                "subtitle": "الاتصالات"
+            },
+            "audio": {
+                "title": "الصوت",
+                "subtitle": "المخرج والميكروفون"
+            },
+            "bluetooth": {
+                "title": "Bluetooth",
+                "subtitle": "الأجهزة"
+            },
+            "appearance": {
+                "title": "المظهر",
+                "subtitle": "السمة والخطوط"
+            },
+            "system": {
+                "title": "النظام",
+                "subtitle": "الإعدادات العامة"
+            },
+            "monitor": {
+                "title": "مراقب النظام",
+                "subtitle": "العمليات والموارد"
+            }
+        },
+        "power": {
+            "lock": {
+                "title": "قفل",
+                "subtitle": "قفل الجلسة"
+            },
+            "suspend": {
+                "title": "تعليق",
+                "subtitle": "وضع الجهاز في السكون"
+            },
+            "reboot": {
+                "title": "إعادة التشغيل",
+                "subtitle": "إعادة تشغيل الحاسوب"
+            },
+            "poweroff": {
+                "title": "إيقاف التشغيل",
+                "subtitle": "إيقاف تشغيل الحاسوب"
+            },
+            "logout": {
+                "title": "تسجيل الخروج",
+                "subtitle": "إنهاء جلسة Hyprland"
+            }
+        },
+        "confirm": {
+            "default": {
+                "title": "هل تريد تأكيد الإجراء؟"
+            },
+            "suspend": {
+                "title": "هل تريد تعليق الحاسوب؟",
+                "description": "سيدخل الحاسوب في وضع السكون."
+            },
+            "reboot": {
+                "title": "هل تريد إعادة تشغيل الحاسوب؟",
+                "description": "سيتم إغلاق جميع التطبيقات."
+            },
+            "poweroff": {
+                "title": "هل تريد إيقاف تشغيل الحاسوب؟",
+                "description": "سيتم إيقاف تشغيل الحاسوب."
+            },
+            "logout": {
+                "title": "هل تريد إنهاء الجلسة؟",
+                "description": "سيتم تسجيل خروجك من Hyprland."
+            },
+            "cancel": "إلغاء",
+            "ok": "تأكيد"
+        }
+    },
+    "modules": {
+        "workspaces": "مساحات العمل",
+        "player": "المشغّل",
+        "audio": "الصوت",
+        "clock": "الساعة",
+        "tray": "علبة النظام",
+        "cpu": "CPU",
+        "ram": "RAM",
+        "gpu": "GPU",
+        "disk": "القرص",
+        "network": "الشبكة",
+        "temperature": "درجة الحرارة",
+        "usermenu": "قائمة المستخدم"
+    },
+    "launch": {
+        "notInstalled": "{name} غير مثبّت.",
+        "labels": {
+            "displays": "مدير الشاشات",
+            "network": "مدير الشبكة",
+            "audio": "التحكم في الصوت",
+            "bluetooth": "مدير Bluetooth",
+            "system": "إعدادات النظام",
+            "monitor": "مراقب النظام"
+        }
+    },
+    "installer": {
+        "update": {
+            "pulling": "جارٍ تنزيل التحديثات...",
+            "compiling": "جارٍ تجميع الواجهة الخلفية لـ Rust...",
+            "preparing": "جارٍ تجهيز التثبيت...",
+            "stopping": "جارٍ إيقاف Wayck...",
+            "installing": "جارٍ تثبيت التحديث...",
+            "done": "تم تحديث Wayck بنجاح!",
+            "backup": "نسخة احتياطية من التثبيت السابق",
+            "missing_jq": "التبعية مفقودة: jq",
+            "missing_dependency": "هناك تبعية مطلوبة مفقودة.",
+            "invalid_repository": "مستودع Git غير صالح.",
+            "pull_failed": "فشل تنزيل التحديثات.",
+            "compile_failed": "فشل تجميع الواجهة الخلفية.",
+            "copy_failed": "فشل نسخ ملفات QML.",
+            "backup_failed": "فشل إنشاء النسخة الاحتياطية.",
+            "install_failed": "فشل التثبيت. تمت استعادة الإصدار السابق.",
+            "symlink_failed": "تعذر إنشاء رابط رمزي لأمر الخلفية."
+        },
+        "menu": {
+            "required": "تثبيت الحزم المطلوبة",
+            "blur": "ضبط التمويه",
+            "apps": "تثبيت تطبيقاتي",
+            "hypr": "تثبيت إعدادات Hyprland",
+            "build": "بناء Wayck وتثبيته"
+        },
+        "title": "مثبّت WAYCK",
+        "help": "استخدم مفاتيح الأسهم للتنقل، والمسافة للتحديد، وEnter للمتابعة. اضغط ESC للخروج.",
+        "confirm": "ENTER: متابعة | المسافة: تحديد | ESC: خروج",
+        "abort": "تم إلغاء التثبيت.",
+        "pkgs_installing": "جارٍ تثبيت الحزم المطلوبة...",
+        "pkgs_ok": "تم تثبيت الحزم المطلوبة.",
+        "pkgs_failed": "فشل تثبيت الحزم المطلوبة.",
+        "blur_info": "التمويه: يطبّق تمويهًا على خلفية المشغّل.",
+        "blur_warn": "تنبيه: قد يؤثر التمويه أيضًا على نوافذ Hyprland الشفافة الأخرى.",
+        "q_blur": "هل تريد تفعيل التمويه؟",
+        "cfg_kept": "تم تحديث الإعدادات: {path}",
+        "invalid_config": "الملف config.json الموجود لا يحتوي على كائن JSON صالح.",
+        "build_msg": "جارٍ بناء الواجهة الخلفية بلغة Rust...",
+        "installing": "جارٍ التثبيت في {path}",
+        "build_failed": "فشل بناء الواجهة الخلفية.",
+        "hypr_q": "هل تريد تثبيت إعدادات Wayck المسبقة في ~/.config/hypr؟ ستُنشأ نسخة احتياطية.",
+        "hypr_backup": "تم حفظ النسخة الاحتياطية في: {path}",
+        "hypr_done": "تم تثبيت إعدادات Hyprland.",
+        "hypr_missing": "لم يتم العثور على Hyprland أو أن المجلد hypr/ مفقود. سيتم تخطي الإعدادات.",
+        "aur_installing": "جارٍ تثبيت {name}...",
+        "aur_installed": "تم تثبيت {name} بنجاح.",
+        "aur_clone_failed": "فشل استنساخ مستودع AUR.",
+        "aur_build_failed": "فشل بناء حزمة AUR أو تثبيتها.",
+        "aur_install_failed": "لم يتم تثبيت مساعد AUR بشكل صحيح.",
+        "personal_installing": "جارٍ تثبيت التطبيقات الشخصية...",
+        "personal_failed": "فشل تثبيت التطبيقات الشخصية.",
+        "zsh_changed": "تم تعيين Zsh كصدفة افتراضية. سيسري التغيير عند تسجيل الدخول التالي.",
+        "zsh_failed": "تعذّر تغيير الصدفة الافتراضية إلى Zsh.",
+        "steam_note": "قد يتطلب Steam تفعيل مستودع multilib في الملف pacman.conf.",
+        "final_title": "اكتمل التثبيت",
+        "final_exec": "سيتم تشغيل Wayck من ملف exec.lua الخاص بك بعد إعادة التشغيل.",
+        "reboot": "أعد تشغيل حاسوبك. هذه الخطوة إلزامية.",
+        "good": "شكرًا لتثبيتك Wayck.",
+        "tty_required": "يلزم وجود طرفية تفاعلية.",
+        "missing_tool": "{name} مطلوب.",
+        "fail_copy": "فشل نسخ الملفات.",
+        "fail_backup": "فشل إنشاء نسخة احتياطية من التثبيت الحالي.",
+        "fail_install": "فشل تثبيت الملفات.",
+        "useful_commands": "أوامر مفيدة:",
+        "yes_words": "y yes ن نعم",
+        "hint_yes": "[Y/n]",
+        "hint_no": "[y/N]"
+    }
+}

@@ -31,6 +31,10 @@ A modular desktop bar combining system information, workspace management and des
 - **System Monitoring:** CPU, RAM, GPU, disk, network and temperature information.
 - **User Menu:** user-related actions and information.
 
+### Languages
+
+The whole interface (bar, user menu, launcher, clipboard, notifications) and the installer are translated into **23 languages**, and the language can be changed **without restarting** Wayck. See [Languages](#languages).
+
 ### Clipboard
 
 A dedicated interface for clipboard interaction and history management.
@@ -53,7 +57,7 @@ An integrated application launcher designed to provide quick access to installed
 
 ## Architecture
 
-Wayck follows a feature-oriented architecture, keeping interface components organized by responsibility and shared services centralized.
+Wayck keeps each interface in its own directory (`bar`, `launcher`, `clipboard`) and shared state in `singletons/`. Every type and singleton is registered once in `qml/qmldir`, so files just `import` the QML root and use things by name.
 
 ```text
 wayck/
@@ -63,22 +67,36 @@ wayck/
 │   └── launcher.png
 ├── hypr/
 ├── qml/
-│   ├── shell.qml
-│   ├── core/
-│   │   ├── Config.qml
-│   │   └── Theme.qml
-│   ├── features/
-│   │   ├── bar/
-│   │   │   ├── Bar.qml
-│   │   │   ├── BarConfig.qml
-│   │   │   ├── BarRegistry.qml
-│   │   │   ├── components/
-│   │   │   └── modules/
-│   │   ├── clipboard/
-│   │   │   └── Clipboard.qml
-│   │   └── launcher/
-│   │       └── Launcher.qml
-│   └── services/
+│   ├── shell.qml                  # entry point
+│   ├── qmldir                     # registers every type and singleton
+│   ├── bar/
+│   │   ├── Bar.qml
+│   │   ├── BarConfig.qml
+│   │   ├── BarModule.qml          # loads one module's face
+│   │   ├── BarModuleRegistry.qml  # module catalog
+│   │   ├── BarSection.qml
+│   │   └── faces/                 # one folder per bar module
+│   │       ├── audio/AudioFace.qml
+│   │       ├── clock/ClockFace.qml
+│   │       ├── cpu/CpuFace.qml
+│   │       └── ...
+│   ├── clipboard/
+│   │   └── Clipboard.qml
+│   ├── assets/
+│   │   └── languages/             # one JSON per language (en.json is the base)
+│   ├── launcher/
+│   │   └── Launcher.qml
+│   ├── notifications/
+│   ├── reusables/
+│   │   └── BarCard.qml
+│   └── singletons/
+│       ├── audio/                 # MprisController
+│       ├── info/                  # SysData
+│       ├── system/                # Config, I18n, SysNotif
+│       ├── theme/                 # Theme
+│       └── widgetcontrols/        # *Controller (IPC)
+├── scripts/
+│   └── i18n-check.sh              # validates the translation files
 ├── src/
 ├── Cargo.toml
 ├── Cargo.lock
@@ -90,10 +108,10 @@ wayck/
 ### Design Principles
 
 - **Feature isolation:** each interface has its own dedicated directory.
-- **Centralized services:** shared functionality stays in one location.
-- **Modularity:** individual bar modules can be maintained independently.
+- **Centralized state:** shared functionality lives in `singletons/`, with one controller per widget.
+- **Modularity:** each bar module is a self-contained face in `bar/faces/`.
 - **Separation of concerns:** QML handles presentation and interaction, while Rust handles backend operations.
-- **Single source of truth:** colors live in `Theme`, settings in `Config`, and the list of bar modules in `BarRegistry`.
+- **Single source of truth:** colors live in `Theme`, settings in `Config`, texts in `qml/assets/languages/*.json` (via `I18n`), and the list of bar modules in `BarModuleRegistry`.
 - **Maintainability:** a consistent structure avoids unnecessary directory fragmentation.
 
 ---
@@ -149,7 +167,7 @@ cp -r qml/* ~/.config/quickshell/wayck/
 
 **5. Install the backend binaries**
 
-Install the generated binaries in the location expected by the project's QML services and scripts. Check `install.sh` for the exact deployment paths.
+Install the generated binaries in the location expected by the project's QML singletons and scripts. Check `install.sh` for the exact deployment paths.
 
 **6. Start Wayck**
 
@@ -201,6 +219,7 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 ```json
 {
   "blur": false,
+  "language": "auto",
   "bar": {
     "position": "top",
     "height": 45,
@@ -217,13 +236,14 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 | Key | Description |
 |:---|:---|
 | `blur` | Enables blur on the launcher (Hyprland). |
+| `language` | `"auto"` (follows the system locale) or a language code such as `"pt"`, `"ja"`, `"zh_tw"`. Changes the interface instantly. |
 | `bar.position` | `"top"` or `"bottom"`. |
 | `bar.height` / `bar.margin` | Bar height and side margin, in pixels. |
-| `bar.layout` | Modules of each section, in order. Available ids are listed in `BarRegistry.qml`. |
+| `bar.layout` | Modules of each section, in order. Available ids are listed in `bar/BarModuleRegistry.qml`. |
 
-**Responsive bar:** when there is spare room the modules spread out; when space runs short they become compact, and if that is still not enough the lowest-priority modules are hidden until there is room again. Priorities are defined in `BarRegistry.qml`.
+**Responsive bar:** when there is spare room the modules spread out; when space runs short they become compact, and if that is still not enough the lowest-priority modules are hidden until there is room again. Priorities are defined in `bar/BarModuleRegistry.qml`.
 
-**Colors** come from the matugen palette (`~/.local/state/quickshell/user/generated/colors.json`) through `qml/core/Theme.qml`, and update live when the wallpaper changes.
+**Colors** come from the matugen palette (`~/.local/state/quickshell/user/generated/colors.json`) through `qml/singletons/theme/Theme.qml`, and update live when the wallpaper changes.
 
 ## Project Structure
 
@@ -231,11 +251,15 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 |:---|:---|
 | `src/` | Rust backend |
 | `qml/` | QML application |
-| `qml/core/` | Shared singletons: `Config` (settings) and `Theme` (colors) |
-| `qml/features/bar/` | Desktop bar and its modules |
-| `qml/features/clipboard/` | Clipboard interface |
-| `qml/features/launcher/` | Application launcher |
-| `qml/services/` | Shared QML services |
+| `qml/bar/` | Desktop bar (`Bar`, `BarModule`, `BarSection`, module registry) |
+| `qml/bar/faces/` | One folder per bar module |
+| `qml/assets/languages/` | Translation files (`<code>.json`) |
+| `qml/clipboard/` | Clipboard interface |
+| `qml/launcher/` | Application launcher |
+| `qml/notifications/` | Notification components |
+| `qml/reusables/` | Shared components (`BarCard`) |
+| `qml/singletons/` | Shared singletons: `Config`, `Theme`, controllers and data |
+| `scripts/` | Maintenance scripts (`i18n-check.sh`) |
 | `hypr/` | Hyprland configuration |
 | `docs/` | Documentation and screenshots |
 
@@ -246,15 +270,67 @@ Wayck is organized to allow independent development of its interface features an
 | Component | Location |
 |:---|:---|
 | Main entry point | `qml/shell.qml` |
-| Settings and colors | `qml/core/` |
-| Desktop Bar | `qml/features/bar/` |
-| Bar module catalog | `qml/features/bar/BarRegistry.qml` |
-| Bar modules | `qml/features/bar/modules/` |
-| Bar components | `qml/features/bar/components/` |
-| Clipboard | `qml/features/clipboard/` |
-| Launcher | `qml/features/launcher/` |
-| Shared services | `qml/services/` |
+| Type and singleton registry | `qml/qmldir` |
+| Settings | `qml/singletons/system/Config.qml` |
+| Colors | `qml/singletons/theme/Theme.qml` |
+| Translations | `qml/singletons/system/I18n.qml` and `qml/assets/languages/` |
+| Desktop Bar | `qml/bar/` |
+| Bar module catalog | `qml/bar/BarModuleRegistry.qml` |
+| Bar modules | `qml/bar/faces/` |
+| Clipboard | `qml/clipboard/` |
+| Launcher | `qml/launcher/` |
+| Widget controllers (IPC) | `qml/singletons/widgetcontrols/` |
 | Rust backend | `src/` |
+
+### Adding a Bar Module
+
+1. Create `qml/bar/faces/<id>/<Name>Face.qml`.
+2. Add one entry to `types` in `qml/bar/BarModuleRegistry.qml` (name, face path, priority).
+3. Put the id in `bar.layout` in `~/.config/wayck/config.json`.
+
+### Languages
+
+Wayck ships with 23 languages: `ar az bg de en es fa fr hi hy id it ja ko nl pl pt ru tr ua vi zh zh_tw`. Each one is a JSON file in `qml/assets/languages/`, with the same structure as `en.json` (the base language). A missing key falls back to English, and if it is missing there too the key itself is shown.
+
+**Choosing the language** (all of these update the interface immediately, no restart):
+
+```bash
+# 1. IPC
+quickshell -c wayck ipc call language set pt      # change and save
+quickshell -c wayck ipc call language set auto    # follow the system language again
+quickshell -c wayck ipc call language get
+quickshell -c wayck ipc call language list
+
+# 2. Edit "language" in ~/.config/wayck/config.json (Wayck reloads it by itself)
+
+# 3. From QML (e.g. a future settings screen)
+#    I18n.setLanguage("ja"); I18n.languages -> [{ code, name }, ...]
+```
+
+**Using texts in QML** — components only know the key, never the text:
+
+```qml
+import "../"   // the QML root, where I18n is registered
+
+Text { text: I18n.t("launcher.search") }
+Text { text: I18n.t("launch.notInstalled", { name: "Firefox" }) }   // "{name}" in the JSON
+Text { text: I18n.t("some.key", "fallback text") }
+```
+
+`I18n` also exposes `activeLang`, `rtl`, `layoutDirection` and `horizontalAlignment` (Arabic and Persian mirror the layout of the launcher, clipboard, tray menu and user menu).
+
+**Adding a new text:** put the key in `en.json` (and in the other languages when you have the translation), then run `./scripts/i18n-check.sh` to see what is missing.
+
+**Adding a language:** copy `en.json` to `qml/assets/languages/<code>.json`, translate it, and add one line to `languages` in `qml/singletons/system/I18n.qml`.
+
+**Installer:** it reads the `installer.*` keys from the same JSON files. It follows your system language, or use `--lang`:
+
+```bash
+bash install.sh --lang ja
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/DuckCosmos/wayck/main/install.sh)" _ --lang ja
+```
+
+When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language` in `config.json`.
 
 ### Development Commands
 
@@ -267,6 +343,9 @@ cargo build --release --bins
 
 # Run the build script
 ./build.sh
+
+# Check the translation files against en.json
+./scripts/i18n-check.sh
 ```
 
 ## Contributing
@@ -276,10 +355,11 @@ Contributions, bug reports and suggestions are welcome.
 When contributing, please follow the existing architecture:
 
 - Keep feature-specific components inside their respective directories.
-- Place shared functionality in `qml/services/`.
-- Avoid duplicated services and unnecessary abstractions.
+- Place shared functionality in `qml/singletons/` and register it in `qml/qmldir`.
+- Avoid duplicated controllers and unnecessary abstractions.
 - Keep backend responsibilities separate from interface presentation.
 - Maintain consistent naming and organization.
+- Never hardcode user-facing text in QML: use `I18n.t("key")` and add the key to `en.json`.
 - Test changes before submitting contributions.
 
 ## License

@@ -1,16 +1,21 @@
 mod clipboard;
 mod launcher;
 mod monitor;
+mod update;
 mod utils;
 
 use std::io::{self, BufRead};
 
-fn main() {
+use crate::update::check;
+
+#[tokio::main(flavor = "current_thread")]
+async fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() > 1 {
         match args[1].as_str() {
             "--monitor" => monitor::run(),
+
             "--filter" => {
                 let busca = if args.len() > 2 { &args[2] } else { "" };
                 let res = launcher::filtrar(busca);
@@ -43,6 +48,17 @@ fn main() {
                     clipboard::deletar(&args[2]);
                 }
             }
+
+            "--clipboard-clear" => {
+                if let Err(error) = clipboard::limpar() {
+                    eprintln!("[Clipboard] Erro ao limpar: {error}");
+                }
+            }
+
+            "--check_version" => match check().await {
+                Ok(has_update) => println!("{}", has_update),
+                Err(error) => eprintln!("Erro ao verificar atualização: {}", error),
+            },
 
             _ => {}
         }

@@ -4,18 +4,16 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "core"
-import "services"
-import "features/bar" as BarUI
-import "features/clipboard" as ClipboardUI
-import "features/launcher" as LauncherUI
+import "."
 
 ShellRoot {
     id: root
 
-    readonly property var screenshotService: ScreenshotService
-    readonly property var notificationService: NotificationService
+    readonly property var screenshotController: ScreenshotController
+    readonly property var languageController: LanguageController
+    readonly property var sysNotif: SysNotif
 
+    readonly property var i18n: I18n
 
     property bool isHyprland: !!Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE")
 
@@ -26,7 +24,11 @@ ShellRoot {
 
     Process {
         running: root.isHyprland && Config.blur
-        command: ["hyprctl", "eval", "hl.config({ decoration = { blur = { enabled = true } } })"]
+        command: [
+            "hyprctl",
+            "eval",
+            "hl.config({ decoration = { blur = { enabled = true, size = 2, passes = 2 } } })"
+        ]
     }
 
     Process {
@@ -34,59 +36,61 @@ ShellRoot {
         command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-launcher-blur', match={namespace='^wayck-launcher$'}, blur=true, ignore_alpha=0 })"]
     }
 
-    // ---------- Coordenação: só um painel por vez ----------
     Connections {
         function onOpenChanged() {
-            if (LauncherService.open && ClipboardService.open) {
+            if (LauncherController.open && ClipboardController.open) {
                 if (clipboardLoader.item)
                     clipboardLoader.item.close();
                 else
-                    ClipboardService.hide();
+                    ClipboardController.hide();
             }
         }
 
-        target: LauncherService
+        target: LauncherController
     }
 
     Connections {
         function onOpenChanged() {
-            if (ClipboardService.open && LauncherService.open) {
+            if (ClipboardController.open && LauncherController.open) {
                 if (launcherLoader.item)
                     launcherLoader.item.close();
                 else
-                    LauncherService.hide();
+                    LauncherController.hide();
             }
         }
 
-        target: ClipboardService
+        target: ClipboardController
     }
 
-    // ---------- Loaders ----------
+    NotificationPopup {}
+
+    WallpaperSelector {}
+
     LazyLoader {
         id: launcherLoader
-        active: LauncherService.open
+        active: LauncherController.open
 
-        LauncherUI.Launcher {
+        Launcher {
             blurEnabled: Config.blur
-            onDismissed: LauncherService.hide()
+            onDismissed: LauncherController.hide()
         }
     }
 
     LazyLoader {
         id: clipboardLoader
-        active: ClipboardService.open
+        active: ClipboardController.open
 
-        ClipboardUI.Clipboard {
-            onDismissed: ClipboardService.hide()
+        Clipboard {
+            onDismissed: ClipboardController.hide()
         }
     }
 
     LazyLoader {
         id: barLoader
-        active: BarService.open
+        active: BarController.open
 
-        BarUI.Bar {
-            onDismissed: BarService.hide()
+        Bar {
+            onDismissed: BarController.hide()
         }
     }
 }
