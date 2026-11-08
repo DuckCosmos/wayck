@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import "../"
 
 Row {
@@ -9,9 +10,10 @@ Row {
     property real compactness: 0
     property string sectionName: ""
     property int firstOrder: 0
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
     signal metricsChanged()
-    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData)
+    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData, var windowRef)
 
     spacing: 6
 
@@ -46,8 +48,11 @@ Row {
             y: (root.height - height) / 2
 
             onImplicitWidthChanged: root.metricsChanged()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) =>
-                root.surfaceRequested(sourceItem, surfaceId, surfaceData)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] BarSection encaminhando", surfaceId)
+                root.surfaceRequested(sourceItem, surfaceId, surfaceData, windowRef)
+            }
             Component.onCompleted: root.metricsChanged()
         }
     }

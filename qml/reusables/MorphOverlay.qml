@@ -10,6 +10,11 @@ PanelWindow {
     property var monitor: null
 
     readonly property bool traySurface: MorphController.surfaceId === "tray"
+    readonly property bool ownsSurface: MorphController.active
+        && monitor !== null
+        && MorphController.targetScreen !== null
+        && monitor.name === MorphController.targetScreen.name
+    readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
     readonly property real sourceX:
         MorphController.sourceGlobalX - (monitor ? monitor.x : 0)
@@ -45,13 +50,20 @@ PanelWindow {
 
     color: "transparent"
     screen: monitor
-    visible: MorphController.active && MorphController.targetScreen === monitor
+    visible: ownsSurface
+    exclusionMode: ExclusionMode.Ignore
 
     onVisibleChanged: {
-        if (MorphController.debug)
-            console.log("[WAYCK MORPH] overlay visible:", visible,
+        if (debug)
+            console.log("[WAYCK MORPH OVERLAY] visible=", visible,
                 "monitor=", monitor ? monitor.name : "null",
-                "target=", MorphController.surfaceId)
+                "surface=", MorphController.surfaceId)
+    }
+
+    Component.onCompleted: {
+        if (debug)
+            console.log("[WAYCK MORPH OVERLAY] instanciado em",
+                monitor ? monitor.name : "monitor nulo")
     }
 
     anchors {
@@ -63,7 +75,6 @@ PanelWindow {
 
     WlrLayershell.namespace: "wayck-morph-overlay"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
     mask: Region {

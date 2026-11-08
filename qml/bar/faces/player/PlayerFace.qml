@@ -10,19 +10,18 @@ BarCard {
     property var player: MprisController.activePlayer
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
+    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+
     implicitHeight: 36
     horizontalPadding: 8
 
-    function openExpanded(): void {
+    function requestExpand(reason): void {
         expandDelay.stop()
-
         if (debug)
-            console.log("[WAYCK INPUT] player open request:",
-                "album=", albumArea.width + "x" + albumArea.height,
-                "visible=", albumArea.visible,
+            console.log("[WAYCK INPUT] player emit expandRequested:",
+                reason, "anchor=", albumArea.width + "x" + albumArea.height,
                 "window=", !!QsWindow.window)
-
-        MorphController.open(albumArea, "player", null, QsWindow.window)
+        expandRequested(albumArea, null, QsWindow.window)
     }
 
     Item {
@@ -71,32 +70,30 @@ BarCard {
             }
         }
 
-        HoverHandler {
-            id: albumHover
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-
-            onHoveredChanged: {
-                MorphController.setSourceHovered(albumArea, hovered)
-
-                if (root.debug)
-                    console.log("[WAYCK INPUT] player hover:", hovered,
-                        "area=", albumArea.width + "x" + albumArea.height)
-
-                if (hovered)
-                    expandDelay.restart()
-                else
-                    expandDelay.stop()
-            }
-        }
-
-        TapHandler {
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
             acceptedButtons: Qt.LeftButton
+            cursorShape: Qt.PointingHandCursor
 
-            onTapped: {
+            onEntered: {
                 if (root.debug)
-                    console.log("[WAYCK INPUT] player tapped")
+                    console.log("[WAYCK INPUT] player MouseArea entered")
+                MorphController.setSourceHovered(albumArea, true)
+                expandDelay.restart()
+            }
 
-                root.openExpanded()
+            onExited: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] player MouseArea exited")
+                MorphController.setSourceHovered(albumArea, false)
+                expandDelay.stop()
+            }
+
+            onClicked: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] player MouseArea clicked")
+                root.requestExpand("click")
             }
         }
 
@@ -106,12 +103,7 @@ BarCard {
             interval: 220
             repeat: false
 
-            onTriggered: {
-                if (root.debug)
-                    console.log("[WAYCK INPUT] player hover dwell elapsed")
-
-                root.openExpanded()
-            }
+            onTriggered: root.requestExpand("hover dwell")
         }
     }
 

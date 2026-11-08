@@ -37,19 +37,14 @@ Singleton {
 
     Timer {
         id: hoverCloseTimer
-
         interval: 420
         repeat: false
 
         onTriggered: {
-            if (root.active
-                    && !root.closing
-                    && root.closeOnHoverExit
-                    && !root.surfaceHovered
-                    && !root.sourceHovered
-                    && root.animationProgress >= 0.98) {
+            if (root.active && !root.closing && root.closeOnHoverExit
+                    && !root.surfaceHovered && !root.sourceHovered
+                    && root.animationProgress >= 0.98)
                 root.close()
-            }
         }
     }
 
@@ -86,10 +81,10 @@ Singleton {
     }
 
     function open(item, requestedSurfaceId, data, windowRef): void {
-        log("open() chamado: " + requestedSurfaceId + " item=" + !!item)
+        log("open() chamado: " + requestedSurfaceId + " | item=" + !!item)
 
         if (active || opening) {
-            log("pedido ignorado: já existe uma superfície ativa")
+            log("pedido ignorado: superfície já ativa")
             return
         }
 
@@ -99,28 +94,22 @@ Singleton {
         }
 
         const sourceWindow = windowRef || item.window
-
-        log("open() recebido: " + requestedSurfaceId
-            + " window=" + !!sourceWindow
-            + " visible=" + item.visible
-            + " rect=" + item.width + "x" + item.height)
-
-        if (!sourceWindow || !item.visible || item.width <= 0 || item.height <= 0) {
+        if (!sourceWindow || !sourceWindow.screen || !item.visible
+                || item.width <= 0 || item.height <= 0) {
             console.warn("[WAYCK MORPH] origem indisponível:", requestedSurfaceId,
                 "window:", !!sourceWindow,
+                "screen:", sourceWindow ? !!sourceWindow.screen : false,
                 "visible:", item.visible,
                 "size:", item.width, "x", item.height)
             return
         }
 
         if (requestedSurfaceId !== "player" && requestedSurfaceId !== "tray") {
-            console.warn("[WAYCK MORPH] superfície expandida não registrada:", requestedSurfaceId)
+            console.warn("[WAYCK MORPH] superfície sem componente:", requestedSurfaceId)
             return
         }
 
-        const screen = sourceWindow.screen
-        let localRect = null
-
+        let localRect
         try {
             localRect = sourceWindow.itemRect(item)
         } catch (error) {
@@ -128,11 +117,10 @@ Singleton {
             return
         }
 
+        const screen = sourceWindow.screen
         if (!screen || !localRect || localRect.width <= 0 || localRect.height <= 0) {
-            console.warn("[WAYCK MORPH] geometria inválida:", requestedSurfaceId,
-                "screen:", !!screen,
-                "rect:", localRect ? localRect.x + "," + localRect.y + " "
-                    + localRect.width + "x" + localRect.height : "null")
+            console.warn("[WAYCK MORPH] geometria de origem inválida:",
+                requestedSurfaceId, "screen:", !!screen, "rect:", localRect)
             return
         }
 
@@ -150,42 +138,52 @@ Singleton {
         surfaceData = data === undefined ? null : data
         closing = false
         closeOnHoverExit = true
-        surfaceHovered = false
         sourceHovered = true
+        surfaceHovered = false
         animationProgress = 0
         progress = 0
         grabResult = null
         opening = true
+        active = true
         hoverCloseTimer.stop()
 
-        log("pedido recebido: " + requestedSurfaceId
-            + " monitor=" + screen.name
-            + " rect=" + Math.round(sourceGlobalX) + ","
+        log("morph iniciado: " + requestedSurfaceId
+            + " | screen=" + screen.name
+            + " | rect=" + Math.round(sourceGlobalX) + ","
             + Math.round(sourceGlobalY) + " "
             + Math.round(sourceWidth) + "x" + Math.round(sourceHeight))
 
-        let accepted = false
+        // Do not gate visibility or animation on the asynchronous snapshot.
+        Qt.callLater(function() {
+            if (token !== root.requestSerial || !root.active || root.closing)
+                return
 
+            root.opening = false
+            root.progress = 1
+            root.log("animação iniciada: " + requestedSurfaceId)
+        })
+
+        // A snapshot improves the first frames but is optional. Failure or latency
+        // cannot prevent the expanded surface from opening.
         try {
-            accepted = item.grabToImage(function(result) {
-                if (token !== root.requestSerial || !root.sourceItem)
+            const accepted = item.grabToImage(function(result) {
+                if (token !== root.requestSerial || !root.active || root.closing)
                     return
 
                 if (!result || !result.url) {
-                    console.warn("[WAYCK MORPH] captura falhou; abrindo sem snapshot")
-                    root.activate(token, null)
+                    root.log("snapshot indisponível; morph continua sem captura")
                     return
                 }
 
-                root.activate(token, result)
+                root.grabResult = result
+                if (root.sourceItem)
+                    root.sourceItem.opacity = 0
+                root.log("snapshot recebido: " + requestedSurfaceId)
             })
-        } catch (error) {
-            console.warn("[WAYCK MORPH] erro ao capturar origem:", error)
-        }
 
-        if (!accepted) {
-            console.warn("[WAYCK MORPH] grabToImage recusou a captura; abrindo sem snapshot")
-            activate(token, null)
+            log("grabToImage enviado; accepted=" + accepted)
+        } catch (error) {
+            log("grabToImage falhou; morph segue sem snapshot: " + error)
         }
     }
 

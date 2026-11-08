@@ -57,32 +57,36 @@ BarCard {
             visible: root.iconFailed || root.trayItem.icon === ""
         }
 
-        HoverHandler {
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-
-            onHoveredChanged: {
-                MorphController.setSourceHovered(iconArea, hovered)
-
-                if (root.debug)
-                    console.log("[WAYCK INPUT] tray hover:",
-                        root.trayItem.title || root.trayItem.id,
-                        hovered,
-                        "area=", iconArea.width + "x" + iconArea.height,
-                        "hasMenu=", root.trayItem.hasMenu)
-
-                if (hovered && root.trayItem.hasMenu)
-                    root.menuRequested(root.trayItem, iconArea, false)
-                else if (!hovered)
-                    root.pointerLeft()
-            }
-        }
-
-        TapHandler {
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
             acceptedButtons: Qt.LeftButton
+            cursorShape: root.trayItem.hasMenu
+                ? Qt.PointingHandCursor
+                : Qt.ArrowCursor
 
-            onTapped: {
+            onEntered: {
                 if (root.debug)
-                    console.log("[WAYCK INPUT] tray tapped:",
+                    console.log("[WAYCK INPUT] tray MouseArea entered:",
+                        root.trayItem.title || root.trayItem.id,
+                        "hasMenu=", root.trayItem.hasMenu)
+                MorphController.setSourceHovered(iconArea, true)
+
+                if (root.trayItem.hasMenu)
+                    root.menuRequested(root.trayItem, iconArea, false)
+            }
+
+            onExited: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray MouseArea exited:",
+                        root.trayItem.title || root.trayItem.id)
+                MorphController.setSourceHovered(iconArea, false)
+                root.pointerLeft()
+            }
+
+            onClicked: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] tray MouseArea clicked:",
                         root.trayItem.title || root.trayItem.id,
                         "hasMenu=", root.trayItem.hasMenu)
 

@@ -64,6 +64,11 @@ Item {
         onLoaded: {
             if (item && "compactness" in item)
                 item.compactness = Qt.binding(() => root.compactness)
+
+            if (root.debug)
+                console.log("[WAYCK INPUT] face loaded:", root.moduleId,
+                    "expandRequested=", !!item && ("expandRequested" in item),
+                    "size=", item ? item.implicitWidth + "x" + item.implicitHeight : "null")
         }
 
         onStatusChanged: {

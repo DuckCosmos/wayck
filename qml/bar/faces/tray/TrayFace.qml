@@ -7,6 +7,8 @@ BarCard {
 
     property var items: TrayController.items
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+
     property var activeTrayItem: null
     property var activeAnchor: null
 
@@ -25,8 +27,11 @@ BarCard {
                 "immediate=", immediate,
                 "anchor=", !!anchor)
 
-        if (!item || !item.hasMenu)
+        if (!item || !item.hasMenu || !item.menu) {
+            if (debug)
+                console.log("[WAYCK INPUT] tray icon has no native menu")
             return
+        }
 
         if (MorphController.active || MorphController.opening) {
             if (MorphController.surfaceId === "tray"
@@ -42,10 +47,24 @@ BarCard {
 
         if (immediate) {
             hoverOpenTimer.stop()
-            MorphController.open(activeAnchor, "tray", item.menu, QsWindow.window)
+            requestExpand("click")
         } else {
             hoverOpenTimer.restart()
         }
+    }
+
+    function requestExpand(reason): void {
+        if (!activeAnchor || !activeTrayItem || !activeTrayItem.menu) {
+            if (debug)
+                console.log("[WAYCK INPUT] tray request missing anchor/menu")
+            return
+        }
+
+        if (debug)
+            console.log("[WAYCK INPUT] tray emit expandRequested:",
+                reason, activeTrayItem.title || activeTrayItem.id)
+
+        expandRequested(activeAnchor, activeTrayItem.menu, QsWindow.window)
     }
 
     function cancelPendingOpen() {
@@ -69,12 +88,7 @@ BarCard {
                     && root.activeAnchor
                     && !MorphController.active
                     && !MorphController.opening) {
-                MorphController.open(
-                    root.activeAnchor,
-                    "tray",
-                    root.activeTrayItem.menu,
-                    QsWindow.window
-                )
+                root.requestExpand("hover dwell")
             }
         }
     }
