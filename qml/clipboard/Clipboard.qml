@@ -161,6 +161,7 @@ PanelWindow {
         height: 0
         y: content.height
         opacity: 0
+        clip: true
 
         Shape {
             anchors.fill: parent
