@@ -206,4 +206,16 @@ PanelWindow {
             onCloseRequested: MorphController.close()
         }
     }
+
+    Component {
+        id: updaterContent
+
+        UpdateExpandedSurface {
+            onUpdateRequested: {
+                UpdateController.installUpdate()
+                MorphController.close()
+            }
+            onCloseRequested: MorphController.close()
+        }
+    }
 }
