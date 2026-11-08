@@ -6,7 +6,32 @@ import "../"
 PanelWindow {
     id: root
 
-    required property var modelData
+    // Variants injects modelData after creating its delegate.
+    property var modelData: null
+
+    readonly property bool traySurface: MorphController.surfaceId === "tray"
+    readonly property real sourceX: MorphController.sourceGlobalX - (modelData ? modelData.x : 0)
+    readonly property real sourceY: MorphController.sourceGlobalY - (modelData ? modelData.y : 0)
+
+    readonly property real targetWidth: traySurface
+        ? Math.min(Math.max(240, surfaceContent.implicitWidth || 256), Math.max(1, width - 24))
+        : Math.min(460, Math.max(1, width - 48))
+
+    readonly property real targetHeight: traySurface
+        ? Math.min(Math.max(72, surfaceContent.implicitHeight || 72), Math.max(1, height - 24))
+        : Math.min(260, Math.max(1, height - 48))
+
+    readonly property real targetX: Math.max(12, Math.min(
+        sourceX + MorphController.sourceWidth / 2 - targetWidth / 2,
+        width - targetWidth - 12
+    ))
+
+    readonly property real targetY: Math.max(12, Math.min(
+        BarConfig.position === "bottom"
+            ? sourceY + MorphController.sourceHeight - targetHeight
+            : sourceY,
+        height - targetHeight - 12
+    ))
 
     color: "transparent"
     screen: modelData
@@ -39,14 +64,14 @@ PanelWindow {
         collapsedY: MorphController.sourceGlobalY - (root.modelData ? root.modelData.y : 0)
         collapsedWidth: MorphController.sourceWidth
         collapsedHeight: MorphController.sourceHeight
-        collapsedRadius: 9
+        collapsedRadius: root.traySurface ? 7 : 9
         collapsedScale: 1
 
-        expandedWidth: Math.min(460, Math.max(240, root.width - 48))
-        expandedHeight: Math.min(260, Math.max(210, root.height - 48))
-        expandedX: (root.width - expandedWidth) / 2
-        expandedY: (root.height - expandedHeight) / 2
-        expandedRadius: 20
+        expandedWidth: root.targetWidth
+        expandedHeight: root.targetHeight
+        expandedX: root.targetX
+        expandedY: root.targetY
+        expandedRadius: root.traySurface ? 14 : 20
         expandedScale: 1
 
         color: Theme.surfaceContainer
@@ -54,14 +79,40 @@ PanelWindow {
         border.color: Theme.outline
         antialiasing: true
 
-        PlayerExpandedSurface {
+        Loader {
+            id: surfaceContent
             anchors.fill: parent
-            onCloseRequested: MorphController.close()
+            sourceComponent: !MorphController.active
+                ? null
+                : (root.traySurface ? trayContent : playerContent)
+        }
+
+        HoverHandler {
+            onHoveredChanged: MorphController.setSurfaceHovered(hovered)
         }
 
         onProgressChanged: {
+            MorphController.syncAnimationProgress(progress)
+
             if (MorphController.closing && progress <= 0.001)
                 Qt.callLater(MorphController.finish)
+        }
+    }
+
+    Component {
+        id: playerContent
+
+        PlayerExpandedSurface {
+            onCloseRequested: MorphController.close()
+        }
+    }
+
+    Component {
+        id: trayContent
+
+        TrayExpandedSurface {
+            menu: MorphController.surfaceData
+            onCloseRequested: MorphController.close()
         }
     }
 }

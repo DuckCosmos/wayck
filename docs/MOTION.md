@@ -136,15 +136,19 @@ Notification cards use one progress for opacity, scale and vertical offset. The 
 
 ## Shared morph host
 
-The bar-to-player transition uses a dedicated overlay `PanelWindow` on the source monitor. The source `BarCard` is captured with `Item.grabToImage()`, retained through its `ItemGrabResult.url`, and hidden only after the overlay is ready. The overlay morphs the captured visual from the measured source rectangle into the expanded player surface; the expanded controls fade in during the same progress interval.
+The player and system-tray transitions use a dedicated overlay `PanelWindow` on the source monitor. Each source item is captured with `Item.grabToImage()`; the returned `ItemGrabResult` is retained so its `url` remains valid. The source item is hidden only after the overlay has the snapshot, then the overlay morphs that visual into its expanded content.
+
+The player opens after a short hover dwell over its album artwork. Its expanded card is positioned around the source icon, so the pointer remains inside the destination while the geometry grows. Leaving the expanded card reverses the morph after a short delay; the close control remains available as an explicit alternative.
+
+The tray starts the same transition when the pointer dwells over an item that exposes a menu. Its native menu object is forwarded as `surfaceData`, and the expanded destination is aligned to the originating icon: upward for a bottom bar and downward for a top bar. The menu is rendered inside the shared overlay instead of a separate `PopupWindow`, so the icon snapshot and panel shape remain one continuous surface.
 
 The flow is:
-1. A face emits `expandRequested` from a deliberate interaction target.
-2. `BarModule` forwards the face and module ID through `BarSection` to `MorphController`.
-3. `MorphController` measures the face in global logical coordinates and captures it asynchronously.
-4. `MorphOverlay` for the matching `ShellScreen` converts the source rectangle into its local coordinate space and animates one `MorphSurface`.
-5. The expanded content is revealed inside the overlay surface. Closing reverses the same progress and restores the original bar item.
+1. A face emits `expandRequested(sourceItem, surfaceData)` after its hover timer completes.
+2. `BarModule` forwards the source item, module ID and optional payload through `BarSection` to `MorphController`.
+3. `MorphController` measures the source item in global logical coordinates and captures it asynchronously.
+4. The `MorphOverlay` instance for the matching `ShellScreen` converts the source rectangle into screen-local coordinates and animates one `MorphSurface`.
+5. The expanded content fades in inside that surface. Hover exit or an explicit close request reverses the same progress and restores the original bar item.
 
-The overlay uses `QsWindow.mask` with a `Region` tied to the morph surface, so its full-screen layer window does not claim pointer input outside the animated surface. The first integration is the player module; new modules can add a face-specific `expandRequested` signal and a matching expanded surface component.
+The overlay uses `QsWindow.mask` with a `Region` tied to the morph surface, so its full-screen layer window does not claim pointer input outside the animated surface. A new module can use this pattern by emitting `expandRequested(sourceItem, surfaceData)`, registering an expanded component in `MorphOverlay`, and choosing destination geometry that contains the pointer's starting position.
 
 The image capture is a one-shot transition snapshot, not a live mirror. This avoids trying to share a `QQuickItem` across separate Wayland windows and avoids keeping an expensive offscreen capture active after the handoff.
