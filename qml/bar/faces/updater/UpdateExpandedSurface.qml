@@ -1,3 +1,4 @@
+
 import QtQuick
 import QtQuick.Layouts
 import "../../../"
@@ -53,7 +54,7 @@ Item {
 
                 Text {
                     text: I18n.t("updater.title")
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
                     font.letterSpacing: 0.6
@@ -85,7 +86,7 @@ Item {
         Text {
             Layout.fillWidth: true
             text: I18n.t("updater.description")
-            color: Theme.onSurface
+            color: Theme.surfaceForeground
             opacity: 0.78
             font.pixelSize: 10
             wrapMode: Text.WordWrap
@@ -129,7 +130,7 @@ Item {
                     : (root.holdActive
                         ? I18n.t("updater.holding", { progress: Math.round(root.holdProgress * 100) })
                         : I18n.t("updater.hold"))
-                color: root.holdProgress > 0.48 ? Theme.onPrimary : Theme.onSurface
+                color: root.holdProgress > 0.48 ? Theme.onPrimary : Theme.surfaceForeground
                 font.pixelSize: 11
                 font.bold: true
             }
@@ -157,7 +158,7 @@ Item {
                 onCanceled: {
                     root.holdActive = false
                     SoundController.stop("longCharge")
-                    
+
                     if (!root.completed) {
                         holdAnimation.stop()
                         drainAnimation.restart()
@@ -177,6 +178,34 @@ Item {
             font.pixelSize: 9
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
+        }
+
+        Text {
+            Layout.fillWidth: true
+
+            text: "View changelog ↗"
+            color: Theme.primary
+            font.pixelSize: 9
+            horizontalAlignment: Text.AlignHCenter
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    const parts = String(UpdateController.localVersion)
+                        .split(".")
+                        .map(Number)
+
+                    parts[parts.length - 1]++
+
+                    const version = parts.join("")
+
+                    Qt.openUrlExternally(
+                        "https://github.com/DuckCosmos/wayck/blob/main/CHANGELOG.md#" + version
+                    )
+                }
+            }
         }
     }
 

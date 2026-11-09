@@ -21,7 +21,7 @@ BarCard {
                   SysData.data.network_down_kib_s
               )
             : "--"
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
         font.pixelSize: 11
         font.bold: true
     }
@@ -39,7 +39,7 @@ BarCard {
                   SysData.data.network_up_kib_s
               )
             : "--"
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
         font.pixelSize: 11
         font.bold: true
     }

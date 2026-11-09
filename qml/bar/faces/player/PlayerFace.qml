@@ -119,7 +119,7 @@ BarCard {
             text: root.player
                 ? (root.player.trackTitle || root.player.identity || I18n.t("player.title"))
                 : I18n.t("player.none")
-            color: Theme.onSurface
+            color: Theme.surfaceForeground
             font.pixelSize: 11
             font.bold: true
             elide: Text.ElideRight
@@ -145,7 +145,7 @@ BarCard {
             anchors.verticalCenterOffset: -2
             text: "‹"
             color: root.player && root.player.canGoPrevious
-                ? Theme.onSurface : Theme.outline
+                ? Theme.surfaceForeground : Theme.outline
             font.pixelSize: 23
         }
 
@@ -185,7 +185,7 @@ BarCard {
             anchors.verticalCenterOffset: -2
             text: "›"
             color: root.player && root.player.canGoNext
-                ? Theme.onSurface : Theme.outline
+                ? Theme.surfaceForeground : Theme.outline
             font.pixelSize: 23
         }
 

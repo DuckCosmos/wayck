@@ -77,7 +77,7 @@ BarCard {
                     width: 7
                     height: 7
                     radius: 4
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 1
                 }
@@ -86,7 +86,7 @@ BarCard {
                     width: 16
                     height: 8
                     radius: 5
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                 }
@@ -94,7 +94,7 @@ BarCard {
 
             Text {
                 text: UserController.username
-                color: Theme.onSurface
+                color: Theme.surfaceForeground
                 font.pixelSize: 12
                 font.bold: true
             }
@@ -206,7 +206,7 @@ BarCard {
 
                             Text {
                                 text: UserController.username
-                                color: Theme.onSurface
+                                color: Theme.surfaceForeground
                                 font.pixelSize: 16
                                 font.bold: true
                             }
@@ -249,7 +249,7 @@ BarCard {
                                 text: I18n.t("usermenu.tabs.control")
                                 color: popup.page === "home"
                                     ? Theme.onPrimary
-                                    : Theme.onSurface
+                                    : Theme.surfaceForeground
 
                                 font.pixelSize: 12
                                 font.bold: true
@@ -275,7 +275,7 @@ BarCard {
                                 text: I18n.t("usermenu.tabs.power")
                                 color: popup.page === "power"
                                     ? Theme.onPrimary
-                                    : Theme.onSurface
+                                    : Theme.surfaceForeground
 
                                 font.pixelSize: 12
                                 font.bold: true
@@ -345,7 +345,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: I18n.t("usermenu.settings." + modelData.id + ".title")
-                                                color: Theme.onSurface
+                                                color: Theme.surfaceForeground
                                                 font.pixelSize: 11
                                                 font.bold: true
                                                 elide: Text.ElideRight
@@ -435,7 +435,7 @@ BarCard {
                                             Text {
                                                 Layout.fillWidth: true
                                                 text: I18n.t("usermenu.power." + modelData.id + ".title")
-                                                color: Theme.onSurface
+                                                color: Theme.surfaceForeground
                                                 font.pixelSize: 11
                                                 font.bold: true
                                                 elide: Text.ElideRight
@@ -484,7 +484,7 @@ BarCard {
                         Text {
                             Layout.fillWidth: true
                             text: root.actionTitle(popup.pendingAction)
-                            color: Theme.onSurface
+                            color: Theme.surfaceForeground
                             font.pixelSize: 18
                             font.bold: true
                             horizontalAlignment: Text.AlignHCenter
@@ -513,7 +513,7 @@ BarCard {
                                 Text {
                                     anchors.centerIn: parent
                                     text: I18n.t("usermenu.confirm.cancel")
-                                    color: Theme.onSurface
+                                    color: Theme.surfaceForeground
                                     font.pixelSize: 12
                                     font.bold: true
                                 }

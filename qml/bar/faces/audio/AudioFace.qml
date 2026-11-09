@@ -69,7 +69,7 @@ RowLayout {
 
                 Text {
                     text: root.percentage(root.sink)
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
                 }
@@ -136,7 +136,7 @@ RowLayout {
 
                 Text {
                     text: root.percentage(root.source)
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
                 }

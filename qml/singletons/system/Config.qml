@@ -34,6 +34,16 @@ Singleton {
         path: root.path
         watchChanges: true
 
+        property bool initialLoadHandled: false
+
+        onLoaded: {
+            if (initialLoadHandled)
+                return
+
+            initialLoadHandled = true
+            writeAdapter()
+        }
+
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
 

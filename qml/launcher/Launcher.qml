@@ -127,11 +127,11 @@ PanelWindow {
                     verticalAlignment: TextInput.AlignVCenter
                     font.family: Qt.application.font.family
                     font.pixelSize: 16
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
 
                     Text {
                         text: I18n.t("launcher.search")
-                        color: Theme.onSurface
+                        color: Theme.surfaceForeground
                         opacity: 0.4
                         font: parent.font
                         width: parent.width
@@ -220,7 +220,7 @@ PanelWindow {
                     color: isSelected
                         ? Theme.primary
                         : (mouseArea.containsMouse
-                            ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08)
+                            ? Qt.rgba(Theme.surfaceForeground.r, Theme.surfaceForeground.g, Theme.surfaceForeground.b, 0.08)
                             : "transparent")
 
                     Behavior on color {
@@ -247,7 +247,7 @@ PanelWindow {
                             text: modelData.nome
                             font.family: Qt.application.font.family
                             font.pixelSize: 15
-                            color: isSelected ? Theme.onPrimary : Theme.onSurface
+                            color: isSelected ? Theme.onPrimary : Theme.surfaceForeground
                             Layout.fillWidth: true
                             elide: Text.ElideRight
                         }

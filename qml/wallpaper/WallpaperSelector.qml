@@ -295,7 +295,7 @@ PanelWindow {
 
                     Text {
                         text: "WALLPAPERS"
-                        color: Theme.onSurface
+                        color: Theme.surfaceForeground
                         font.pixelSize: 11
                         font.bold: true
                         font.letterSpacing: 1.2
@@ -473,7 +473,7 @@ PanelWindow {
                         ? "Nenhum wallpaper encontrado"
                         : "Nenhum resultado encontrado"
 
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 13
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -498,7 +498,7 @@ PanelWindow {
 
                         font.pixelSize: 14
 
-                        color: Theme.onSurface
+                        color: Theme.surfaceForeground
                         placeholderText: "Pesquisar wallpaper..."
                         placeholderTextColor: Qt.lighter(
                             Theme.surfaceContainer,
@@ -506,7 +506,7 @@ PanelWindow {
                         )
 
                         selectionColor: Theme.primary
-                        selectedTextColor: Theme.onSurface
+                        selectedTextColor: Theme.surfaceForeground
 
                         selectByMouse: true
                         activeFocusOnPress: true

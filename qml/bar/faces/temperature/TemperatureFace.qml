@@ -28,7 +28,7 @@ BarCard {
                 : I18n.t("common.na")
         }
 
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
         font.pixelSize: 12
         font.bold: true
     }

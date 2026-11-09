@@ -91,7 +91,7 @@ Item {
             Text {
                 text: root.notification.body
                 font.pixelSize: 12
-                color: Theme.onSurface
+                color: Theme.surfaceForeground
                 Layout.fillWidth: true
                 maximumLineCount: 3
                 wrapMode: Text.Wrap

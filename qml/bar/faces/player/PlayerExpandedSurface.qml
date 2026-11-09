@@ -60,7 +60,7 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     text: "×"
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 22
 
                     MouseArea {
@@ -77,7 +77,7 @@ Item {
                 text: root.player
                     ? (root.player.trackTitle || I18n.t("player.title"))
                     : I18n.t("player.none")
-                color: Theme.onSurface
+                color: Theme.surfaceForeground
                 font.pixelSize: 19
                 font.bold: true
                 elide: Text.ElideRight
@@ -103,7 +103,7 @@ Item {
 
                 Text {
                     text: "‹"
-                    color: root.player && root.player.canGoPrevious ? Theme.onSurface : Theme.outline
+                    color: root.player && root.player.canGoPrevious ? Theme.surfaceForeground : Theme.outline
                     font.pixelSize: 34
 
                     MouseArea {
@@ -139,7 +139,7 @@ Item {
 
                 Text {
                     text: "›"
-                    color: root.player && root.player.canGoNext ? Theme.onSurface : Theme.outline
+                    color: root.player && root.player.canGoNext ? Theme.surfaceForeground : Theme.outline
                     font.pixelSize: 34
 
                     MouseArea {

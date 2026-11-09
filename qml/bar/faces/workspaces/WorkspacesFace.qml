@@ -35,7 +35,7 @@ RowLayout {
                 Text {
                     anchors.fill: parent
                     text: String(workspaceCard.modelData)
-                    color: workspaceCard.active ? Theme.onPrimary : Theme.onSurface
+                    color: workspaceCard.active ? Theme.onPrimary : Theme.surfaceForeground
 
                     Behavior on color {
                         ColorAnimation {

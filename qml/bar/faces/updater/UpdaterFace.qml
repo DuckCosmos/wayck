@@ -35,7 +35,7 @@ BarCard {
         Text {
             anchors.centerIn: parent
             text: "󰇚"
-            color: root.hovered ? Theme.primary : Theme.onSurface
+            color: root.hovered ? Theme.primary : Theme.surfaceForeground
             font.pixelSize: 19
 
             Behavior on color {

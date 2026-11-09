@@ -87,7 +87,7 @@ Item {
 
                 Text {
                     text: "MIXER DE APLICATIVOS"
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
                     font.letterSpacing: 0.8
@@ -130,7 +130,7 @@ Item {
 
                 Text {
                     text: "Volume principal"
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
                 }
@@ -249,7 +249,7 @@ Item {
                                     Text {
                                         Layout.fillWidth: true
                                         text: root.appName(streamDelegate.node)
-                                        color: Theme.onSurface
+                                        color: Theme.surfaceForeground
                                         font.pixelSize: 11
                                         font.bold: true
                                         elide: Text.ElideRight

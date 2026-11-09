@@ -51,7 +51,7 @@ BarCard {
             text: (root.trayItem.title || root.trayItem.id || "?")
                 .charAt(0).toUpperCase()
 
-            color: Theme.onSurface
+            color: Theme.surfaceForeground
             font.pixelSize: 12
             font.bold: true
 

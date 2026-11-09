@@ -107,7 +107,7 @@ BarCard {
 
                 text: "‹  " + I18n.t("tray.back")
 
-                color: Theme.onSurface
+                color: Theme.surfaceForeground
                 font.pixelSize: 13
             }
 
@@ -201,7 +201,7 @@ BarCard {
 
                     text: entryItem.modelData.text
 
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     opacity: entryItem.modelData.enabled ? 1 : 0.45
 
                     font.pixelSize: 13
@@ -219,7 +219,7 @@ BarCard {
 
                     text: entryItem.modelData.hasChildren ? "›" : ""
 
-                    color: Theme.onSurface
+                    color: Theme.surfaceForeground
                     font.pixelSize: 18
 
                     visible: !entryItem.modelData.isSeparator

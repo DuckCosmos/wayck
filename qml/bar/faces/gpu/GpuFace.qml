@@ -97,7 +97,7 @@ BarCard {
             anchors.centerIn: parent
 
             text: "▣"
-            color: Theme.onSurface
+            color: Theme.surfaceForeground
 
             font.pixelSize: 11
             font.bold: true
@@ -119,7 +119,7 @@ BarCard {
 
             return Math.round(root.metricValue) + "%"
         }
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
 
         font.pixelSize: 12
         font.bold: true

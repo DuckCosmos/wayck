@@ -11,7 +11,7 @@ BarCard {
 
     Text {
         text: Qt.formatDateTime(root.now, "HH:mm:ss")
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
         font.pixelSize: 14
         font.bold: true
     }
@@ -25,7 +25,7 @@ BarCard {
 
     Text {
         text: Qt.formatDateTime(root.now, I18n.t("clock.dateFormat", "dd/MM/yy"))
-        color: Theme.onSurface
+        color: Theme.surfaceForeground
         font.pixelSize: 11
     }
 

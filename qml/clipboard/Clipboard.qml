@@ -144,7 +144,7 @@ PanelWindow {
             preferredRendererType: Shape.CurveRenderer
 
             ShapePath {
-                fillColor: Qt.darker(Theme.onSurface, 10)
+                fillColor: Qt.darker(Theme.surfaceForeground, 10)
                 strokeColor: Theme.outline
                 strokeWidth: 1
                 joinStyle: ShapePath.RoundJoin
@@ -266,7 +266,7 @@ PanelWindow {
                             easing.type: Motion.standard
                         }
                     }
-                    color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.onSurface.r, Theme.onSurface.g, Theme.onSurface.b, 0.08) : Qt.darker(Theme.surfaceContainer, 1.8))
+                    color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.surfaceForeground.r, Theme.surfaceForeground.g, Theme.surfaceForeground.b, 0.08) : Qt.darker(Theme.surfaceContainer, 1.8))
 
                     Process {
                         id: extractImg
@@ -285,7 +285,7 @@ PanelWindow {
                             textFormat: Text.PlainText
                             font.family: Qt.application.font.family
                             font.pixelSize: 14
-                            color: isSelected ? Theme.onPrimary : Theme.onSurface
+                            color: isSelected ? Theme.onPrimary : Theme.surfaceForeground
                             width: parent.width
                             elide: Text.ElideRight
                             verticalAlignment: Text.AlignVCenter
@@ -313,7 +313,7 @@ PanelWindow {
                             textFormat: Text.PlainText
                             font.family: Qt.application.font.family
                             font.pixelSize: 11
-                            color: isSelected ? Theme.onPrimary : Theme.onSurface
+                            color: isSelected ? Theme.onPrimary : Theme.surfaceForeground
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
                             opacity: 0.8
@@ -357,7 +357,7 @@ PanelWindow {
                         verticalAlignment: TextInput.AlignVCenter
                         font.family: Qt.application.font.family
                         font.pixelSize: 16
-                        color: Theme.onSurface
+                        color: Theme.surfaceForeground
                         focus: true
                         onTextChanged: searchDebounceTimer.restart()
                         
@@ -380,7 +380,7 @@ PanelWindow {
 
                         Text {
                             text: I18n.t("clipboard.search")
-                            color: Theme.onSurface
+                            color: Theme.surfaceForeground
                             opacity: 0.4
                             font: parent.font
                             width: parent.width
@@ -404,7 +404,7 @@ PanelWindow {
                         id: clearLabel
                         anchors.centerIn: parent
                         text: "メ " + I18n.t("clipboard.clear")
-                        color: mouseClear.containsMouse ? Qt.darker(Theme.surfaceContainer, 1.8) : Theme.onSurface
+                        color: mouseClear.containsMouse ? Qt.darker(Theme.surfaceContainer, 1.8) : Theme.surfaceForeground
                         font.pixelSize: 18
                     }
 
