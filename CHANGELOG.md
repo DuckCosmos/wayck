@@ -1,4 +1,4 @@
-### [0.1.3](https://github.com/DuckCosmos/wayck/releases/tag/v0.1.3)
+### 0.1.3
 
 - feat: add wave animations to pressed items
 - feat: add sound effects to interactions, such as clicks
