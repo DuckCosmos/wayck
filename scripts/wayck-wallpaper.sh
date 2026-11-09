@@ -2,7 +2,8 @@
 
 set -Eeuo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd -P)"
 
 DIR="${WAYCK_WALLPAPERS:-$HOME/Pictures/Wallpapers}"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -18,14 +19,14 @@ THEME_MODE="${WAYCK_THEME_MODE:-dark}"
 SCHEME_TYPE="${WAYCK_THEME_SCHEME:-scheme-tonal-spot}"
 
 warn() {
-    printf 'wayck-wallpaper: %s\\n' "$*" >&2
+    printf 'wayck-wallpaper: %s\n' "$*" >&2
 }
 
 list_wallpapers() {
     [[ -d "$DIR" ]] || return 0
 
-    find -L "$DIR" -maxdepth 2 -type f \\
-        \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \\) |
+    find -L "$DIR" -maxdepth 2 -type f \
+        \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) |
         sort
 }
 
@@ -95,10 +96,10 @@ generate_colors() {
 
     ensure_matugen_config || return 0
 
-    if ! matugen image "$img" \\
-        -c "$MATUGEN_CONFIG" \\
-        -m "$THEME_MODE" \\
-        -t "$SCHEME_TYPE" \\
+    if ! matugen image "$img" \
+        -c "$MATUGEN_CONFIG" \
+        -m "$THEME_MODE" \
+        -t "$SCHEME_TYPE" \
         --source-color-index 0 >/dev/null; then
         warn "falha ao gerar a paleta com Matugen"
         return 0
@@ -132,7 +133,7 @@ set_wallpaper() {
     fi
 
     mkdir -p -- "$(dirname -- "$STATE_FILE")"
-    printf '%s\\n' "$img" > "$STATE_FILE.tmp.$$"
+    printf '%s\n' "$img" > "$STATE_FILE.tmp.$$"
     mv -f -- "$STATE_FILE.tmp.$$" "$STATE_FILE"
 
     generate_colors "$img"
@@ -159,6 +160,8 @@ select_relative_wallpaper() {
             break
         fi
     done
+
+    (( index >= 0 )) || index=0
 
     if [[ "$direction" == "next" ]]; then
         next=$(((index + 1) % ${#files[@]}))

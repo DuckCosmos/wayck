@@ -34,6 +34,8 @@ ShellRoot {
     Process {
         running: root.isHyprland && Config.blur
         command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-launcher-blur', match={namespace='^wayck-launcher
+    }
+
     Connections {
         function onOpenChanged() {
             if (LauncherController.open && ClipboardController.open) {
@@ -109,6 +111,8 @@ ShellRoot {
     Process {
         running: root.isHyprland && Config.blur
         command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-wallpaper-selector-blur', match={namespace='^wayck-wallpaper-selector
+    }
+
     Connections {
         function onOpenChanged() {
             if (LauncherController.open && ClipboardController.open) {
@@ -181,7 +185,7 @@ ShellRoot {
 }, blur=true, ignore_alpha=0 })"]
     }
 
-    // Reaplica o wallpaper persistido e gera a paleta antes de usar o shell.
+    // Restaura o wallpaper persistido e atualiza a paleta antes do uso do shell.
     Process {
         running: true
         command: [Quickshell.env("WAYCK_WALLPAPER") || "wayck-wallpaper", "apply"]
@@ -189,6 +193,10 @@ ShellRoot {
             if (exitCode !== 0)
                 console.warn("[Wayck] Não foi possível restaurar o wallpaper na inicialização.");
         }
+    }
+
+    }
+
     }
 
     Connections {
