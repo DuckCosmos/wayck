@@ -1,3 +1,9 @@
+### 0.1.4
+
+- feat: add new system matugen
+- fix(colors): fix colors matugen loading in colors,json
+- fix(config): config.json fixed, previously it wouldn't load the file
+
 ### 0.1.3
 
 - feat: add wave animations to pressed items
