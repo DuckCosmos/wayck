@@ -26,13 +26,20 @@ Singleton {
     }
 
     function installUpdate(): void {
-        if (installing || !updateAvailable)
+        console.log("[WAYCK UPDATE] install requested")
+        console.log("[WAYCK UPDATE] available:", updateAvailable)
+        console.log("[WAYCK UPDATE] installing:", installing)
+        console.log("[WAYCK UPDATE] installer:", installerPath)
+
+        if (installing || !updateAvailable) {
+            console.warn("[WAYCK UPDATE] installation blocked")
             return
+        }
 
         installing = true
         error = ""
 
-        console.log("[WAYCK UPDATE] starting interactive-free update")
+        console.log("[WAYCK UPDATE] executing installer")
 
         Quickshell.execDetached([
             "bash",

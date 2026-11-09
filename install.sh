@@ -21,7 +21,8 @@ readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
     quickshell qt6-declarative qt6-wayland git base-devel
-    kitty papirus-icon-theme wl-clipboard cliphist micro jq hyprpaper
+    kitty papirus-icon-theme wl-clipboard cliphist micro
+    jq hyprpaper qt6-shadertools pipewire-audio
 )
 
 readonly PERSONAL_REPO_PKGS=(

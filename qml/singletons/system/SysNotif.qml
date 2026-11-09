@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
+import "../../"
 
 Singleton {
     id: root
@@ -41,6 +42,7 @@ Singleton {
 
         function onNotification(notification) {
             notification.tracked = true
+            SoundController.play("notification")
 
             root.notifications = [
                 {

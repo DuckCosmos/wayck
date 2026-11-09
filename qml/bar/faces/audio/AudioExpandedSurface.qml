@@ -50,6 +50,10 @@ Item {
         objects: root.trackedNodes
     }
 
+    PwObjectTracker {
+        objects: [Pipewire.defaultAudioSink]
+    }
+
     Connections {
         target: Pipewire.nodes
         ignoreUnknownSignals: true
@@ -115,6 +119,60 @@ Item {
             height: 1
             color: Theme.outline
             opacity: 0.22
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 5
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Text {
+                    text: "Volume principal"
+                    color: Theme.onSurface
+                    font.pixelSize: 11
+                    font.bold: true
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: Pipewire.defaultAudioSink?.audio
+                        ? Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%"
+                        : "--%"
+                    color: Theme.outline
+                    font.pixelSize: 10
+                }
+            }
+
+            Slider {
+                id: masterVolumeSlider
+
+                Layout.fillWidth: true
+                from: 0
+                to: 1.5
+
+                enabled: !!Pipewire.defaultAudioSink?.audio
+
+                value: Pipewire.defaultAudioSink?.audio
+                    ? Pipewire.defaultAudioSink.audio.volume
+                    : 0
+
+                onMoved: {
+                    const sink = Pipewire.defaultAudioSink
+
+                    if (!sink?.audio)
+                        return
+
+                    sink.audio.volume = value
+
+                    if (value > 0)
+                        sink.audio.muted = false
+                }
+            }
         }
 
         Item {

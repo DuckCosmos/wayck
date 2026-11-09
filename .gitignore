@@ -2,8 +2,7 @@
 /target/
 
 # Binário compilado do git.rs (gere com rustc, não versione)
-/git
-/git.rs
+/push.sh
 /build.sh
 
 # Editor / sistema

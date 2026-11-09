@@ -329,6 +329,7 @@ PanelWindow {
                         onClicked: (mouse) => {
                             root.selectedIndex = index;
                             if (mouse.button === Qt.LeftButton) {
+                                SoundController.play("clickbutton")
                                 root.copyItem(modelData);
                             } else if (mouse.button === Qt.RightButton) {
                                 deleting = true;
@@ -371,6 +372,7 @@ PanelWindow {
                                 event.accepted = true;
                             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                                 if (root.clipboardList.length > root.selectedIndex)
+                                    SoundController.play("clickbutton")
                                     root.copyItem(root.clipboardList[root.selectedIndex]);
                                 event.accepted = true;
                             }
@@ -412,6 +414,7 @@ PanelWindow {
                         hoverEnabled: true
 
                         onClicked: {
+                            SoundController.play("clickbutton")
                             root.clearClipboard();
                         }
                     }

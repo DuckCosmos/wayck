@@ -75,8 +75,11 @@ PanelWindow {
 
     function close() {
         if (!shown) return;
+
+        searchInput.focus = false;
         closing = true;
         shown = false;
+
         closeTimer.start();
     }
 
@@ -88,7 +91,6 @@ PanelWindow {
 
     MorphSurface {
         id: card
-        // MorphSurface computes both centered geometries itself.
         expanded: root.shown
         expandedWidth: parent.width
         expandedHeight: parent.height
@@ -126,7 +128,6 @@ PanelWindow {
                     font.family: Qt.application.font.family
                     font.pixelSize: 16
                     color: Theme.onSurface
-                    focus: true
 
                     Text {
                         text: I18n.t("launcher.search")
@@ -143,6 +144,10 @@ PanelWindow {
                     onTextChanged: searchDebounceTimer.restart()
 
                     Keys.onPressed: event => {
+                        if (event.text.length > 0) {
+                            SoundController.play("click")
+                        }
+
                         if (event.key === Qt.Key_Escape) {
                             root.close();
                         } else if (event.key === Qt.Key_Down) {
@@ -155,6 +160,7 @@ PanelWindow {
                                 event.accepted = true
                         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                             if (root.appList.length > root.selectedIndex)
+                                SoundController.play("clickbutton")
                                 root.launchApp(root.appList[root.selectedIndex]);
                                 event.accepted = true
                         }
@@ -252,6 +258,7 @@ PanelWindow {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
+                            SoundController.play("clickbutton")
                             root.selectedIndex = index;
                             root.launchApp(modelData);
                         }
@@ -263,6 +270,10 @@ PanelWindow {
 
     Component.onCompleted: {
         triggerSearch();
-        Qt.callLater(() => root.shown = true);
+
+        Qt.callLater(() => {
+            root.shown = true;
+            searchInput.forceActiveFocus();
+        });
     }
 }

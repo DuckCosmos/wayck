@@ -11,6 +11,7 @@ Item {
     property real holdProgress: 0
     property bool holdActive: false
     property bool completed: false
+    property real wavePhase: 0
 
     implicitWidth: 340
     implicitHeight: 204
@@ -102,20 +103,23 @@ Item {
             border.color: root.holdActive ? Theme.primary : Theme.outline
             clip: true
 
-            Rectangle {
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * root.holdProgress
-                radius: parent.radius
-                color: Theme.primary
+            WaveFill {
+                anchors.fill: parent
 
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 70
-                        easing.type: Easing.OutCubic
-                    }
-                }
+                radius: parent.radius
+                fillLevel: root.holdProgress
+
+                waveAmp: root.holdProgress > 0.001
+                    && root.holdProgress < 0.99
+                    ? 40 * Math.sin(root.holdProgress * Math.PI)
+                    : 0
+
+                phase: root.wavePhase
+
+                color1: Qt.darker(Theme.primary, 1.08)
+                color2: Theme.primary
+
+                visible: root.holdProgress > 0.001
             }
 
             Text {
@@ -137,10 +141,13 @@ Item {
                 onPressed: {
                     root.holdActive = true
                     holdAnimation.restart()
+                    SoundController.play("longCharge")
                 }
 
                 onReleased: {
                     root.holdActive = false
+                    SoundController.stop("longCharge")
+
                     if (!root.completed) {
                         holdAnimation.stop()
                         drainAnimation.restart()
@@ -149,6 +156,8 @@ Item {
 
                 onCanceled: {
                     root.holdActive = false
+                    SoundController.stop("longCharge")
+                    
                     if (!root.completed) {
                         holdAnimation.stop()
                         drainAnimation.restart()
@@ -177,7 +186,7 @@ Item {
         property: "holdProgress"
         from: 0
         to: 1
-        duration: 1850
+        duration: 3904
         easing.type: Easing.Linear
 
         onFinished: {
@@ -186,6 +195,7 @@ Item {
 
             root.completed = true
             root.updateRequested()
+            SoundController.stop("longCharge")
         }
     }
 
@@ -196,5 +206,16 @@ Item {
         to: 0
         duration: Math.max(100, root.holdProgress * 210)
         easing.type: Easing.OutCubic
+    }
+
+    NumberAnimation on wavePhase {
+        running: root.holdProgress > 0.0
+            && root.holdProgress < 1.0
+
+        from: 0
+        to: Math.PI * 2
+
+        duration: 600
+        loops: Animation.Infinite
     }
 }

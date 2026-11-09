@@ -5,11 +5,12 @@ import ".."
 PanelWindow {
     id: root
     property bool hasNotifications: SysNotif.notifications.length > 0
+    property bool doNotDisturb: Config.doNotDisturb
 
     anchors { top: true; left: true; right: true }
     margins { top: 43 }
 
-    visible: hasNotifications || hideTimer.running
+    visible: !doNotDisturb && (hasNotifications || hideTimer.running)
     implicitWidth: 420
     implicitHeight: content.implicitHeight
     exclusiveZone: -1

@@ -6,7 +6,6 @@ import "../"
 PanelWindow {
     id: root
 
-    // Variants injects monitor data after creating the delegate.
     property var monitor: null
 
     readonly property bool traySurface: MorphController.surfaceId === "tray"
@@ -51,8 +50,6 @@ PanelWindow {
         width - targetWidth
     ))
 
-    // Keep the expanded tray panel outside the icon lane so the overlay never
-    // covers the next icons while the pointer travels across the tray.
     readonly property real targetY: Math.max(8, Math.min(
         BarConfig.position === "bottom"
             ? sourceY - targetHeight - 8
@@ -92,15 +89,11 @@ PanelWindow {
     mask: Region {
         item: surface
 
-        // Keep the collapsed player anchor in the overlay input region while
-        // the morph moves away from it. This prevents a false hover exit.
         Region {
             item: sourceHoverRegion
         }
     }
 
-    // The player source remains a hover-safe area during the morph. Once
-    // the pointer actually leaves this anchor, normal hover-close behavior resumes.
     Item {
         id: sourceHoverRegion
 

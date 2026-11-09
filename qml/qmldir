@@ -20,6 +20,7 @@ PlayerExpandedSurface 1.0 bar/faces/player/PlayerExpandedSurface.qml
 AudioExpandedSurface 1.0 bar/faces/audio/AudioExpandedSurface.qml
 UpdateExpandedSurface 1.0 bar/faces/updater/UpdateExpandedSurface.qml
 TrayExpandedSurface 1.0 bar/faces/tray/TrayExpandedSurface.qml
+WaveFill 1.0 reusables/WaveFill.qml
 
 # Notificações
 NotificationCard 1.0 notifications/NotificationCard.qml
@@ -46,4 +47,5 @@ singleton ScreenshotController 1.0 singletons/widgetcontrols/ScreenshotControlle
 singleton TrayController 1.0 singletons/widgetcontrols/TrayController.qml
 singleton UserController 1.0 singletons/widgetcontrols/UserController.qml
 singleton Motion 1.0 singletons/theme/Motion.qml
+singleton SoundController 1.0 singletons/system/SoundController.qml
 MorphSurface 1.0 reusables/MorphSurface.qml
