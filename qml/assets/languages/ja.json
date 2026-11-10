@@ -225,5 +225,10 @@
         "streamFallback": "音声出力",
         "empty": "音声を再生しているアプリはありません",
         "connecting": "PipeWireに接続中..."
+    },
+    "wallpaperSelector": {
+        "title": "壁紙",
+        "empty": "壁紙が見つかりません",
+        "noResults": "結果が見つかりません"
     }
 }
