@@ -123,7 +123,8 @@
         "disk": "Ổ đĩa",
         "network": "Mạng",
         "temperature": "Nhiệt độ",
-        "usermenu": "Menu người dùng"
+        "usermenu": "Menu người dùng",
+        "updater": "Cập nhật"
     },
     "launch": {
         "notInstalled": "{name} chưa được cài đặt.",
@@ -160,7 +161,8 @@
             "blur": "Cấu hình blur",
             "apps": "Cài đặt các ứng dụng của tôi",
             "hypr": "Cài đặt cấu hình Hyprland",
-            "build": "Biên dịch và cài đặt Wayck"
+            "build": "Biên dịch và cài đặt Wayck",
+            "update": "Cập nhật Wayck"
         },
         "title": "TRÌNH CÀI ĐẶT WAYCK",
         "help": "Dùng phím mũi tên để di chuyển, PHÍM CÁCH để chọn và ENTER để tiếp tục. ESC để thoát.",
@@ -212,6 +214,16 @@
         "holding": "Tiếp tục giữ · {progress}%",
         "cancelHint": "Thả trước khi hoàn tất để hủy.",
         "installing": "Đang bắt đầu cập nhật…",
-        "installHint": "Wayck sẽ cập nhật tệp và khởi động lại shell."
+        "installHint": "Wayck sẽ cập nhật tệp và khởi động lại shell.",
+        "changelog": "Xem nhật ký thay đổi"
+    },
+    "audioMixer": {
+        "title": "BỘ TRỘN ỨNG DỤNG",
+        "streams": "{count} ứng dụng đang phát âm thanh",
+        "masterVolume": "Âm lượng chính",
+        "appFallback": "Ứng dụng",
+        "streamFallback": "Đầu ra âm thanh",
+        "empty": "Không có ứng dụng nào đang phát âm thanh",
+        "connecting": "Đang kết nối với PipeWire..."
     }
 }
