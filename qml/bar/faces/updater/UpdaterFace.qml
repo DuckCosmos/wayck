@@ -6,6 +6,9 @@ import "../../../"
 BarCard {
     id: root
 
+    // Morph snapshots are captured in local coordinates; keep the source anchor unscaled.
+    hoverScale: 1
+
     signal expandRequested(var sourceItem, var surfaceData, var windowRef)
 
     visible: UpdateController.updateAvailable
