@@ -225,5 +225,10 @@
         "streamFallback": "Səs çıxışı",
         "empty": "Heç bir tətbiq səs çıxarmır",
         "connecting": "PipeWire-a qoşulur..."
+    },
+    "wallpaperSelector": {
+        "title": "DİVAR KAĞIZLARI",
+        "empty": "Divar kağızı tapılmadı",
+        "noResults": "Nəticə tapılmadı"
     }
 }
