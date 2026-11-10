@@ -16,10 +16,6 @@ singleton WallpaperService 1.0 singletons/system/WallpaperService.qml
 # Reutilizáveis
 BarCard 1.0 reusables/BarCard.qml
 Morph 1.0 reusables/Morph.qml
-PlayerExpandedSurface 1.0 bar/faces/player/PlayerExpandedSurface.qml
-AudioExpandedSurface 1.0 bar/faces/audio/AudioExpandedSurface.qml
-UpdateExpandedSurface 1.0 bar/faces/updater/UpdateExpandedSurface.qml
-TrayExpandedSurface 1.0 bar/faces/tray/TrayExpandedSurface.qml
 WaveFill 1.0 reusables/WaveFill.qml
 
 # Notificações
