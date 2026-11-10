@@ -7,12 +7,12 @@ layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
 
-    // Keep the existing WaveFill.qml interface unchanged.
     float radius;
     float fillLevel;
     float waveAmp;
     vec2 itemSize;
     float phase;
+    float threeDimensional;
 
     vec4 color1;
     vec4 color2;
@@ -36,7 +36,7 @@ void main() {
     float boxDistance = sdRoundedBox(p - halfSize, halfSize, clampedRadius);
     float boxAlpha = clamp(0.5 - boxDistance, 0.0, 1.0);
 
-    // Horizontal fluid surface, matching Serpantinum's fluid_wave shader.
+    // Horizontal fluid surface, matching the original wave motion.
     float fillX = itemSize.x * clamp(fillLevel, 0.0, 1.0);
     float t = clamp(p.y / max(itemSize.y, 1.0), 0.0, 1.0);
 
@@ -48,13 +48,33 @@ void main() {
     );
 
     float surfaceX = fillX + waveOffset;
-    float fluidAlpha = clamp(0.5 - (p.x - surfaceX), 0.0, 1.0);
+    float fluidDistance = surfaceX - p.x;
+    float fluidAlpha = clamp(0.5 + fluidDistance, 0.0, 1.0);
 
     vec4 col = mix(
         color1,
         color2,
         clamp(p.x / max(itemSize.x, 1.0), 0.0, 1.0)
     );
+
+    // Single-pass bevel: a shaded rim and a narrow specular highlight
+    // follow the actual animated surface. No secondary wave is rendered.
+    if (threeDimensional > 0.5) {
+        float edgeShadow = 1.0 - smoothstep(0.0, 4.0, fluidDistance);
+        float edgeHighlight = 1.0 - smoothstep(
+            0.0, 1.25, abs(fluidDistance - 2.0)
+        );
+
+        float surfaceSlope = dFdy(surfaceX);
+        float slopeShade = clamp(
+            1.0 - abs(surfaceSlope) * 0.0025,
+            0.88,
+            1.0
+        );
+
+        col.rgb *= (1.0 - edgeShadow * 0.27) * slopeShade;
+        col.rgb += col.rgb * edgeHighlight * 0.17;
+    }
 
     float alpha = boxAlpha * fluidAlpha * col.a * qt_Opacity;
     fragColor = vec4(col.rgb * alpha, alpha);
