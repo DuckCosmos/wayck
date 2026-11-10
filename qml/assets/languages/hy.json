@@ -225,5 +225,10 @@
         "streamFallback": "Ձայնի ելք",
         "empty": "Ոչ մի հավելված ձայն չի արձակում",
         "connecting": "Միացում PipeWire-ին..."
+    },
+    "wallpaperSelector": {
+        "title": "ՊԱՍՏԱՌՆԵՐ",
+        "empty": "Պաստառներ չեն գտնվել",
+        "noResults": "Արդյունք չի գտնվել"
     }
 }
