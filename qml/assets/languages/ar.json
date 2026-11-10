@@ -225,5 +225,10 @@
         "streamFallback": "مخرج الصوت",
         "empty": "لا يوجد تطبيق يُصدر الصوت",
         "connecting": "جارٍ الاتصال بـ PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "الخلفيات",
+        "empty": "لم يتم العثور على خلفيات",
+        "noResults": "لم يتم العثور على نتائج"
     }
 }
