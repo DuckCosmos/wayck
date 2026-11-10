@@ -225,5 +225,10 @@
         "streamFallback": "Audio output",
         "empty": "No application is playing audio",
         "connecting": "Connecting to PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "WALLPAPERS",
+        "empty": "No wallpapers found",
+        "noResults": "No results found"
     }
 }
