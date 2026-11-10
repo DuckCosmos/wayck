@@ -50,6 +50,7 @@ BarCard {
         }
 
         HoverHandler {
+            enabled: root.hoverEnabled
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
