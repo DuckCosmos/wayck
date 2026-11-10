@@ -123,7 +123,8 @@
         "disk": "دیسک",
         "network": "شبکه",
         "temperature": "دما",
-        "usermenu": "منوی کاربر"
+        "usermenu": "منوی کاربر",
+        "updater": "به‌روزرسانی"
     },
     "launch": {
         "notInstalled": "{name} نصب نشده است.",
@@ -160,7 +161,8 @@
             "blur": "پیکربندی محو شدگی",
             "apps": "نصب برنامه‌های من",
             "hypr": "نصب پیکربندی Hyprland",
-            "build": "ساخت و نصب Wayck"
+            "build": "ساخت و نصب Wayck",
+            "update": "به‌روزرسانی Wayck"
         },
         "title": "نصب‌کنندهٔ WAYCK",
         "help": "برای حرکت از کلیدهای جهت‌نما، برای انتخاب از Space و برای ادامه از Enter استفاده کنید. برای خروج ESC را بزنید.",
@@ -212,6 +214,16 @@
         "holding": "همچنان نگه دارید · {progress}%",
         "cancelHint": "برای لغو، پیش از پایان رها کنید.",
         "installing": "در حال شروع به‌روزرسانی…",
-        "installHint": "فایل‌های Wayck به‌روزرسانی و shell دوباره راه‌اندازی می‌شود."
+        "installHint": "فایل‌های Wayck به‌روزرسانی و shell دوباره راه‌اندازی می‌شود.",
+        "changelog": "مشاهدهٔ فهرست تغییرات"
+    },
+    "audioMixer": {
+        "title": "میکسر برنامه‌ها",
+        "streams": "{count} برنامه در حال پخش صدا",
+        "masterVolume": "بلندی صدای اصلی",
+        "appFallback": "برنامه",
+        "streamFallback": "خروجی صدا",
+        "empty": "هیچ برنامه‌ای در حال پخش صدا نیست",
+        "connecting": "در حال اتصال به PipeWire..."
     }
 }
