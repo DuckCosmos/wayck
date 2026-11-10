@@ -123,7 +123,8 @@
         "disk": "Disk",
         "network": "Şəbəkə",
         "temperature": "Temperatur",
-        "usermenu": "İstifadəçi menyusu"
+        "usermenu": "İstifadəçi menyusu",
+        "updater": "Yeniləmə"
     },
     "launch": {
         "notInstalled": "{name} quraşdırılmayıb.",
@@ -160,7 +161,8 @@
             "blur": "Blur-u konfiqurasiya et",
             "apps": "Tətbiqlərimi quraşdır",
             "hypr": "Hyprland konfiqurasiyasını quraşdır",
-            "build": "Wayck-i tərtib et və quraşdır"
+            "build": "Wayck-i tərtib et və quraşdır",
+            "update": "Wayck-i yenilə"
         },
         "title": "WAYCK QURAŞDIRICISI",
         "help": "Gəzmək üçün ox düymələrindən, seçmək üçün BOŞLUQ düyməsindən, davam etmək üçün ENTER düyməsindən istifadə edin. Çıxmaq üçün ESC.",
@@ -212,6 +214,16 @@
         "holding": "Basmağa davam edin · {progress}%",
         "cancelHint": "Ləğv etmək üçün tamamlanmadan buraxın.",
         "installing": "Yeniləmə başladılır…",
-        "installHint": "Wayck faylları yeniləyəcək və shell-i yenidən başladacaq."
+        "installHint": "Wayck faylları yeniləyəcək və shell-i yenidən başladacaq.",
+        "changelog": "Dəyişikliklər jurnalına bax"
+    },
+    "audioMixer": {
+        "title": "TƏTBİQ MİKSERİ",
+        "streams": "Səs çıxaran tətbiqlər: {count}",
+        "masterVolume": "Əsas səs səviyyəsi",
+        "appFallback": "Tətbiq",
+        "streamFallback": "Səs çıxışı",
+        "empty": "Heç bir tətbiq səs çıxarmır",
+        "connecting": "PipeWire-a qoşulur..."
     }
 }
