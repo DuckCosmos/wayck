@@ -225,5 +225,10 @@
         "streamFallback": "오디오 출력",
         "empty": "오디오를 재생 중인 앱이 없습니다",
         "connecting": "PipeWire에 연결하는 중..."
+    },
+    "wallpaperSelector": {
+        "title": "배경화면",
+        "empty": "배경화면을 찾을 수 없습니다",
+        "noResults": "검색 결과가 없습니다"
     }
 }
