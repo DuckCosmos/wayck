@@ -395,6 +395,7 @@ Item {
         id: morphContentHost
         anchors.fill: parent
         visible: root.active
+        z: 4
 
         Loader {
             id: surfaceContent
@@ -414,6 +415,11 @@ Item {
                         ? audioContent
                         : (root.surfaceId === "updater"
                             ? updaterContent : playerContent)))
+
+            HoverHandler {
+                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                onHoveredChanged: root.setSurfaceHovered(hovered)
+            }
         }
     }
 
@@ -512,7 +518,7 @@ Item {
         width: root.surfaceId === "tray" ? 0 : root.sourceWidth
         height: root.surfaceId === "tray" ? 0 : root.sourceHeight
         visible: root.active && root.surfaceId !== "tray"
-        z: 4
+        z: 5
 
         HoverHandler {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
