@@ -12,18 +12,6 @@ Singleton {
     readonly property string directory:
         Quickshell.env("HOME") + "/Pictures/Screenshots"
 
-    // Cor atual do Matugen
-    readonly property string notificationColor: {
-        const c = Theme.primary
-
-        const hex = value => {
-            const result = Math.round(value * 255).toString(16)
-            return result.length === 1 ? "0" + result : result
-        }
-
-        return `#${hex(c.r)}${hex(c.g)}${hex(c.b)}`
-    }
-
     readonly property string script: [
         'set -Eeuo pipefail',
 
@@ -57,11 +45,9 @@ Singleton {
         // OCR ou cópia da imagem
         'if [ "$action" = "ocr" ]; then',
         '    tesseract "$file" stdout -l por+eng --psm 3 2>/dev/null | wl-copy --type text/plain',
-        '    notify "Texto copiado" "Texto reconhecido e copiado para a área de transferência."',
         '    echo "Texto reconhecido e copiado: $file"',
         'else',
         '    wl-copy --type image/png < "$file" || { echo "Falha ao copiar imagem" >&2; exit 1; }',
-        '    notify "Captura de tela" "Imagem salva e copiada: $(basename "$file")"',
         '    echo "salvo e copiado: $file"',
         'fi'
     ].join("\n")
