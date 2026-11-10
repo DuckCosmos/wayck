@@ -225,5 +225,10 @@
         "streamFallback": "Audioausgabe",
         "empty": "Keine Anwendung gibt Audio wieder",
         "connecting": "Verbindung mit PipeWire wird hergestellt..."
+    },
+    "wallpaperSelector": {
+        "title": "HINTERGRÜNDE",
+        "empty": "Keine Hintergrundbilder gefunden",
+        "noResults": "Keine Ergebnisse gefunden"
     }
 }
