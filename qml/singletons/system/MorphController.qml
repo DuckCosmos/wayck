@@ -94,9 +94,9 @@ Singleton {
             return
         }
 
-        // A previous overlay has already been hidden before this point.
-        restoreSource()
-
+        // Source restoration belongs exclusively to MorphOverlay's
+        // backingWindowVisible handshake. Never restore it from open(): a new
+        // request can arrive while the previous Wayland surface is still closing.
         if (!item) {
             console.warn("[WAYCK MORPH] origem ausente:", requestedSurfaceId)
             return
