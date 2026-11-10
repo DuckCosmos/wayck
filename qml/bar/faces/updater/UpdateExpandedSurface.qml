@@ -183,7 +183,7 @@ Item {
         Text {
             Layout.fillWidth: true
 
-            text: "View changelog ↗"
+            text: I18n.t("updater.changelog") + " ↗"
             color: Theme.primary
             font.pixelSize: 9
             horizontalAlignment: Text.AlignHCenter
