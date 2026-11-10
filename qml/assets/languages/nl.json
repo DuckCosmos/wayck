@@ -225,5 +225,10 @@
         "streamFallback": "Audio-uitvoer",
         "empty": "Er speelt geen audio af in een applicatie",
         "connecting": "Verbinden met PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "ACHTERGRONDEN",
+        "empty": "Geen achtergronden gevonden",
+        "noResults": "Geen resultaten gevonden"
     }
 }
