@@ -230,5 +230,19 @@
         "title": "HINTERGRÜNDE",
         "empty": "Keine Hintergrundbilder gefunden",
         "noResults": "Keine Ergebnisse gefunden"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Bildschirmfoto",
+            "body": "Bild wurde gespeichert und in die Zwischenablage kopiert."
+        },
+        "ocr": {
+            "title": "Text kopiert",
+            "body": "Text wurde erkannt und in die Zwischenablage kopiert."
+        },
+        "update": {
+            "title": "Update verfügbar",
+            "body": "Wayck-Version {version} ist jetzt verfügbar."
+        }
     }
 }
