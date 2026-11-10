@@ -47,6 +47,8 @@ RowLayout {
     }
 
     BarCard {
+        // The volume anchor is captured by MorphController; avoid ancestor scaling.
+        hoverScale: 1
         implicitHeight: 36
 
         Item {
