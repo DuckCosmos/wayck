@@ -400,10 +400,10 @@ Item {
         Loader {
             id: surfaceContent
 
-            x: root.targetX
-            y: root.targetY
-            width: root.targetWidth
-            height: root.targetHeight
+            x: root.animatedTargetX
+            y: root.animatedTargetY
+            width: root.animatedTargetWidth
+            height: root.animatedTargetHeight
             visible: root.active
             enabled: root.active && root.progress >= 0.98
 
