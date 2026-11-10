@@ -230,5 +230,19 @@
         "title": "HÌNH NỀN",
         "empty": "Không tìm thấy hình nền",
         "noResults": "Không tìm thấy kết quả"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Ảnh chụp màn hình",
+            "body": "Hình ảnh đã được lưu và sao chép vào bộ nhớ tạm."
+        },
+        "ocr": {
+            "title": "Đã sao chép văn bản",
+            "body": "Văn bản đã được nhận dạng và sao chép vào bộ nhớ tạm."
+        },
+        "update": {
+            "title": "Có bản cập nhật",
+            "body": "Phiên bản Wayck {version} hiện đã có sẵn."
+        }
     }
 }
