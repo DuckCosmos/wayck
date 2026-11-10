@@ -47,7 +47,9 @@ RowLayout {
     }
 
     BarCard {
-        // The volume anchor is captured by MorphController; avoid ancestor scaling.
+        id: volumeCard
+
+        // Morph the complete card so its background and input region are hidden too.
         hoverScale: 1
         implicitHeight: 36
 
@@ -81,7 +83,7 @@ RowLayout {
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
                 onHoveredChanged: {
-                    MorphController.setSourceHovered(volumeAnchor, hovered)
+                    MorphController.setSourceHovered(volumeCard, hovered)
                     if (hovered)
                         mixerOpenTimer.restart()
                     else
@@ -96,7 +98,7 @@ RowLayout {
                 onTriggered: {
                     if (root.debug)
                         console.log("[WAYCK INPUT] audio mixer hover dwell")
-                    root.expandRequested(volumeAnchor, null, QsWindow.window)
+                    root.expandRequested(volumeCard, null, QsWindow.window)
                 }
             }
 
