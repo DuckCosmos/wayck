@@ -123,7 +123,8 @@
         "disk": "Disk",
         "network": "Jaringan",
         "temperature": "Suhu",
-        "usermenu": "Menu pengguna"
+        "usermenu": "Menu pengguna",
+        "updater": "Pembaruan"
     },
     "launch": {
         "notInstalled": "{name} belum terpasang.",
@@ -160,7 +161,8 @@
             "blur": "Konfigurasi blur",
             "apps": "Pasang aplikasi saya",
             "hypr": "Pasang konfigurasi Hyprland",
-            "build": "Kompilasi dan pasang Wayck"
+            "build": "Kompilasi dan pasang Wayck",
+            "update": "Perbarui Wayck"
         },
         "title": "PENGINSTAL WAYCK",
         "help": "Gunakan tombol panah untuk bernavigasi, SPASI untuk memilih, dan ENTER untuk melanjutkan. ESC untuk keluar.",
@@ -212,6 +214,16 @@
         "holding": "Terus tahan · {progress}%",
         "cancelHint": "Lepaskan sebelum selesai untuk membatalkan.",
         "installing": "Memulai pembaruan…",
-        "installHint": "Wayck akan memperbarui file dan memulai ulang shell."
+        "installHint": "Wayck akan memperbarui file dan memulai ulang shell.",
+        "changelog": "Lihat catatan perubahan"
+    },
+    "audioMixer": {
+        "title": "MIXER APLIKASI",
+        "streams": "{count} aplikasi memutar audio",
+        "masterVolume": "Volume utama",
+        "appFallback": "Aplikasi",
+        "streamFallback": "Keluaran audio",
+        "empty": "Tidak ada aplikasi yang memutar audio",
+        "connecting": "Menghubungkan ke PipeWire..."
     }
 }
