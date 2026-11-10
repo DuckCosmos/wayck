@@ -332,12 +332,16 @@ Singleton {
     }
 
     function finish(): void {
-        if (sourceItem)
-            sourceItem.opacity = sourceOpacity
+        const itemToRestore = sourceItem
+        const opacityToRestore = sourceOpacity
 
         hoverCloseTimer.stop()
         ++requestSerial
+
+        // Hide the overlay before restoring the original item. Restoring it
+        // first leaves one frame where both the snapshot and source are visible.
         active = false
+
         opening = false
         closing = false
         closeOnHoverExit = true
@@ -351,6 +355,11 @@ Singleton {
         snapshotOpacity = 1
         surfaceData = null
         surfaceId = ""
+
+        Qt.callLater(function() {
+            if (itemToRestore)
+                itemToRestore.opacity = opacityToRestore
+        })
 
         log("superfície liberada")
     }
