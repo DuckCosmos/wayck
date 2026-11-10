@@ -123,7 +123,8 @@
         "disk": "Datenträger",
         "network": "Netzwerk",
         "temperature": "Temperatur",
-        "usermenu": "Benutzermenü"
+        "usermenu": "Benutzermenü",
+        "updater": "Aktualisierung"
     },
     "launch": {
         "notInstalled": "{name} ist nicht installiert.",
@@ -160,7 +161,8 @@
             "blur": "Blur konfigurieren",
             "apps": "Meine Anwendungen installieren",
             "hypr": "Hyprland-Konfiguration installieren",
-            "build": "Wayck kompilieren und installieren"
+            "build": "Wayck kompilieren und installieren",
+            "update": "Wayck aktualisieren"
         },
         "title": "WAYCK-INSTALLER",
         "help": "Mit den Pfeiltasten navigieren, mit LEERTASTE auswählen und mit EINGABE fortfahren. ESC zum Beenden.",
@@ -212,6 +214,16 @@
         "holding": "Weiter halten · {progress}%",
         "cancelHint": "Vor dem Ende loslassen, um abzubrechen.",
         "installing": "Update wird gestartet…",
-        "installHint": "Wayck aktualisiert die Dateien und startet die Shell neu."
+        "installHint": "Wayck aktualisiert die Dateien und startet die Shell neu.",
+        "changelog": "Änderungsprotokoll anzeigen"
+    },
+    "audioMixer": {
+        "title": "APP-MIXER",
+        "streams": "{count} Apps geben Audio wieder",
+        "masterVolume": "Hauptlautstärke",
+        "appFallback": "Anwendung",
+        "streamFallback": "Audioausgabe",
+        "empty": "Keine Anwendung gibt Audio wieder",
+        "connecting": "Verbindung mit PipeWire wird hergestellt..."
     }
 }
