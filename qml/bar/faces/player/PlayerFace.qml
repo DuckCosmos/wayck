@@ -7,6 +7,9 @@ import "../../../"
 BarCard {
     id: root
 
+    // Keep morph capture geometry aligned with the unscaled source anchor.
+    hoverScale: 1
+
     property var player: MprisController.activePlayer
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
