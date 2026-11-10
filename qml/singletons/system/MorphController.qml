@@ -27,7 +27,9 @@ Singleton {
     property bool morphStarted: false
     property var pendingSourceItem: null
     property real pendingSourceOpacity: 1
+    property bool pendingSourceEnabled: true
     property bool pendingSourceRestore: false
+    property bool sourceEnabled: true
 
     property real sourceGlobalX: 0
     property real sourceGlobalY: 0
@@ -76,6 +78,7 @@ Singleton {
         // This prevents the original and the expanded representation from
         // being rendered simultaneously while grabToImage is still pending.
         sourceItem.opacity = 0
+        sourceItem.enabled = false
         opening = false
         progress = 1
 
@@ -237,11 +240,14 @@ Singleton {
 
         // Restore the previous tray icon before changing the anchor. The retained
         // snapshot fades away; the morph itself never collapses or restarts.
-        if (sourceItem)
+        if (sourceItem) {
             sourceItem.opacity = sourceOpacity
+            sourceItem.enabled = sourceEnabled
+        }
 
         sourceItem = item
         sourceOpacity = item.opacity
+        sourceEnabled = item.enabled
         sourceGlobalX = screen.x + localRect.x
         sourceGlobalY = screen.y + localRect.y
         sourceWidth = Math.max(1, localRect.width)
@@ -339,14 +345,17 @@ Singleton {
 
         const item = pendingSourceItem
         const opacity = pendingSourceOpacity
+        const enabled = pendingSourceEnabled
 
         pendingSourceItem = null
         pendingSourceRestore = false
 
-        if (item)
+        if (item) {
             item.opacity = opacity
+            item.enabled = enabled
+        }
 
-        log("origem restaurada após ocultar overlay")
+        log("origem restaurada após ocultação efetiva do overlay")
     }
 
     function finish(): void {
@@ -359,6 +368,7 @@ Singleton {
         // from showing both the overlay snapshot and the original widget.
         pendingSourceItem = sourceItem
         pendingSourceOpacity = sourceOpacity
+        pendingSourceEnabled = sourceEnabled
         pendingSourceRestore = pendingSourceItem !== null
 
         active = false
