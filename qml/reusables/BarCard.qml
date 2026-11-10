@@ -27,6 +27,11 @@ Item {
     property real hoverRadiusBoost: 3
     property bool hovered: false
 
+    onHoverEnabledChanged: {
+        if (!hoverEnabled)
+            hovered = false
+    }
+
     default property alias contentData: content.data
 
     readonly property real effectiveHorizontalPadding:
