@@ -16,6 +16,7 @@ PanelWindow {
         && MorphController.targetScreen !== null
         && monitor.name === MorphController.targetScreen.name
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
+    property bool wasVisible: false
 
     readonly property real sourceX:
         MorphController.sourceGlobalX - (monitor ? monitor.x : 0)
@@ -65,18 +66,32 @@ PanelWindow {
     onVisibleChanged: {
         if (debug)
             console.log("[WAYCK MORPH OVERLAY] visible=", visible,
+                "backing=", backingWindowVisible,
                 "monitor=", monitor ? monitor.name : "null",
                 "surface=", MorphController.surfaceId)
 
-        if (!visible && MorphController.pendingSourceRestore)
-            restoreSourceTimer.start()
+        if (visible) {
+            wasVisible = true
+        } else if (wasVisible && MorphController.pendingSourceRestore) {
+            // 'visible' is only the requested state. Wait until Quickshell
+            // confirms that the Wayland backing surface is actually hidden.
+            if (!backingWindowVisible) {
+                wasVisible = false
+                MorphController.restoreSource()
+            }
+        }
     }
 
-    Timer {
-        id: restoreSourceTimer
-        interval: 32
-        repeat: false
-        onTriggered: MorphController.restoreSource()
+    onBackingWindowVisibleChanged: {
+        if (debug)
+            console.log("[WAYCK MORPH OVERLAY] backingWindowVisible=",
+                backingWindowVisible, "visible=", visible)
+
+        if (!backingWindowVisible && !visible && wasVisible
+                && MorphController.pendingSourceRestore) {
+            wasVisible = false
+            MorphController.restoreSource()
+        }
     }
 
     Component.onCompleted: {
