@@ -20,6 +20,7 @@ Singleton {
     })
 
     readonly property bool blur: adapter.blur
+    readonly property bool threeDimensionalWave: adapter.threeDimensionalWave
     readonly property string language: adapter.language
     readonly property string notificationSound: adapter.notificationSound
     readonly property bool soundEffects: adapter.soundEffects
@@ -56,6 +57,7 @@ Singleton {
             id: adapter
 
             property bool blur: false
+            property bool threeDimensionalWave: true
             property string language: "auto"
             property string notificationSound: "Curious.mp3"
             property bool soundEffects: true
