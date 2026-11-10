@@ -32,6 +32,7 @@ singleton I18n 1.0 singletons/system/I18n.qml
 singleton SysNotif 1.0 singletons/system/SysNotif.qml
 singleton MorphController 1.0 singletons/system/MorphController.qml
 singleton UpdateController 1.0 singletons/system/UpdateController.qml
+singleton NotificationController 1.0 singletons/system/NotificationController.qml
 
 # Singletons: tema, áudio e dados
 singleton Theme 1.0 singletons/theme/Theme.qml
