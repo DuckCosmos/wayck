@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import "../../"
 
 Singleton {
     id: root
@@ -67,6 +68,17 @@ Singleton {
     function log(message): void {
         if (debug)
             console.log("[WAYCK MORPH]", message)
+    }
+
+    function getSourceWindowOrigin(windowRef, screen) {
+        // itemRect() is relative to the PanelWindow content item, not the monitor.
+        // The bar is horizontally centered by symmetric left/right layer-shell margins.
+        const x = screen.x + Math.max(0, (screen.width - windowRef.width) / 2)
+        const y = screen.y + (BarConfig.position === "bottom"
+            ? screen.height - windowRef.height
+            : 0)
+
+        return Qt.point(x, y)
     }
 
     function startMorph(token): void {
@@ -146,12 +158,13 @@ Singleton {
             return
         }
 
+        const windowOrigin = getSourceWindowOrigin(sourceWindow, screen)
         const token = ++requestSerial
 
         sourceItem = item
         targetScreen = screen
-        sourceGlobalX = screen.x + localRect.x
-        sourceGlobalY = screen.y + localRect.y
+        sourceGlobalX = windowOrigin.x + localRect.x
+        sourceGlobalY = windowOrigin.y + localRect.y
         sourceWidth = Math.max(1, localRect.width)
         sourceHeight = Math.max(1, localRect.height)
         sourceOpacity = item.opacity
@@ -183,6 +196,10 @@ Singleton {
 
         log("morph iniciado: " + requestedSurfaceId
             + " | screen=" + screen.name
+            + " | windowOrigin=" + Math.round(windowOrigin.x) + ","
+            + Math.round(windowOrigin.y)
+            + " | windowOrigin=" + Math.round(windowOrigin.x) + ","
+            + Math.round(windowOrigin.y)
             + " | rect=" + Math.round(sourceGlobalX) + ","
             + Math.round(sourceGlobalY) + " "
             + Math.round(sourceWidth) + "x" + Math.round(sourceHeight))
@@ -251,6 +268,8 @@ Singleton {
             return
         }
 
+        const windowOrigin = getSourceWindowOrigin(sourceWindow, screen)
+
         hoverCloseTimer.stop()
 
         if (sourceItem === item && surfaceData === data && !closing) {
@@ -277,8 +296,8 @@ Singleton {
             item.hoverEnabled = false
             item.hovered = false
         }
-        sourceGlobalX = screen.x + localRect.x
-        sourceGlobalY = screen.y + localRect.y
+        sourceGlobalX = windowOrigin.x + localRect.x
+        sourceGlobalY = windowOrigin.y + localRect.y
         sourceWidth = Math.max(1, localRect.width)
         sourceHeight = Math.max(1, localRect.height)
         surfaceData = data === undefined ? null : data
