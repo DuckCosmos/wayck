@@ -25,6 +25,9 @@ Singleton {
     property var surfaceData: null
     property real snapshotOpacity: 1
     property bool morphStarted: false
+    property var pendingSourceItem: null
+    property real pendingSourceOpacity: 1
+    property bool pendingSourceRestore: false
 
     property real sourceGlobalX: 0
     property real sourceGlobalY: 0
@@ -87,6 +90,9 @@ Singleton {
             log("pedido ignorado: superfície já ativa")
             return
         }
+
+        // A previous overlay has already been hidden before this point.
+        restoreSource()
 
         if (!item) {
             console.warn("[WAYCK MORPH] origem ausente:", requestedSurfaceId)
@@ -327,16 +333,34 @@ Singleton {
         }
     }
 
-    function finish(): void {
-        const itemToRestore = sourceItem
-        const opacityToRestore = sourceOpacity
+    function restoreSource(): void {
+        if (!pendingSourceRestore)
+            return
 
+        const item = pendingSourceItem
+        const opacity = pendingSourceOpacity
+
+        pendingSourceItem = null
+        pendingSourceRestore = false
+
+        if (item)
+            item.opacity = opacity
+
+        log("origem restaurada após ocultar overlay")
+    }
+
+    function finish(): void {
         hoverCloseTimer.stop()
         snapshotFallbackTimer.stop()
         ++requestSerial
 
-        // Hide the overlay before restoring the original item. Restoring it
-        // first leaves one frame where both the snapshot and source are visible.
+        // Keep the original item hidden until MorphOverlay confirms that its
+        // window is no longer visible. This prevents a final compositor frame
+        // from showing both the overlay snapshot and the original widget.
+        pendingSourceItem = sourceItem
+        pendingSourceOpacity = sourceOpacity
+        pendingSourceRestore = pendingSourceItem !== null
+
         active = false
 
         opening = false
@@ -354,11 +378,6 @@ Singleton {
         surfaceData = null
         surfaceId = ""
 
-        Qt.callLater(function() {
-            if (itemToRestore)
-                itemToRestore.opacity = opacityToRestore
-        })
-
-        log("superfície liberada")
+        log("overlay encerrado; aguardando ocultação antes de restaurar origem")
     }
 }
