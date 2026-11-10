@@ -6,6 +6,9 @@ import "../../../"
 BarCard {
     id: root
 
+    // Keep morph capture geometry aligned with the unscaled source anchor.
+    hoverScale: 1
+
     required property var trayItem
 
     signal menuRequested(var item, var anchor, bool immediate)
