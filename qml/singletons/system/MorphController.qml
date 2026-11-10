@@ -30,6 +30,8 @@ Singleton {
     property bool pendingSourceEnabled: true
     property bool pendingSourceRestore: false
     property bool sourceEnabled: true
+    property bool sourceHoverEnabled: false
+    property bool pendingSourceHoverEnabled: false
 
     property real sourceGlobalX: 0
     property real sourceGlobalY: 0
@@ -79,6 +81,14 @@ Singleton {
         // being rendered simultaneously while grabToImage is still pending.
         sourceItem.opacity = 0
         sourceItem.enabled = false
+
+        // Qt 6 keeps HoverHandlers active on disabled Items. Disable the
+        // BarCard hover system explicitly so the hidden source cannot retain
+        // its highlighted/hovered appearance under the overlay.
+        if ("hoverEnabled" in sourceItem) {
+            sourceItem.hoverEnabled = false
+            sourceItem.hovered = false
+        }
         opening = false
         progress = 1
 
@@ -146,6 +156,7 @@ Singleton {
         sourceHeight = Math.max(1, localRect.height)
         sourceOpacity = item.opacity
         sourceEnabled = item.enabled
+        sourceHoverEnabled = ("hoverEnabled" in item) ? item.hoverEnabled : false
 
         surfaceId = requestedSurfaceId
         surfaceData = data === undefined ? null : data
@@ -244,11 +255,16 @@ Singleton {
         if (sourceItem) {
             sourceItem.opacity = sourceOpacity
             sourceItem.enabled = sourceEnabled
+            if ("hoverEnabled" in sourceItem) {
+                sourceItem.hoverEnabled = sourceHoverEnabled
+                sourceItem.hovered = false
+            }
         }
 
         sourceItem = item
         sourceOpacity = item.opacity
         sourceEnabled = item.enabled
+        sourceHoverEnabled = ("hoverEnabled" in item) ? item.hoverEnabled : false
         sourceGlobalX = screen.x + localRect.x
         sourceGlobalY = screen.y + localRect.y
         sourceWidth = Math.max(1, localRect.width)
@@ -347,6 +363,7 @@ Singleton {
         const item = pendingSourceItem
         const opacity = pendingSourceOpacity
         const enabled = pendingSourceEnabled
+        const hoverEnabled = pendingSourceHoverEnabled
 
         pendingSourceItem = null
         pendingSourceRestore = false
@@ -354,6 +371,10 @@ Singleton {
         if (item) {
             item.opacity = opacity
             item.enabled = enabled
+            if ("hoverEnabled" in item) {
+                item.hoverEnabled = hoverEnabled
+                item.hovered = false
+            }
         }
 
         log("origem restaurada após ocultação efetiva do overlay")
@@ -370,6 +391,7 @@ Singleton {
         pendingSourceItem = sourceItem
         pendingSourceOpacity = sourceOpacity
         pendingSourceEnabled = sourceEnabled
+        pendingSourceHoverEnabled = sourceHoverEnabled
         pendingSourceRestore = pendingSourceItem !== null
 
         active = false
