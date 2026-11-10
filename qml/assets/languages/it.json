@@ -123,7 +123,8 @@
         "disk": "Disco",
         "network": "Rete",
         "temperature": "Temperatura",
-        "usermenu": "Menu utente"
+        "usermenu": "Menu utente",
+        "updater": "Aggiornamento"
     },
     "launch": {
         "notInstalled": "{name} non è installato.",
@@ -160,7 +161,8 @@
             "blur": "Configura il blur",
             "apps": "Installa le mie applicazioni",
             "hypr": "Installa la configurazione di Hyprland",
-            "build": "Compila e installa Wayck"
+            "build": "Compila e installa Wayck",
+            "update": "Aggiorna Wayck"
         },
         "title": "INSTALLER DI WAYCK",
         "help": "Usa le frecce per spostarti, SPAZIO per selezionare e INVIO per continuare. ESC per uscire.",
@@ -212,6 +214,16 @@
         "holding": "Continua a tenere premuto · {progress}%",
         "cancelHint": "Rilascia prima della fine per annullare.",
         "installing": "Avvio aggiornamento…",
-        "installHint": "Wayck aggiornerà i file e riavvierà la shell."
+        "installHint": "Wayck aggiornerà i file e riavvierà la shell.",
+        "changelog": "Visualizza le modifiche"
+    },
+    "audioMixer": {
+        "title": "MIXER APPLICAZIONI",
+        "streams": "{count} applicazioni riproducono audio",
+        "masterVolume": "Volume principale",
+        "appFallback": "Applicazione",
+        "streamFallback": "Uscita audio",
+        "empty": "Nessuna applicazione sta riproducendo audio",
+        "connecting": "Connessione a PipeWire..."
     }
 }
