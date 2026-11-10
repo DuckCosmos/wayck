@@ -294,7 +294,7 @@ PanelWindow {
                     Layout.preferredHeight: 22
 
                     Text {
-                        text: "WALLPAPERS"
+                        text: I18n.t("wallpaperSelector.title")
                         color: Theme.surfaceForeground
                         font.pixelSize: 11
                         font.bold: true
@@ -470,8 +470,8 @@ PanelWindow {
                         carousel.count === 0
 
                     text: root.wallpapers.length === 0
-                        ? "Nenhum wallpaper encontrado"
-                        : "Nenhum resultado encontrado"
+                        ? I18n.t("wallpaperSelector.empty")
+                        : I18n.t("wallpaperSelector.noResults")
 
                     color: Theme.surfaceForeground
                     font.pixelSize: 13
@@ -499,7 +499,7 @@ PanelWindow {
                         font.pixelSize: 14
 
                         color: Theme.surfaceForeground
-                        placeholderText: "Pesquisar wallpaper..."
+                        placeholderText: I18n.t("launcher.search")
                         placeholderTextColor: Qt.lighter(
                             Theme.surfaceContainer,
                             1.8
