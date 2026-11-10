@@ -230,5 +230,19 @@
         "title": "DUVAR KAĞITLARI",
         "empty": "Duvar kağıdı bulunamadı",
         "noResults": "Sonuç bulunamadı"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Ekran görüntüsü",
+            "body": "Görüntü kaydedildi ve panoya kopyalandı."
+        },
+        "ocr": {
+            "title": "Metin kopyalandı",
+            "body": "Metin tanındı ve panoya kopyalandı."
+        },
+        "update": {
+            "title": "Güncelleme mevcut",
+            "body": "Wayck {version} sürümü artık kullanılabilir."
+        }
     }
 }
