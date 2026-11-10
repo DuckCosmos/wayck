@@ -158,6 +158,14 @@ Singleton {
         sourceEnabled = item.enabled
         sourceHoverEnabled = ("hoverEnabled" in item) ? item.hoverEnabled : false
 
+        // Clear hover before grabToImage: the snapshot must not capture the
+        // BarCard's highlighted state, otherwise the collapsed morph itself
+        // looks like a second focused copy even after the real source is hidden.
+        if ("hoverEnabled" in item) {
+            item.hoverEnabled = false
+            item.hovered = false
+        }
+
         surfaceId = requestedSurfaceId
         surfaceData = data === undefined ? null : data
         closing = false
