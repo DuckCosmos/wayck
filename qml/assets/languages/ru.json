@@ -225,5 +225,10 @@
         "streamFallback": "Аудиовыход",
         "empty": "Нет приложений, воспроизводящих звук",
         "connecting": "Подключение к PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "ОБОИ",
+        "empty": "Обои не найдены",
+        "noResults": "Результаты не найдены"
     }
 }
