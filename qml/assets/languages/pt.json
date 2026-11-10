@@ -230,5 +230,19 @@
         "title": "PAPÉIS DE PAREDE",
         "empty": "Nenhum papel de parede encontrado",
         "noResults": "Nenhum resultado encontrado"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Captura de tela",
+            "body": "Imagem salva e copiada para a área de transferência."
+        },
+        "ocr": {
+            "title": "Texto copiado",
+            "body": "Texto reconhecido e copiado para a área de transferência."
+        },
+        "update": {
+            "title": "Atualização disponível",
+            "body": "A versão {version} do Wayck está disponível."
+        }
     }
 }
