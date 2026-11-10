@@ -16,7 +16,7 @@ BarCard {
 
     property bool iconFailed: false
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
-    readonly property var interactionAnchor: iconArea
+    readonly property var interactionAnchor: root
 
     horizontalPadding: 6
     verticalPadding: 6
