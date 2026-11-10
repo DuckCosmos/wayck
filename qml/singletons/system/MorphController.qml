@@ -145,6 +145,7 @@ Singleton {
         sourceWidth = Math.max(1, localRect.width)
         sourceHeight = Math.max(1, localRect.height)
         sourceOpacity = item.opacity
+        sourceEnabled = item.enabled
 
         surfaceId = requestedSurfaceId
         surfaceData = data === undefined ? null : data
