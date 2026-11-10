@@ -80,6 +80,7 @@ RowLayout {
             }
 
             HoverHandler {
+                enabled: volumeCard.hoverEnabled
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
                 onHoveredChanged: {
