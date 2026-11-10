@@ -1,7 +1,10 @@
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Controls
+import Quickshell.Services.Pipewire
 import Quickshell
 import "../"
+import "../bar/faces/tray"
 
 Item {
     id: root
@@ -531,38 +534,802 @@ Item {
 
     Component {
         id: playerContent
+        Item {
+            id: expandedRoot
 
-        PlayerExpandedSurface {
+    property var player: MprisController.activePlayer
+
+    signal closeRequested()
+
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: 24
+        spacing: 22
+
+        Rectangle {
+            Layout.preferredWidth: 172
+            Layout.preferredHeight: 172
+            radius: 14
+            color: Theme.surface
+            clip: true
+
+            Image {
+                anchors.fill: parent
+                source: expandedRoot.player ? expandedRoot.player.trackArtUrl : ""
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                visible: expandedRoot.player !== null && expandedRoot.player.trackArtUrl !== ""
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: "♫"
+                color: Theme.primary
+                font.pixelSize: 54
+                visible: !expandedRoot.player || !expandedRoot.player.trackArtUrl
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 22
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: expandedRoot.player ? (expandedRoot.player.identity || I18n.t("player.title")) : I18n.t("player.none")
+                    color: Theme.outline
+                    font.pixelSize: 11
+                    elide: Text.ElideRight
+                }
+
+                Text {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "×"
+                    color: Theme.surfaceForeground
+                    font.pixelSize: 22
+
+                    MouseArea {
+                        anchors.fill: parent
+                        anchors.margins: -8
+                        onClicked: expandedRoot.closeRequested()
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                }
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: expandedRoot.player
+                    ? (expandedRoot.player.trackTitle || I18n.t("player.title"))
+                    : I18n.t("player.none")
+                color: Theme.surfaceForeground
+                font.pixelSize: 19
+                font.bold: true
+                elide: Text.ElideRight
+                maximumLineCount: 2
+                wrapMode: Text.Wrap
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: expandedRoot.player
+                    ? (expandedRoot.player.trackArtist || I18n.t("player.unknownArtist"))
+                    : I18n.t("player.waiting")
+                color: Theme.outline
+                font.pixelSize: 13
+                elide: Text.ElideRight
+            }
+
+            Item { Layout.fillHeight: true }
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 26
+
+                Text {
+                    text: "‹"
+                    color: expandedRoot.player && expandedRoot.player.canGoPrevious ? Theme.surfaceForeground : Theme.outline
+                    font.pixelSize: 34
+
+                    MouseArea {
+                        anchors.fill: parent
+                        anchors.margins: -10
+                        enabled: expandedRoot.player !== null && expandedRoot.player.canGoPrevious
+                        onClicked: expandedRoot.player.previous()
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    }
+                }
+
+                Rectangle {
+                    Layout.preferredWidth: 46
+                    Layout.preferredHeight: 46
+                    radius: 23
+                    color: Theme.primary
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: expandedRoot.player && expandedRoot.player.isPlaying ? "Ⅱ" : "▶"
+                        color: Theme.onPrimary
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: expandedRoot.player !== null && expandedRoot.player.canTogglePlaying
+                        onClicked: expandedRoot.player.togglePlaying()
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    }
+                }
+
+                Text {
+                    text: "›"
+                    color: expandedRoot.player && expandedRoot.player.canGoNext ? Theme.surfaceForeground : Theme.outline
+                    font.pixelSize: 34
+
+                    MouseArea {
+                        anchors.fill: parent
+                        anchors.margins: -10
+                        enabled: expandedRoot.player !== null && expandedRoot.player.canGoNext
+                        onClicked: expandedRoot.player.next()
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    }
+                }
+            }
+        }
+    }
             onCloseRequested: root.close()
         }
     }
-
     Component {
         id: trayContent
+        Item {
+            id: expandedRoot
 
-        TrayExpandedSurface {
-            menu: root.surfaceData
+    property var menu: root.surfaceData
+
+    signal closeRequested()
+
+    implicitWidth: menuCard.implicitWidth
+    implicitHeight: menuCard.implicitHeight
+
+    TrayMenu {
+        id: menuCard
+
+        anchors.left: parent.left
+        anchors.top: parent.top
+
+        menu: expandedRoot.menu
+        onCloseRequested: root.close()
+    }
             onCloseRequested: root.close()
         }
     }
-
     Component {
         id: audioContent
+        Item {
+            id: expandedRoot
 
-        AudioExpandedSurface {
+    signal closeRequested()
+
+    property var trackedNodes: []
+
+    readonly property var audioStreams: trackedNodes.filter(function(node) {
+        if (!node || !node.isStream || !node.audio)
+            return false
+
+        const props = node.properties || ({})
+        const mediaClass = props["media.class"] || ""
+        return mediaClass === "" || mediaClass === "Stream/Output/Audio"
+    })
+
+    implicitWidth: 360
+    implicitHeight: 280
+
+    function refreshNodes(): void {
+        trackedNodes = Pipewire.nodes.values
+    }
+
+    function appName(node): string {
+        const props = node && node.properties ? node.properties : ({})
+        return props["application.name"]
+            || props["application.process.binary"]
+            || node.description
+            || node.name
+            || I18n.t("audioMixer.appFallback")
+    }
+
+    function streamDescription(node): string {
+        const props = node && node.properties ? node.properties : ({})
+        return props["media.name"]
+            || props["media.title"]
+            || props["window.title"]
+            || node.name
+            || I18n.t("audioMixer.streamFallback")
+    }
+
+    PwObjectTracker {
+        objects: expandedRoot.trackedNodes
+    }
+
+    PwObjectTracker {
+        objects: [Pipewire.defaultAudioSink]
+    }
+
+    Connections {
+        target: Pipewire.nodes
+        ignoreUnknownSignals: true
+        function onValuesChanged() { expandedRoot.refreshNodes() }
+        function onObjectInsertedPost() { expandedRoot.refreshNodes() }
+        function onObjectRemovedPost() { expandedRoot.refreshNodes() }
+    }
+
+    Component.onCompleted: refreshNodes()
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 16
+        color: Qt.alpha(Theme.surfaceContainer, 0.98)
+        border.width: 1
+        border.color: Theme.outline
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 17
+        spacing: 10
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 1
+
+                Text {
+                    text: I18n.t("audioMixer.title")
+                    color: Theme.surfaceForeground
+                    font.pixelSize: 11
+                    font.bold: true
+                    font.letterSpacing: 0.8
+                }
+
+                Text {
+                    text: I18n.t("audioMixer.streams", { count: expandedRoot.audioStreams.length })
+                    color: Theme.outline
+                    font.pixelSize: 10
+                }
+            }
+
+            Text {
+                text: "×"
+                color: Theme.outline
+                font.pixelSize: 20
+
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.margins: -7
+                    onClicked: expandedRoot.closeRequested()
+                    cursorShape: Qt.PointingHandCursor
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            height: 1
+            color: Theme.outline
+            opacity: 0.22
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 5
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Text {
+                    text: I18n.t("audioMixer.masterVolume")
+                    color: Theme.surfaceForeground
+                    font.pixelSize: 11
+                    font.bold: true
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: Pipewire.defaultAudioSink?.audio
+                        ? Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%"
+                        : "--%"
+                    color: Theme.outline
+                    font.pixelSize: 10
+                }
+            }
+
+            Slider {
+                id: masterVolumeSlider
+
+                Layout.fillWidth: true
+                from: 0
+                to: 1.5
+
+                enabled: !!Pipewire.defaultAudioSink?.audio
+
+                value: Pipewire.defaultAudioSink?.audio
+                    ? Pipewire.defaultAudioSink.audio.volume
+                    : 0
+
+                onMoved: {
+                    const sink = Pipewire.defaultAudioSink
+
+                    if (!sink?.audio)
+                        return
+
+                    sink.audio.volume = value
+
+                    if (value > 0)
+                        sink.audio.muted = false
+                }
+            }
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ListView {
+                id: streamList
+                anchors.fill: parent
+                clip: true
+                spacing: 6
+                model: expandedRoot.audioStreams
+                boundsBehavior: Flickable.StopAtBounds
+
+                add: Transition {
+                    ParallelAnimation {
+                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Motion.contentFadeDuration }
+                        NumberAnimation { property: "y"; from: 12; duration: Motion.menuContentDuration; easing.type: Motion.standard }
+                    }
+                }
+
+                displaced: Transition {
+                    NumberAnimation {
+                        properties: "x,y"
+                        duration: Motion.menuContentDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Motion.layoutCurve
+                    }
+                }
+
+                delegate: Item {
+                    id: streamDelegate
+                    required property var modelData
+                    required property int index
+
+                    property var node: modelData
+                    readonly property var props: node && node.properties ? node.properties : ({})
+                    readonly property bool muted: node && node.audio ? node.audio.muted : false
+                    readonly property real volume: node && node.audio ? node.audio.volume : 0
+
+                    width: streamList.width
+                    height: 54
+
+                    RowLayout {
+                        anchors.fill: parent
+                        spacing: 9
+
+                        Rectangle {
+                            Layout.preferredWidth: 34
+                            Layout.preferredHeight: 34
+                            radius: 10
+                            color: Qt.alpha(Theme.primary, 0.14)
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "♫"
+                                color: Theme.primary
+                                font.pixelSize: 17
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 5
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 6
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 1
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: expandedRoot.appName(streamDelegate.node)
+                                        color: Theme.surfaceForeground
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: expandedRoot.streamDescription(streamDelegate.node)
+                                        color: Theme.outline
+                                        font.pixelSize: 9
+                                        elide: Text.ElideRight
+                                    }
+                                }
+
+                                Text {
+                                    text: Math.round(streamDelegate.volume * 100) + "%"
+                                    color: Theme.outline
+                                    font.pixelSize: 10
+                                }
+                            }
+
+                            Slider {
+                                id: volumeSlider
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 15
+                                from: 0
+                                to: 1.5
+                                value: streamDelegate.volume
+
+                                onMoved: {
+                                    if (!streamDelegate.node || !streamDelegate.node.audio)
+                                        return
+                                    streamDelegate.node.audio.volume = value
+                                    if (value > 0)
+                                        streamDelegate.node.audio.muted = false
+                                }
+
+                                background: Rectangle {
+                                    x: volumeSlider.leftPadding
+                                    y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                    width: volumeSlider.availableWidth
+                                    height: 4
+                                    radius: 2
+                                    color: Qt.darker(Theme.surfaceContainer, 1.5)
+
+                                    Rectangle {
+                                        width: parent.width * volumeSlider.visualPosition
+                                        height: parent.height
+                                        radius: parent.radius
+                                        color: Theme.primary
+                                    }
+                                }
+
+                                handle: Rectangle {
+                                    x: volumeSlider.leftPadding
+                                        + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
+                                    y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
+                                    width: 11
+                                    height: 11
+                                    radius: 6
+                                    color: Theme.primary
+                                    border.width: 2
+                                    border.color: Qt.lighter(Theme.primary, 1.2)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.preferredWidth: 30
+                            Layout.preferredHeight: 30
+                            radius: 9
+                            color: streamDelegate.muted
+                                ? Qt.alpha(Theme.outline, 0.16)
+                                : Qt.alpha(Theme.primary, 0.12)
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: streamDelegate.muted ? "󰖁" : "󰕾"
+                                color: streamDelegate.muted ? Theme.outline : Theme.primary
+                                font.pixelSize: 15
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (streamDelegate.node && streamDelegate.node.audio)
+                                        streamDelegate.node.audio.muted = !streamDelegate.node.audio.muted
+                                }
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+                    }
+                }
+            }
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                spacing: 5
+                visible: expandedRoot.audioStreams.length === 0
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "♪"
+                    color: Theme.outline
+                    font.pixelSize: 28
+                }
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: Pipewire.ready ? I18n.t("audioMixer.empty") : I18n.t("audioMixer.connecting")
+                    color: Theme.outline
+                    font.pixelSize: 10
+                }
+            }
+        }
+    }
             onCloseRequested: root.close()
         }
     }
-
     Component {
         id: updaterContent
+        Item {
+            id: expandedRoot
 
-        UpdateExpandedSurface {
-            onUpdateRequested: {
-                UpdateController.installUpdate()
-                root.close()
+    signal updateRequested()
+    signal closeRequested()
+
+    property real holdProgress: 0
+    property bool holdActive: false
+    property bool completed: false
+    property real wavePhase: 0
+
+    implicitWidth: 340
+    implicitHeight: 204
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 17
+        color: Qt.alpha(Theme.surfaceContainer, 0.98)
+        border.width: 1
+        border.color: Theme.outline
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 18
+        spacing: 8
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 9
+
+            Rectangle {
+                Layout.preferredWidth: 38
+                Layout.preferredHeight: 38
+                radius: 12
+                color: Qt.alpha(Theme.primary, 0.16)
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "󰇚"
+                    color: Theme.primary
+                    font.pixelSize: 20
+                }
             }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 2
+
+                Text {
+                    text: I18n.t("updater.title")
+                    color: Theme.surfaceForeground
+                    font.pixelSize: 11
+                    font.bold: true
+                    font.letterSpacing: 0.6
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: UpdateController.localVersion + "  →  " + UpdateController.remoteVersion
+                    color: Theme.outline
+                    font.pixelSize: 10
+                    elide: Text.ElideRight
+                }
+            }
+
+            Text {
+                text: "×"
+                color: Theme.outline
+                font.pixelSize: 20
+
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.margins: -7
+                    onClicked: expandedRoot.closeRequested()
+                    cursorShape: Qt.PointingHandCursor
+                }
+            }
+        }
+
+        Text {
+            Layout.fillWidth: true
+            text: I18n.t("updater.description")
+            color: Theme.surfaceForeground
+            opacity: 0.78
+            font.pixelSize: 10
+            wrapMode: Text.WordWrap
+        }
+
+        Item { Layout.fillHeight: true }
+
+        Rectangle {
+            id: holdButton
+            Layout.fillWidth: true
+            Layout.preferredHeight: 48
+            radius: 12
+            color: Qt.darker(Theme.surfaceContainer, 1.28)
+            border.width: 1
+            border.color: expandedRoot.holdActive ? Theme.primary : Theme.outline
+            clip: true
+
+            // The shader draws the fluid and its optional 3D bevel in one pass.
+            WaveFill {
+                anchors.fill: parent
+                z: 0
+
+                radius: parent.radius
+                threeDimensional: 1.0
+                fillLevel: expandedRoot.holdProgress
+
+                waveAmp: expandedRoot.holdProgress > 0.001
+                    && expandedRoot.holdProgress < 0.99
+                    ? 40 * Math.sin(expandedRoot.holdProgress * Math.PI)
+                    : 0
+
+                phase: expandedRoot.wavePhase
+
+                color1: Qt.darker(Theme.primary, 1.08)
+                color2: Theme.primary
+
+                visible: expandedRoot.holdProgress > 0.001
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: expandedRoot.completed
+                    ? I18n.t("updater.installing")
+                    : (expandedRoot.holdActive
+                        ? I18n.t("updater.holding", { progress: Math.round(expandedRoot.holdProgress * 100) })
+                        : I18n.t("updater.hold"))
+                color: expandedRoot.holdProgress > 0.48 ? Theme.onPrimary : Theme.surfaceForeground
+                font.pixelSize: 11
+                font.bold: true
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: !expandedRoot.completed
+
+                onPressed: {
+                    expandedRoot.holdActive = true
+                    holdAnimation.restart()
+                    SoundController.play("longCharge")
+                }
+
+                onReleased: {
+                    expandedRoot.holdActive = false
+                    SoundController.stop("longCharge")
+
+                    if (!expandedRoot.completed) {
+                        holdAnimation.stop()
+                        drainAnimation.restart()
+                    }
+                }
+
+                onCanceled: {
+                    expandedRoot.holdActive = false
+                    SoundController.stop("longCharge")
+
+                    if (!expandedRoot.completed) {
+                        holdAnimation.stop()
+                        drainAnimation.restart()
+                    }
+                }
+
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+
+        Text {
+            Layout.fillWidth: true
+            text: expandedRoot.holdActive
+                ? I18n.t("updater.cancelHint")
+                : I18n.t("updater.installHint")
+            color: Theme.outline
+            font.pixelSize: 9
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+        }
+
+        Text {
+            Layout.fillWidth: true
+
+            text: I18n.t("updater.changelog") + " ↗"
+            color: Theme.primary
+            font.pixelSize: 9
+            horizontalAlignment: Text.AlignHCenter
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    const parts = String(UpdateController.localVersion)
+                        .split(".")
+                        .map(Number)
+
+                    parts[parts.length - 1]++
+
+                    const version = parts.join("")
+
+                    Qt.openUrlExternally(
+                        "https://github.com/DuckCosmos/wayck/blob/main/CHANGELOG.md#" + version
+                    )
+                }
+            }
+        }
+    }
+
+    NumberAnimation {
+        id: holdAnimation
+        target: root
+        property: "holdProgress"
+        from: 0
+        to: 1
+        duration: 3904
+        easing.type: Easing.Linear
+
+        onFinished: {
+            if (!expandedRoot.holdActive || expandedRoot.completed)
+                return
+
+            expandedRoot.completed = true
+            expandedRoot.updateRequested()
+            SoundController.stop("longCharge")
+        }
+    }
+
+    NumberAnimation {
+        id: drainAnimation
+        target: root
+        property: "holdProgress"
+        to: 0
+        duration: Math.max(100, expandedRoot.holdProgress * 210)
+        easing.type: Easing.OutCubic
+    }
+
+    NumberAnimation on wavePhase {
+        running: expandedRoot.holdProgress > 0.0
+            && expandedRoot.holdProgress < 1.0
+
+        from: 0
+        to: Math.PI * 2
+
+        duration: 600
+        loops: Animation.Infinite
+    }
+            onUpdateRequested: { UpdateController.installUpdate(); root.close() }
             onCloseRequested: root.close()
         }
     }
+
 }
