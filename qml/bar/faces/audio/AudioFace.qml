@@ -84,7 +84,7 @@ RowLayout {
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
                 onHoveredChanged: {
-                    MorphController.setSourceHovered(volumeCard, hovered)
+                    QsWindow.window.morph.setSourceHovered(volumeCard, hovered)
                     if (hovered)
                         mixerOpenTimer.restart()
                     else

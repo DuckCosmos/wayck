@@ -8,6 +8,8 @@ PanelWindow {
 
     signal dismissed()
 
+    property alias morph: morphLayer
+
     readonly property real minModuleSpacing: 4
     readonly property real maxModuleSpacing: 10
     readonly property real sectionGap: 8
@@ -36,12 +38,24 @@ PanelWindow {
 
     color: "transparent"
 
-    implicitHeight: BarConfig.barHeight
+    implicitHeight: screen ? screen.height : BarConfig.barHeight
     exclusiveZone: BarConfig.barHeight
 
     WlrLayershell.namespace: "wayck-bar"
-    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.layer: morphLayer.active ? WlrLayer.Overlay : WlrLayer.Top
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+    mask: Region {
+        item: barContent
+
+        Region {
+            item: morphLayer.maskItem
+        }
+
+        Region {
+            item: morphLayer.sourceHoverItem
+        }
+    }
 
     anchors {
         top: BarConfig.position === "top"
@@ -217,7 +231,7 @@ PanelWindow {
         if (debug)
             console.log("[WAYCK INPUT] Bar recebeu", surfaceId,
                 "source=", !!sourceItem, "window=", !!windowRef)
-        MorphController.open(sourceItem, surfaceId, surfaceData, windowRef || QsWindow.window)
+        morphLayer.open(sourceItem, surfaceId, surfaceData)
     }
 
     Connections {
@@ -230,10 +244,20 @@ PanelWindow {
 
     Component.onCompleted: scheduleLayout()
 
+    Morph {
+        id: morphLayer
+        anchors.fill: parent
+        z: 100
+    }
+
     Item {
         id: barContent
 
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: BarConfig.barHeight
+        y: BarConfig.position === "bottom" ? parent.height - height : 0
+        z: 1
 
         onWidthChanged: root.scheduleLayout()
 

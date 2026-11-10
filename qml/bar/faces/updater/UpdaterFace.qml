@@ -22,7 +22,7 @@ BarCard {
     cornerRadius: 9
 
     function requestExpand(reason): void {
-        if (!UpdateController.updateAvailable || MorphController.active)
+        if (!UpdateController.updateAvailable || QsWindow.window.morph.active)
             return
 
         if (Quickshell.env("WAYCK_DEBUG") === "1")
@@ -54,7 +54,7 @@ BarCard {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
-                MorphController.setSourceHovered(root, hovered)
+                QsWindow.window.morph.setSourceHovered(root, hovered)
 
                 if (hovered)
                     openTimer.restart()

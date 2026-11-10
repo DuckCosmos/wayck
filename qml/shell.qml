@@ -77,17 +77,6 @@ ShellRoot {
         target: ClipboardController
     }
 
-    Variants {
-        model: Quickshell.screens
-
-        delegate: Component {
-            MorphOverlay {
-                required property var modelData
-                monitor: modelData
-            }
-        }
-    }
-
     NotificationPopup {}
 
     WallpaperSelector {}

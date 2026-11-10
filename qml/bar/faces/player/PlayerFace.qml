@@ -32,7 +32,7 @@ BarCard {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
         onHoveredChanged: {
-            MorphController.setSourceHovered(root, hovered)
+            QsWindow.window.morph.setSourceHovered(root, hovered)
 
             if (root.debug)
                 console.log("[WAYCK INPUT] player card hover:", hovered)

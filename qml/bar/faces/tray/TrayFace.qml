@@ -27,11 +27,11 @@ BarCard {
         const sameAnchor = activeTrayItem === item && activeAnchor === anchor
 
         if (sameAnchor
-                && MorphController.active
-                && MorphController.surfaceId === "tray") {
-            if (MorphController.closing) {
+                && QsWindow.window.morph.active
+                && QsWindow.window.morph.surfaceId === "tray") {
+            if (QsWindow.window.morph.closing) {
                 hoverOpenTimer.stop()
-                MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
+                QsWindow.window.morph.retarget(anchor, "tray", item.menu, QsWindow.window)
             }
             return
         }
@@ -45,13 +45,13 @@ BarCard {
 
         // Once a tray surface exists, changing icons retargets the same surface.
         // Its progress never returns to zero; only its geometry and menu data move.
-        if (MorphController.active && MorphController.surfaceId === "tray") {
+        if (QsWindow.window.morph.active && QsWindow.window.morph.surfaceId === "tray") {
             hoverOpenTimer.stop()
-            MorphController.retarget(anchor, "tray", item.menu, QsWindow.window)
+            QsWindow.window.morph.retarget(anchor, "tray", item.menu, QsWindow.window)
             return
         }
 
-        if (MorphController.active || MorphController.opening)
+        if (QsWindow.window.morph.active || QsWindow.window.morph.opening)
             return
 
         if (immediate) {
@@ -77,7 +77,7 @@ BarCard {
 
         if (!item.hasMenu || !item.menu) {
             hoverOpenTimer.stop()
-            if (!MorphController.active) {
+            if (!QsWindow.window.morph.active) {
                 activeTrayItem = null
                 activeAnchor = null
             } else if (debug) {
@@ -104,7 +104,7 @@ BarCard {
     }
 
     function cancelPendingOpen() {
-        if (!MorphController.active && !MorphController.opening)
+        if (!QsWindow.window.morph.active && !QsWindow.window.morph.opening)
             hoverOpenTimer.stop()
     }
 
@@ -122,8 +122,8 @@ BarCard {
             if (root.activeTrayItem
                     && root.activeTrayItem.hasMenu
                     && root.activeAnchor
-                    && !MorphController.active
-                    && !MorphController.opening) {
+                    && !QsWindow.window.morph.active
+                    && !QsWindow.window.morph.opening) {
                 root.requestExpand("hover dwell")
             }
         }
@@ -137,9 +137,9 @@ BarCard {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 
             onHoveredChanged: {
-                // Match the exact icon anchor used by MorphController.open/retarget.
+                // Match the exact icon anchor used by QsWindow.window.morph.open/retarget.
                 // Passing the whole TrayFace fails its source identity check on exit.
-                MorphController.setSourceHovered(root.activeAnchor || root, hovered)
+                QsWindow.window.morph.setSourceHovered(root.activeAnchor || root, hovered)
 
                 if (root.debug)
                     console.log("[WAYCK INPUT] tray row hover:", hovered)
