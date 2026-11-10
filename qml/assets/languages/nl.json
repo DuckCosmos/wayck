@@ -123,7 +123,8 @@
         "disk": "Schijf",
         "network": "Netwerk",
         "temperature": "Temperatuur",
-        "usermenu": "Gebruikersmenu"
+        "usermenu": "Gebruikersmenu",
+        "updater": "Update"
     },
     "launch": {
         "notInstalled": "{name} is niet geïnstalleerd.",
@@ -160,7 +161,8 @@
             "blur": "Blur configureren",
             "apps": "Mijn toepassingen installeren",
             "hypr": "Hyprland-configuratie installeren",
-            "build": "Wayck compileren en installeren"
+            "build": "Wayck compileren en installeren",
+            "update": "Wayck bijwerken"
         },
         "title": "WAYCK-INSTALLATIEPROGRAMMA",
         "help": "Gebruik de pijltjestoetsen om te navigeren, SPATIE om te selecteren en ENTER om door te gaan. ESC om af te sluiten.",
@@ -212,6 +214,16 @@
         "holding": "Blijf vasthouden · {progress}%",
         "cancelHint": "Laat los vóór het einde om te annuleren.",
         "installing": "Update starten…",
-        "installHint": "Wayck werkt de bestanden bij en start de shell opnieuw."
+        "installHint": "Wayck werkt de bestanden bij en start de shell opnieuw.",
+        "changelog": "Wijzigingslog bekijken"
+    },
+    "audioMixer": {
+        "title": "APPLICATIEMIXER",
+        "streams": "{count} apps spelen audio af",
+        "masterVolume": "Hoofdvolume",
+        "appFallback": "Applicatie",
+        "streamFallback": "Audio-uitvoer",
+        "empty": "Er speelt geen audio af in een applicatie",
+        "connecting": "Verbinden met PipeWire..."
     }
 }
