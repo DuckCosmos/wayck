@@ -230,5 +230,19 @@
         "title": "桌布",
         "empty": "找不到桌布",
         "noResults": "找不到結果"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "螢幕截圖",
+            "body": "圖片已儲存並複製到剪貼簿。"
+        },
+        "ocr": {
+            "title": "文字已複製",
+            "body": "文字已辨識並複製到剪貼簿。"
+        },
+        "update": {
+            "title": "有可用更新",
+            "body": "Wayck {version} 版本現已推出。"
+        }
     }
 }
