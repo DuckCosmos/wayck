@@ -123,7 +123,8 @@
         "disk": "ディスク",
         "network": "ネットワーク",
         "temperature": "温度",
-        "usermenu": "ユーザーメニュー"
+        "usermenu": "ユーザーメニュー",
+        "updater": "アップデート"
     },
     "launch": {
         "notInstalled": "{name} がインストールされていません。",
@@ -160,7 +161,8 @@
             "blur": "ブラーを設定",
             "apps": "自分のアプリケーションをインストール",
             "hypr": "Hyprland の設定をインストール",
-            "build": "Wayck をビルドしてインストール"
+            "build": "Wayck をビルドしてインストール",
+            "update": "Wayckを更新"
         },
         "title": "WAYCK インストーラー",
         "help": "矢印キーで移動、スペースキーで選択、ENTER で続行します。ESC で終了。",
@@ -212,6 +214,16 @@
         "holding": "押し続けてください · {progress}%",
         "cancelHint": "完了前に離すとキャンセルします。",
         "installing": "アップデートを開始中…",
-        "installHint": "Wayck のファイルを更新して shell を再起動します。"
+        "installHint": "Wayck のファイルを更新して shell を再起動します。",
+        "changelog": "変更履歴を見る"
+    },
+    "audioMixer": {
+        "title": "アプリケーションミキサー",
+        "streams": "音声を再生中のアプリ: {count}",
+        "masterVolume": "マスター音量",
+        "appFallback": "アプリケーション",
+        "streamFallback": "音声出力",
+        "empty": "音声を再生しているアプリはありません",
+        "connecting": "PipeWireに接続中..."
     }
 }
