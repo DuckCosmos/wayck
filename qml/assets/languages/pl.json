@@ -230,5 +230,19 @@
         "title": "TAPETY",
         "empty": "Nie znaleziono tapet",
         "noResults": "Nie znaleziono wyników"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Zrzut ekranu",
+            "body": "Obraz zapisano i skopiowano do schowka."
+        },
+        "ocr": {
+            "title": "Skopiowano tekst",
+            "body": "Tekst rozpoznano i skopiowano do schowka."
+        },
+        "update": {
+            "title": "Dostępna aktualizacja",
+            "body": "Wersja {version} Wayck jest już dostępna."
+        }
     }
 }
