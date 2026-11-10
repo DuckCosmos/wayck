@@ -225,5 +225,10 @@
         "streamFallback": "خروجی صدا",
         "empty": "هیچ برنامه‌ای در حال پخش صدا نیست",
         "connecting": "در حال اتصال به PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "کاغذدیواری‌ها",
+        "empty": "هیچ پس‌زمینه‌ای پیدا نشد",
+        "noResults": "نتیجه‌ای پیدا نشد"
     }
 }
