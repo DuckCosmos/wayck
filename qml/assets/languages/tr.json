@@ -225,5 +225,10 @@
         "streamFallback": "Ses çıkışı",
         "empty": "Ses çalan uygulama yok",
         "connecting": "PipeWire'a bağlanılıyor..."
+    },
+    "wallpaperSelector": {
+        "title": "DUVAR KAĞITLARI",
+        "empty": "Duvar kağıdı bulunamadı",
+        "noResults": "Sonuç bulunamadı"
     }
 }
