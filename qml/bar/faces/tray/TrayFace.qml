@@ -7,7 +7,7 @@ BarCard {
 
     property var items: TrayController.items
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
-    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+    signal expandRequested(var sourceItem, var surfaceData)
 
     property var activeTrayItem: null
     property var activeAnchor: null
@@ -31,7 +31,7 @@ BarCard {
                 && QsWindow.window.morph.surfaceId === "tray") {
             if (QsWindow.window.morph.closing) {
                 hoverOpenTimer.stop()
-                QsWindow.window.morph.retarget(anchor, "tray", item.menu, QsWindow.window)
+                QsWindow.window.morph.retarget(anchor, "tray", item.menu)
             }
             return
         }
@@ -47,7 +47,7 @@ BarCard {
         // Its progress never returns to zero; only its geometry and menu data move.
         if (QsWindow.window.morph.active && QsWindow.window.morph.surfaceId === "tray") {
             hoverOpenTimer.stop()
-            QsWindow.window.morph.retarget(anchor, "tray", item.menu, QsWindow.window)
+            QsWindow.window.morph.retarget(anchor, "tray", item.menu)
             return
         }
 
@@ -100,7 +100,7 @@ BarCard {
             console.log("[WAYCK INPUT] tray emit expandRequested:",
                 reason, activeTrayItem.title || activeTrayItem.id)
 
-        expandRequested(activeAnchor, activeTrayItem.menu, QsWindow.window)
+        expandRequested(activeAnchor, activeTrayItem.menu)
     }
 
     function cancelPendingOpen() {

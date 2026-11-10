@@ -10,7 +10,7 @@ RowLayout {
     property var sink: Pipewire.defaultAudioSink
     property var source: Pipewire.defaultAudioSource
 
-    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+    signal expandRequested(var sourceItem, var surfaceData)
 
     spacing: 6
 
@@ -99,7 +99,7 @@ RowLayout {
                 onTriggered: {
                     if (root.debug)
                         console.log("[WAYCK INPUT] audio mixer hover dwell")
-                    root.expandRequested(volumeCard, null, QsWindow.window)
+                    root.expandRequested(volumeCard, null)
                 }
             }
 

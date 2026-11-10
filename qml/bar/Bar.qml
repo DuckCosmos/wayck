@@ -227,10 +227,10 @@ PanelWindow {
         layoutTimer.restart()
     }
 
-    function forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef): void {
+    function forwardSurfaceRequest(sourceItem, surfaceId, surfaceData): void {
         if (debug)
             console.log("[WAYCK INPUT] Bar recebeu", surfaceId,
-                "source=", !!sourceItem, "window=", !!windowRef)
+                "source=", !!sourceItem)
         morphLayer.open(sourceItem, surfaceId, surfaceData)
     }
 
@@ -293,7 +293,7 @@ PanelWindow {
             x: 0
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData)
         }
 
         BarSection {
@@ -310,7 +310,7 @@ PanelWindow {
             x: Math.max(barContent.leftEdge, Math.min(barContent.idealCenterX, barContent.maxCenterX))
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData)
         }
 
         BarSection {
@@ -327,7 +327,7 @@ PanelWindow {
             x: barContent.width - width
 
             onMetricsChanged: root.scheduleLayout()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData, windowRef)
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => root.forwardSurfaceRequest(sourceItem, surfaceId, surfaceData)
         }
     }
 }

@@ -13,7 +13,7 @@ BarCard {
     property var player: MprisController.activePlayer
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
-    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+    signal expandRequested(var sourceItem, var surfaceData)
 
     implicitHeight: 36
     horizontalPadding: 8
@@ -22,9 +22,8 @@ BarCard {
         expandDelay.stop()
         if (debug)
             console.log("[WAYCK INPUT] player emit expandRequested:",
-                reason, "anchor=", root.width + "x" + root.height,
-                "window=", !!QsWindow.window)
-        expandRequested(root, null, QsWindow.window)
+                reason, "anchor=", root.width + "x" + root.height)
+        expandRequested(root, null)
     }
 
     HoverHandler {

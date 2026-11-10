@@ -9,7 +9,7 @@ BarCard {
     // Keep morph capture geometry aligned with the unscaled source anchor.
     hoverScale: 1
 
-    signal expandRequested(var sourceItem, var surfaceData, var windowRef)
+    signal expandRequested(var sourceItem, var surfaceData)
 
     visible: UpdateController.updateAvailable
     implicitWidth: UpdateController.updateAvailable ? 34 : 0
@@ -28,7 +28,7 @@ BarCard {
         if (Quickshell.env("WAYCK_DEBUG") === "1")
             console.log("[WAYCK INPUT] updater emit expandRequested:", reason)
 
-        expandRequested(root, null, QsWindow.window)
+        expandRequested(root, null)
     }
 
     Item {

@@ -13,7 +13,7 @@ Row {
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
     signal metricsChanged()
-    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData, var windowRef)
+    signal surfaceRequested(var sourceItem, string surfaceId, var surfaceData)
 
     spacing: 6
 
@@ -48,10 +48,10 @@ Row {
             y: (root.height - height) / 2
 
             onImplicitWidthChanged: root.metricsChanged()
-            onSurfaceRequested: (sourceItem, surfaceId, surfaceData, windowRef) => {
+            onSurfaceRequested: (sourceItem, surfaceId, surfaceData) => {
                 if (root.debug)
                     console.log("[WAYCK INPUT] BarSection encaminhando", surfaceId)
-                root.surfaceRequested(sourceItem, surfaceId, surfaceData, windowRef)
+                root.surfaceRequested(sourceItem, surfaceId, surfaceData)
             }
             Component.onCompleted: root.metricsChanged()
         }
