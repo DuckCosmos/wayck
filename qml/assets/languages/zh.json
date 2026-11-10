@@ -225,5 +225,10 @@
         "streamFallback": "音频输出",
         "empty": "没有应用正在播放音频",
         "connecting": "正在连接 PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "壁纸",
+        "empty": "未找到壁纸",
+        "noResults": "未找到结果"
     }
 }
