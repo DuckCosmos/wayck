@@ -123,7 +123,8 @@
         "disk": "القرص",
         "network": "الشبكة",
         "temperature": "درجة الحرارة",
-        "usermenu": "قائمة المستخدم"
+        "usermenu": "قائمة المستخدم",
+        "updater": "تحديث"
     },
     "launch": {
         "notInstalled": "{name} غير مثبّت.",
@@ -160,7 +161,8 @@
             "blur": "ضبط التمويه",
             "apps": "تثبيت تطبيقاتي",
             "hypr": "تثبيت إعدادات Hyprland",
-            "build": "بناء Wayck وتثبيته"
+            "build": "بناء Wayck وتثبيته",
+            "update": "تحديث Wayck"
         },
         "title": "مثبّت WAYCK",
         "help": "استخدم مفاتيح الأسهم للتنقل، والمسافة للتحديد، وEnter للمتابعة. اضغط ESC للخروج.",
@@ -212,6 +214,16 @@
         "holding": "واصل الضغط · {progress}%",
         "cancelHint": "اترك الزر قبل الانتهاء لإلغاء العملية.",
         "installing": "جارٍ بدء التحديث…",
-        "installHint": "سيتم تحديث ملفات Wayck وإعادة تشغيل الواجهة."
+        "installHint": "سيتم تحديث ملفات Wayck وإعادة تشغيل الواجهة.",
+        "changelog": "عرض سجل التغييرات"
+    },
+    "audioMixer": {
+        "title": "مُكَبِّر التطبيقات",
+        "streams": "{count} تطبيقات تُصدر الصوت",
+        "masterVolume": "مستوى الصوت الرئيسي",
+        "appFallback": "تطبيق",
+        "streamFallback": "مخرج الصوت",
+        "empty": "لا يوجد تطبيق يُصدر الصوت",
+        "connecting": "جارٍ الاتصال بـ PipeWire..."
     }
 }
