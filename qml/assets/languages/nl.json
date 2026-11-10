@@ -230,5 +230,19 @@
         "title": "ACHTERGRONDEN",
         "empty": "Geen achtergronden gevonden",
         "noResults": "Geen resultaten gevonden"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Schermafbeelding",
+            "body": "Afbeelding opgeslagen en naar het klembord gekopieerd."
+        },
+        "ocr": {
+            "title": "Tekst gekopieerd",
+            "body": "Tekst herkend en naar het klembord gekopieerd."
+        },
+        "update": {
+            "title": "Update beschikbaar",
+            "body": "Wayck-versie {version} is nu beschikbaar."
+        }
     }
 }
