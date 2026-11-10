@@ -110,7 +110,7 @@ Item {
                 z: 0
 
                 radius: parent.radius
-                threeDimensional: Config.threeDimensionalWave ? 1.0 : 0.0
+                threeDimensional: 1.0
                 fillLevel: root.holdProgress
 
                 waveAmp: root.holdProgress > 0.001
