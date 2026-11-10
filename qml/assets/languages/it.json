@@ -230,5 +230,19 @@
         "title": "SFONDI",
         "empty": "Nessuno sfondo trovato",
         "noResults": "Nessun risultato trovato"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Screenshot",
+            "body": "Immagine salvata e copiata negli appunti."
+        },
+        "ocr": {
+            "title": "Testo copiato",
+            "body": "Testo riconosciuto e copiato negli appunti."
+        },
+        "update": {
+            "title": "Aggiornamento disponibile",
+            "body": "La versione {version} di Wayck è ora disponibile."
+        }
     }
 }
