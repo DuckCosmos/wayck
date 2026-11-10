@@ -225,5 +225,10 @@
         "streamFallback": "Uscita audio",
         "empty": "Nessuna applicazione sta riproducendo audio",
         "connecting": "Connessione a PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "SFONDI",
+        "empty": "Nessuno sfondo trovato",
+        "noResults": "Nessun risultato trovato"
     }
 }
