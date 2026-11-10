@@ -230,5 +230,19 @@
         "title": "FONDOS DE PANTALLA",
         "empty": "No se encontraron fondos de pantalla",
         "noResults": "No se encontraron resultados"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Captura de pantalla",
+            "body": "La imagen se guardó y se copió al portapapeles."
+        },
+        "ocr": {
+            "title": "Texto copiado",
+            "body": "El texto se reconoció y se copió al portapapeles."
+        },
+        "update": {
+            "title": "Actualización disponible",
+            "body": "La versión {version} de Wayck ya está disponible."
+        }
     }
 }
