@@ -6,6 +6,9 @@ import "../../../"
 BarCard {
     id: root
 
+    // Morph snapshots are captured in local coordinates; keep the source anchor unscaled.
+    hoverScale: 1
+
     required property var trayItem
 
     signal menuRequested(var item, var anchor, bool immediate)
