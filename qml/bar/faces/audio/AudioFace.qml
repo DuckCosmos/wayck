@@ -47,6 +47,7 @@ RowLayout {
     }
 
     BarCard {
+        hoverScale: 1
         implicitHeight: 36
 
         Item {
