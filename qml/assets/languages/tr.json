@@ -123,7 +123,8 @@
         "disk": "Disk",
         "network": "Ağ",
         "temperature": "Sıcaklık",
-        "usermenu": "Kullanıcı menüsü"
+        "usermenu": "Kullanıcı menüsü",
+        "updater": "Güncelleme"
     },
     "launch": {
         "notInstalled": "{name} yüklü değil.",
@@ -160,7 +161,8 @@
             "blur": "Bulanıklığı yapılandır",
             "apps": "Uygulamalarımı yükle",
             "hypr": "Hyprland yapılandırmasını yükle",
-            "build": "Wayck'i derle ve yükle"
+            "build": "Wayck'i derle ve yükle",
+            "update": "Wayck'i güncelle"
         },
         "title": "WAYCK YÜKLEYICI",
         "help": "Gezinmek için ok tuşlarını, seçmek için BOŞLUK tuşunu, devam etmek için ENTER tuşunu kullanın. Çıkmak için ESC.",
@@ -212,6 +214,16 @@
         "holding": "Basılı tutmaya devam et · {progress}%",
         "cancelHint": "İptal etmek için bitmeden bırakın.",
         "installing": "Güncelleme başlatılıyor…",
-        "installHint": "Wayck dosyaları güncelleyecek ve shell'i yeniden başlatacak."
+        "installHint": "Wayck dosyaları güncelleyecek ve shell'i yeniden başlatacak.",
+        "changelog": "Değişiklik günlüğünü görüntüle"
+    },
+    "audioMixer": {
+        "title": "UYGULAMA MİKSERİ",
+        "streams": "Ses çalan uygulama sayısı: {count}",
+        "masterVolume": "Ana ses düzeyi",
+        "appFallback": "Uygulama",
+        "streamFallback": "Ses çıkışı",
+        "empty": "Ses çalan uygulama yok",
+        "connecting": "PipeWire'a bağlanılıyor..."
     }
 }
