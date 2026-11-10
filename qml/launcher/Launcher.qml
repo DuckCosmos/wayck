@@ -1,3 +1,4 @@
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,9 +12,7 @@ PanelWindow {
     signal dismissed()
 
     property bool blurEnabled: false
-
     property bool shown: false
-    
     property bool closing: false
 
     WlrLayershell.namespace: "wayck-launcher"
@@ -24,8 +23,13 @@ PanelWindow {
     property var blurShape: Region { item: card }
     BackgroundEffect.blurRegion: blurEnabled ? blurShape : null
 
-    anchors { top: true }
-    margins { top: 150 }
+    anchors {
+        top: true
+    }
+
+    margins {
+        top: 150
+    }
 
     implicitWidth: 450
     implicitHeight: 500
@@ -36,231 +40,368 @@ PanelWindow {
 
     property var appList: []
     property int selectedIndex: 0
-
     property bool searchPending: false
 
     function triggerSearch() {
         if (rustBackend.running) {
-            searchPending = true;
-            return;
+            searchPending = true
+            return
         }
-        rustBackend.running = true;
+
+        rustBackend.running = true
     }
 
     Process {
         id: rustBackend
+
         command: [root.backend, "--filter", searchInput.text]
 
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    root.appList = JSON.parse(text);
-                    root.selectedIndex = 0;
+                    root.appList = JSON.parse(text)
+                    root.selectedIndex = 0
                 } catch (e) {}
             }
         }
 
         onRunningChanged: {
             if (!running && root.searchPending) {
-                root.searchPending = false;
-                root.triggerSearch();
+                root.searchPending = false
+                root.triggerSearch()
             }
         }
     }
 
     function launchApp(item) {
-        Quickshell.execDetached([root.backend, "--exec", item.nome, item.exec]);
-        close();
+        Quickshell.execDetached([
+            root.backend,
+            "--exec",
+            item.nome,
+            item.exec
+        ])
+
+        close()
     }
 
     function close() {
-        if (!shown) return;
+        if (!shown)
+            return
 
-        searchInput.focus = false;
-        closing = true;
-        shown = false;
+        searchInput.focus = false
+        closing = true
+        shown = false
 
-        closeTimer.start();
+        closeTimer.start()
     }
 
     Timer {
         id: closeTimer
         interval: Motion.surfaceCloseDuration + 40
+        repeat: false
+
         onTriggered: root.dismissed()
     }
 
-    MorphSurface {
+    Rectangle {
         id: card
-        expanded: root.shown
-        expandedWidth: parent.width
-        expandedHeight: parent.height
-        collapsedWidth: Math.min(190, parent.width * 0.55)
-        collapsedHeight: 54
-        expandedRadius: 16
-        collapsedRadius: 27
 
-        color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g,
-                       Theme.surfaceContainer.b, root.blurEnabled ? 0.5 : 1.0)
+        property real progress: root.shown ? 1 : 0
+
+        readonly property real collapsedWidth:
+            Math.min(190, parent.width * 0.55)
+
+        readonly property real collapsedHeight: 54
+
+        readonly property real expandedWidth: parent.width
+        readonly property real expandedHeight: parent.height
+
+        readonly property real collapsedX:
+            (parent.width - collapsedWidth) / 2
+
+        readonly property real collapsedY:
+            (parent.height - collapsedHeight) / 2
+
+        readonly property real expandedX:
+            (parent.width - expandedWidth) / 2
+
+        readonly property real expandedY:
+            (parent.height - expandedHeight) / 2
+
+        readonly property real contentProgress:
+            Math.max(0, Math.min(1, (progress - 0.18) / 0.82))
+
+        x: collapsedX + (expandedX - collapsedX) * progress
+        y: collapsedY + (expandedY - collapsedY) * progress
+
+        width: collapsedWidth
+            + (expandedWidth - collapsedWidth) * progress
+
+        height: collapsedHeight
+            + (expandedHeight - collapsedHeight) * progress
+
+        radius: 27 + (16 - 27) * progress
+
+        scale: 0.96 + (1.0 - 0.96) * progress
+
+        clip: true
+        antialiasing: true
+        transformOrigin: Item.Center
+
+        color: Qt.rgba(
+            Theme.surfaceContainer.r,
+            Theme.surfaceContainer.g,
+            Theme.surfaceContainer.b,
+            root.blurEnabled ? 0.5 : 1.0
+        )
+
         border.color: Theme.outline
         border.width: 1
 
-        LayoutMirroring.enabled: I18n.rtl
-        LayoutMirroring.childrenInherit: true
+        Behavior on progress {
+            NumberAnimation {
+                duration: root.shown
+                    ? Motion.surfaceOpenDuration
+                    : Motion.surfaceCloseDuration
 
-        ColumnLayout {
+                easing.type: Easing.BezierSpline
+
+                easing.bezierCurve: root.shown
+                    ? Motion.surfaceOpenCurve
+                    : Motion.surfaceCloseCurve
+            }
+        }
+
+        Item {
+            id: content
+
             anchors.fill: parent
-            anchors.margins: 20
-            spacing: 10
+            z: 1
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 42
-                color: "transparent"
-                border.color: searchInput.activeFocus ? Theme.primary : "transparent"
-                border.width: 1
-                radius: 8
+            opacity: card.contentProgress
+            enabled: card.progress > 0.98
+            visible: card.progress > 0.01
 
-                TextInput {
-                    id: searchInput
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    verticalAlignment: TextInput.AlignVCenter
-                    font.family: Qt.application.font.family
-                    font.pixelSize: 16
-                    color: Theme.surfaceForeground
-
-                    Text {
-                        text: I18n.t("launcher.search")
-                        color: Theme.surfaceForeground
-                        opacity: 0.4
-                        font: parent.font
-                        width: parent.width
-                        horizontalAlignment: I18n.horizontalAlignment
-                        elide: Text.ElideRight
-                        visible: !parent.text && !parent.activeFocus
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    onTextChanged: searchDebounceTimer.restart()
-
-                    Keys.onPressed: event => {
-                        if (event.text.length > 0) {
-                            SoundController.play("click")
-                        }
-
-                        if (event.key === Qt.Key_Escape) {
-                            root.close();
-                        } else if (event.key === Qt.Key_Down) {
-                            if (root.appList.length > 0)
-                                root.selectedIndex = Math.min(root.selectedIndex + 1, root.appList.length - 1);
-                                event.accepted = true
-                        } else if (event.key === Qt.Key_Up) {
-                            if (root.selectedIndex > 0)
-                                root.selectedIndex--;
-                                event.accepted = true
-                        } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            if (root.appList.length > root.selectedIndex)
-                                SoundController.play("clickbutton")
-                                root.launchApp(root.appList[root.selectedIndex]);
-                                event.accepted = true
-                        }
-                    }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Motion.contentFadeDuration
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: Motion.contentCurve
                 }
             }
 
-            Timer {
-                id: searchDebounceTimer
-                interval: 20
-                repeat: false
-                onTriggered: root.triggerSearch()
-            }
+            LayoutMirroring.enabled: I18n.rtl
+            LayoutMirroring.childrenInherit: true
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: Theme.outline
-                opacity: 0.1
-            }
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 10
 
-            ListView {
-                id: listView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                model: root.appList
-                currentIndex: root.selectedIndex
-                spacing: 4
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 42
 
-                add: Transition {
-                    NumberAnimation {
-                        property: "opacity"
-                        from: 0
-                        to: 1
-                        duration: Motion.contentFadeDuration
-                        easing.type: Motion.standard
-                    }
-                }
+                    color: "transparent"
 
-                displaced: Transition {
-                    NumberAnimation {
-                        properties: "x,y"
-                        duration: Motion.layoutDuration
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Motion.layoutCurve
-                    }
-                }
+                    border.color: searchInput.activeFocus
+                        ? Theme.primary
+                        : "transparent"
 
-                delegate: Rectangle {
-                    width: listView.width
-                    height: 40
+                    border.width: 1
                     radius: 8
 
-                    property bool isSelected: index === root.selectedIndex
+                    TextInput {
+                        id: searchInput
 
-                    color: isSelected
-                        ? Theme.primary
-                        : (mouseArea.containsMouse
-                            ? Qt.rgba(Theme.surfaceForeground.r, Theme.surfaceForeground.g, Theme.surfaceForeground.b, 0.08)
-                            : "transparent")
+                        anchors.fill: parent
+                        anchors.margins: 10
 
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: Motion.colorDuration
+                        verticalAlignment: TextInput.AlignVCenter
+
+                        font.family: Qt.application.font.family
+                        font.pixelSize: 16
+
+                        color: Theme.surfaceForeground
+
+                        Text {
+                            text: I18n.t("launcher.search")
+                            color: Theme.surfaceForeground
+                            opacity: 0.4
+                            font: parent.font
+                            width: parent.width
+
+                            horizontalAlignment: I18n.horizontalAlignment
+                            elide: Text.ElideRight
+
+                            visible: !parent.text && !parent.activeFocus
+
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        onTextChanged: searchDebounceTimer.restart()
+
+                        Keys.onPressed: event => {
+                            if (!event.isAutoRepeat)
+                                SoundController.play("click")
+
+                            if (event.key === Qt.Key_Escape) {
+                                root.close()
+
+                            } else if (event.key === Qt.Key_Down) {
+                                if (root.appList.length > 0) {
+                                    root.selectedIndex = Math.min(
+                                        root.selectedIndex + 1,
+                                        root.appList.length - 1
+                                    )
+                                }
+
+                                event.accepted = true
+
+                            } else if (event.key === Qt.Key_Up) {
+                                if (root.selectedIndex > 0)
+                                    root.selectedIndex--
+
+                                event.accepted = true
+
+                            } else if (
+                                event.key === Qt.Key_Return
+                                || event.key === Qt.Key_Enter
+                            ) {
+                                if (root.appList.length > root.selectedIndex) {
+                                    SoundController.play("clickbutton")
+                                    root.launchApp(root.appList[root.selectedIndex])
+                                }
+
+                                event.accepted = true
+                            }
+                        }
+                    }
+                }
+
+                Timer {
+                    id: searchDebounceTimer
+
+                    interval: 20
+                    repeat: false
+
+                    onTriggered: root.triggerSearch()
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 1
+
+                    color: Theme.outline
+                    opacity: 0.1
+                }
+
+                ListView {
+                    id: listView
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    clip: true
+
+                    model: root.appList
+                    currentIndex: root.selectedIndex
+                    spacing: 4
+
+                    add: Transition {
+                        NumberAnimation {
+                            property: "opacity"
+                            from: 0
+                            to: 1
+
+                            duration: Motion.contentFadeDuration
                             easing.type: Motion.standard
                         }
                     }
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.leftMargin: 8
-                        anchors.rightMargin: 8
-                        spacing: 10
+                    displaced: Transition {
+                        NumberAnimation {
+                            properties: "x,y"
 
-                        Image {
-                            source: modelData.icone_path ? "file://" + modelData.icone_path : ""
-                            Layout.preferredWidth: 24
-                            Layout.preferredHeight: 24
-                            fillMode: Image.PreserveAspectFit
-                        }
+                            duration: Motion.layoutDuration
 
-                        Text {
-                            text: modelData.nome
-                            font.family: Qt.application.font.family
-                            font.pixelSize: 15
-                            color: isSelected ? Theme.onPrimary : Theme.surfaceForeground
-                            Layout.fillWidth: true
-                            elide: Text.ElideRight
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: Motion.layoutCurve
                         }
                     }
 
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            SoundController.play("clickbutton")
-                            root.selectedIndex = index;
-                            root.launchApp(modelData);
+                    delegate: Rectangle {
+                        width: listView.width
+                        height: 40
+                        radius: 8
+
+                        property bool isSelected:
+                            index === root.selectedIndex
+
+                        color: isSelected
+                            ? Theme.primary
+                            : (mouseArea.containsMouse
+                                ? Qt.rgba(
+                                    Theme.surfaceForeground.r,
+                                    Theme.surfaceForeground.g,
+                                    Theme.surfaceForeground.b,
+                                    0.08
+                                )
+                                : "transparent")
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Motion.colorDuration
+                                easing.type: Motion.standard
+                            }
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
+
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+
+                            spacing: 10
+
+                            Image {
+                                source: modelData.icone_path
+                                    ? "file://" + modelData.icone_path
+                                    : ""
+
+                                Layout.preferredWidth: 24
+                                Layout.preferredHeight: 24
+
+                                fillMode: Image.PreserveAspectFit
+                            }
+
+                            Text {
+                                text: modelData.nome
+
+                                font.family: Qt.application.font.family
+                                font.pixelSize: 15
+
+                                color: isSelected
+                                    ? Theme.onPrimary
+                                    : Theme.surfaceForeground
+
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        MouseArea {
+                            id: mouseArea
+
+                            anchors.fill: parent
+                            hoverEnabled: true
+
+                            onClicked: {
+                                SoundController.play("clickbutton")
+
+                                root.selectedIndex = index
+                                root.launchApp(modelData)
+                            }
                         }
                     }
                 }
@@ -269,11 +410,11 @@ PanelWindow {
     }
 
     Component.onCompleted: {
-        triggerSearch();
+        triggerSearch()
 
         Qt.callLater(() => {
-            root.shown = true;
-            searchInput.forceActiveFocus();
-        });
+            root.shown = true
+            searchInput.forceActiveFocus()
+        })
     }
 }

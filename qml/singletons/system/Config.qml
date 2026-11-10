@@ -1,3 +1,4 @@
+
 pragma Singleton
 
 import QtQuick
@@ -19,6 +20,7 @@ Singleton {
         right: ["network", "audio", "tray", "usermenu"]
     })
 
+    readonly property bool gamer: adapter.gamer
     readonly property bool blur: adapter.blur
     readonly property string language: adapter.language
     readonly property string notificationSound: adapter.notificationSound
@@ -30,7 +32,54 @@ Singleton {
         adapter.language = String(code || "auto")
     }
 
+    function setBlur(value: bool): void {
+        adapter.blur = value
+    }
+
+    function setSoundEffects(value: bool): void {
+        adapter.soundEffects = value
+    }
+
+    function setNotificationSound(value: string): void {
+        adapter.notificationSound = value
+    }
+
+    function setDoNotDisturb(value: bool): void {
+        adapter.doNotDisturb = value
+    }
+
+    function setGamer(value: bool): void {
+        adapter.gamer = value
+    }
+
+    function writeConfig(): void {
+        const data = {
+            language: adapter.language,
+            gamer: adapter.gamer,
+            blur: adapter.blur,
+            notificationSound: adapter.notificationSound,
+            soundEffects: adapter.soundEffects,
+            doNotDisturb: adapter.doNotDisturb,
+
+            bar: {
+                position: adapter.bar.position,
+                height: adapter.bar.height,
+                margin: adapter.bar.margin,
+
+                layout: {
+                    left: adapter.bar.layout.left,
+                    center: adapter.bar.layout.center,
+                    right: adapter.bar.layout.right
+                }
+            }
+        }
+
+        file.setText(JSON.stringify(data, null, 4))
+    }
+
     FileView {
+        id: file
+
         path: root.path
         watchChanges: true
 
@@ -41,20 +90,21 @@ Singleton {
                 return
 
             initialLoadHandled = true
-            writeAdapter()
+            root.writeConfig()
         }
 
         onFileChanged: reload()
-        onAdapterUpdated: writeAdapter()
+        onAdapterUpdated: root.writeConfig()
 
         onLoadFailed: error => {
             if (error === FileViewError.FileNotFound)
-                writeAdapter()
+                root.writeConfig()
         }
 
         adapter: JsonAdapter {
             id: adapter
 
+            property bool gamer: false
             property bool blur: false
             property string language: "auto"
             property string notificationSound: "Curious.mp3"

@@ -9,7 +9,10 @@ ShaderEffect {
     property real waveAmp: 0
     property vector2d itemSize: Qt.vector2d(width, height)
     property real phase: 0
-    property real threeDimensional: 0.0
+
+    property bool use3D: false
+
+    property real threeDimensional: use3D ? 1.0 : 0.0
 
     property color color1: Theme.primary
     property color color2: Theme.primary

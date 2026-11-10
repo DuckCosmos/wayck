@@ -305,9 +305,6 @@ Item {
 
         hoverCloseTimer.stop()
 
-        // Keep the first captured texture as the visual source. The new tray
-        // anchor becomes the reverse-morph destination and stays hidden until finish.
-        hideSourceItem(item, true)
         setSourceGeometry(item)
         sourceItem = item
         surfaceData = data === undefined ? null : data
@@ -460,7 +457,7 @@ Item {
 
             anchors.fill: parent
             sourceItem: root.snapshotItem
-            hideSource: root.active
+            hideSource: root.active && root.snapshotOpacity > 0
             live: root.active
             visible: root.active && root.snapshotOpacity > 0
             opacity: (1 - root.contentProgress) * root.snapshotOpacity
@@ -1182,7 +1179,6 @@ Item {
             border.color: expandedRoot.holdActive ? Theme.primary : Theme.outline
             clip: true
 
-            // The shader draws the fluid and its optional 3D bevel in one pass.
             WaveFill {
                 anchors.fill: parent
                 z: 0
@@ -1197,6 +1193,8 @@ Item {
                     : 0
 
                 phase: expandedRoot.wavePhase
+
+                use3D: true
 
                 color1: Qt.darker(Theme.primary, 1.08)
                 color2: Theme.primary
@@ -1292,7 +1290,7 @@ Item {
 
     NumberAnimation {
         id: holdAnimation
-        target: root
+        target: expandedRoot
         property: "holdProgress"
         from: 0
         to: 1
@@ -1311,7 +1309,7 @@ Item {
 
     NumberAnimation {
         id: drainAnimation
-        target: root
+        target: expandedRoot
         property: "holdProgress"
         to: 0
         duration: Math.max(100, expandedRoot.holdProgress * 210)

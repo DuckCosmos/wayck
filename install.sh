@@ -43,6 +43,8 @@ AUR_HELPER=""
 ROOT=""
 TERMINAL_STATE=""
 
+SELECTED_PACKAGES=()
+
 OPTIONS=(required blur apps hypr update build)
 SELECTED=(1 1 0 0 0 1)
 CURSOR=0
@@ -79,7 +81,10 @@ hy|Այս տեղադրիչը աջակցում է միայն Arch Linux-ին և p
 declare -A MSG=()
 declare -a YES_WORDS=()
 
-# pt_BR.UTF-8 -> pt | uk_UA -> ua | zh_TW -> zh_tw | desconhecido -> en
+# ============================================================
+# LANGUAGE
+# ============================================================
+
 normalize_lang() {
     local raw="${1,,}"
 
@@ -96,6 +101,7 @@ normalize_lang() {
     fi
 
     local supported
+
     for supported in "${SUPPORTED_LANGS[@]}"; do
         if [[ "$supported" == "$lang" ]]; then
             printf '%s' "$lang"
@@ -129,7 +135,6 @@ pick_lang() {
     LANGUAGE="$(normalize_lang "${code:-${LC_ALL:-${LC_MESSAGES:-${LANG:-en}}}}")"
 }
 
-# Mensagens de antes do clone (ainda não existe JSON pra ler).
 early_msg() {
     local key="$1" code no_pacman prepare_failed
 
@@ -145,8 +150,6 @@ early_msg() {
     done <<< "$EARLY_MESSAGES"
 }
 
-# Carrega as chaves "installer.*" do inglês e depois do idioma escolhido por cima
-# (o que faltar num idioma cai pro inglês, igual ao I18n.qml).
 load_messages() {
     local dir="$ROOT/qml/assets/languages" file key value
 
@@ -163,7 +166,6 @@ load_messages() {
     read -r -a YES_WORDS <<< "${MSG[yes_words]:-y yes}"
 }
 
-# msg chave [nome valor]...   ->  msg cfg_kept path "$config"
 msg() {
     local text="${MSG[$1]:-$1}"
     shift
@@ -372,6 +374,107 @@ interactive_menu() {
 }
 
 # ============================================================
+# PACKAGE SELECTION MENU
+# ============================================================
+
+package_menu() {
+    local title="$1"
+    shift
+
+    local -a packages=("$@")
+    local -a selected=()
+
+    local cursor=0
+    local key sequence index pointer checkbox
+
+    # Não abre um menu sem pacotes.
+    ((${#packages[@]})) || return 1
+
+    # Inicializa todos os pacotes como selecionados.
+    for index in "${!packages[@]}"; do
+        selected[index]=1
+    done
+
+    # Configura o terminal para leitura individual das teclas.
+    [[ -t 0 ]] || return 1
+
+    TERMINAL_STATE="$(stty -g)"
+    tput civis 2>/dev/null || true
+    stty -echo -icanon min 1 time 0
+
+    while true; do
+        printf '\033[H\033[2J'
+
+        printf '%b========================================%b\n' "$BLUE" "$RESET"
+        printf '%b%s%b\n\n' "$GREEN" "$title" "$RESET"
+
+        for index in "${!packages[@]}"; do
+            pointer=" "
+            checkbox=" "
+
+            (( index == cursor )) && pointer=">"
+            (( selected[index] )) && checkbox="x"
+
+            if (( index == cursor )); then
+                printf '%b%s [%s] %s%b\n' \
+                    "$GREEN" "$pointer" "$checkbox" "${packages[$index]}" "$RESET"
+            else
+                printf '%s [%s] %s\n' \
+                    "$pointer" "$checkbox" "${packages[$index]}"
+            fi
+        done
+
+        printf '\n%b↑ ↓ Navegar | Espaço Selecionar | Enter Confirmar | Esc Cancelar%b\n' \
+            "$YELLOW" "$RESET"
+
+        key=""
+        IFS= read -rsn1 key || true
+
+        case "$key" in
+            $'\x1b')
+                sequence=""
+                IFS= read -rsn2 -t 0.1 sequence || true
+
+                case "$sequence" in
+                    "[A")
+                        (( cursor > 0 )) && ((cursor--)) || true
+                        ;;
+                    "[B")
+                        (( cursor < ${#packages[@]} - 1 )) && ((cursor++)) || true
+                        ;;
+                    "")
+                        restore_terminal
+                        return 1
+                        ;;
+                esac
+                ;;
+
+            " ")
+                if (( selected[cursor] )); then
+                    selected[cursor]=0
+                else
+                    selected[cursor]=1
+                fi
+                ;;
+
+            "")
+                SELECTED_PACKAGES=()
+
+                for index in "${!packages[@]}"; do
+                    if (( selected[index] )); then
+                        SELECTED_PACKAGES+=("${packages[$index]}")
+                    fi
+                done
+
+                restore_terminal
+                printf '\n'
+                return 0
+                ;;
+        esac
+    done
+}
+
+# ============================================================
 # REQUIRED PACKAGES
 # ============================================================
 
@@ -388,7 +491,8 @@ install_packages() {
 # BLUR CONFIGURATION
 # ============================================================
 
-# config_set <chave> <valor-json>   (mexe só nessa chave, o resto do config.json fica intacto)
+# config_set <chave> <valor-json>
+# Modifica apenas a chave indicada e preserva o restante do config.json.
 config_set() {
     local key="$1" value="$2"
     local config="$CFG_DIR/config.json" temp
@@ -485,17 +589,64 @@ install_personal_apps() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg personal_installing)" "$RESET"
     printf '%b%s%b\n' "$YELLOW" "$(msg steam_note)" "$RESET"
 
-    install_aur_helper
+    local -a selected_repo=()
+    local -a selected_aur=()
+    local -a selected_flatpak=()
 
-    must "$(msg personal_failed)" \
-        sudo pacman -S --needed "${PERSONAL_REPO_PKGS[@]}"
+    local install_zsh=false
 
-    must "$(msg personal_failed)" \
-        "$AUR_HELPER" -S --needed "${PERSONAL_AUR_PKGS[@]}"
-    must "$(msg personal_failed)" \
-        flatpak install flathub "${PERSONAL_FLATPAK_PKGS[@]}"
+    # PACMAN
+    if package_menu "PACMAN PACKAGES" "${PERSONAL_REPO_PKGS[@]}"; then
+        selected_repo=("${SELECTED_PACKAGES[@]}")
+    else
+        printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
+        return 0
+    fi
 
-    if have zsh; then
+    # AUR
+    if package_menu "AUR PACKAGES" "${PERSONAL_AUR_PKGS[@]}"; then
+        selected_aur=("${SELECTED_PACKAGES[@]}")
+    else
+        printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
+        return 0
+    fi
+
+    # FLATPAK
+    if package_menu "FLATPAK PACKAGES" "${PERSONAL_FLATPAK_PKGS[@]}"; then
+        selected_flatpak=("${SELECTED_PACKAGES[@]}")
+    else
+        printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
+        return 0
+    fi
+
+    # PACMAN INSTALLATION
+    if ((${#selected_repo[@]})); then
+        must "$(msg personal_failed)" \
+            sudo pacman -S --needed "${selected_repo[@]}"
+
+        for package in "${selected_repo[@]}"; do
+            [[ "$package" == zsh ]] && install_zsh=true
+        done
+    fi
+
+    # AUR INSTALLATION
+    if ((${#selected_aur[@]})); then
+        install_aur_helper
+
+        must "$(msg personal_failed)" \
+            "$AUR_HELPER" -S --needed "${selected_aur[@]}"
+    fi
+
+    # FLATPAK INSTALLATION
+    if ((${#selected_flatpak[@]})); then
+        have flatpak || die "$(msg missing_tool name flatpak)"
+
+        must "$(msg personal_failed)" \
+            flatpak install flathub "${selected_flatpak[@]}"
+    fi
+
+    # ZSH DEFAULT SHELL
+    if [[ "$install_zsh" == true ]] && have zsh; then
         local zsh_path
         zsh_path="$(command -v zsh)"
 
@@ -507,8 +658,9 @@ install_personal_apps() {
 }
 
 # ============================================================
-# BUILD AND INSTALL
+# BUILD AND UPDATE
 # ============================================================
+
 update_dot() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg update.pulling)" "$RESET"
 
@@ -582,10 +734,6 @@ update_dot() {
         printf '%s: %s\n' "$(msg update.backup)" "$UPDATE_BACKUP"
 }
 
-# ============================================================
-# BUILD AND INSTALL
-# ============================================================
-
 build_and_install() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg build_msg)" "$RESET"
 
@@ -625,15 +773,12 @@ build_and_install() {
         die "$(msg fail_install)"
     fi
 
-    # Atalho "wayck-wallpaper" no PATH (o menu e o exec.lua usam o do DEST direto).
     mkdir -p -- "$HOME/.local/bin"
     ln -sf -- "$DEST/wayck-wallpaper" "$HOME/.local/bin/wayck-wallpaper"
 
     install_matugen
 }
 
-# matugen gera as cores a partir do wallpaper. É opcional: sem ele o Wayck usa
-# as cores padrão do Theme.qml, então se só o pacote falhar a instalação continua.
 install_matugen() {
     have matugen && return 0
 
@@ -701,15 +846,16 @@ print_final() {
 # ============================================================
 
 main() {
-    # Non-interactive update entrypoint used by the bar's hold-to-confirm UI.
-    # The detached process survives the Quickshell restart performed by update_dot.
     if [[ "${1:-}" == "--update-only" ]]; then
         pick_lang
         bootstrap
         update_dot
+
         mkdir -p -- "${XDG_STATE_HOME:-$HOME/.local/state}/wayck"
+
         nohup quickshell -c wayck \
             > "${XDG_STATE_HOME:-$HOME/.local/state}/wayck/update-shell.log" 2>&1 &
+
         return 0
     fi
 
