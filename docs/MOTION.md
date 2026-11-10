@@ -67,3 +67,7 @@ The overlay uses `QsWindow.mask` and a `Region` tied to the morph surface so tha
 ## Design references
 
 The visual language is informed by Caelestia, HakuSpace and Serpantinum. These are design references; check each upstream project's license before copying implementation code.
+
+### Morph source alignment
+
+Keep morph source anchors in an unscaled coordinate space while they are captured. If a source sits inside a `BarCard`, set `hoverScale: 1` on that card: `grabToImage()` captures the item's local contents, while ancestor transforms can move or scale the rendered source relative to the rectangle used by the overlay. Hover color and other non-geometric feedback can remain enabled.
