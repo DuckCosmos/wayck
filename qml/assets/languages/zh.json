@@ -230,5 +230,19 @@
         "title": "壁纸",
         "empty": "未找到壁纸",
         "noResults": "未找到结果"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "屏幕截图",
+            "body": "图像已保存并复制到剪贴板。"
+        },
+        "ocr": {
+            "title": "文本已复制",
+            "body": "文本已识别并复制到剪贴板。"
+        },
+        "update": {
+            "title": "有可用更新",
+            "body": "Wayck {version} 版本现已推出。"
+        }
     }
 }
