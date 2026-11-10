@@ -264,20 +264,44 @@ PanelWindow {
             onClicked: root.cancelSelector()
         }
 
-        MorphSurface {
+        Rectangle {
             id: selector
             anchors.centerIn: parent
-            expanded: root.opened
-            expandedWidth: Math.max(300, Math.min(620, focusRoot.width - 32))
-            expandedHeight: Math.max(220, Math.min(270, focusRoot.height - 32))
-            collapsedWidth: 174
-            collapsedHeight: 48
-            expandedRadius: 16
-            collapsedRadius: 24
+            width: root.opened
+                ? Math.max(300, Math.min(620, focusRoot.width - 32))
+                : 174
+            height: root.opened
+                ? Math.max(220, Math.min(270, focusRoot.height - 32))
+                : 48
+            radius: root.opened ? 16 : 24
             color: Qt.alpha(Theme.surfaceContainer, Config.blur ? 0.66 : 0.96)
             border.width: 1
             border.color: Theme.outline
             z: 1
+
+            Behavior on width {
+                NumberAnimation {
+                    duration: root.opened ? Motion.surfaceOpenDuration : Motion.surfaceCloseDuration
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: root.opened ? Motion.surfaceOpenCurve : Motion.surfaceCloseCurve
+                }
+            }
+
+            Behavior on height {
+                NumberAnimation {
+                    duration: root.opened ? Motion.surfaceOpenDuration : Motion.surfaceCloseDuration
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: root.opened ? Motion.surfaceOpenCurve : Motion.surfaceCloseCurve
+                }
+            }
+
+            Behavior on radius {
+                NumberAnimation {
+                    duration: root.opened ? Motion.surfaceOpenDuration : Motion.surfaceCloseDuration
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: root.opened ? Motion.surfaceOpenCurve : Motion.surfaceCloseCurve
+                }
+            }
 
             ColumnLayout {
                 anchors.fill: parent
