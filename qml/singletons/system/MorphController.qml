@@ -223,7 +223,6 @@ Singleton {
         }
 
         hoverCloseTimer.stop()
-        snapshotFallbackTimer.stop()
 
         if (sourceItem === item && surfaceData === data && !closing) {
             sourceHovered = true
