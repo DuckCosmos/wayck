@@ -67,6 +67,16 @@ PanelWindow {
             console.log("[WAYCK MORPH OVERLAY] visible=", visible,
                 "monitor=", monitor ? monitor.name : "null",
                 "surface=", MorphController.surfaceId)
+
+        if (!visible && MorphController.pendingSourceRestore)
+            restoreSourceTimer.start()
+    }
+
+    Timer {
+        id: restoreSourceTimer
+        interval: 32
+        repeat: false
+        onTriggered: MorphController.restoreSource()
     }
 
     Component.onCompleted: {
