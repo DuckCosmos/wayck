@@ -230,5 +230,19 @@
         "title": "WALLPAPER",
         "empty": "Wallpaper tidak ditemukan",
         "noResults": "Tidak ada hasil"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Tangkapan layar",
+            "body": "Gambar disimpan dan disalin ke papan klip."
+        },
+        "ocr": {
+            "title": "Teks disalin",
+            "body": "Teks dikenali dan disalin ke papan klip."
+        },
+        "update": {
+            "title": "Pembaruan tersedia",
+            "body": "Wayck versi {version} kini tersedia."
+        }
     }
 }
