@@ -123,7 +123,8 @@
         "disk": "磁盘",
         "network": "网络",
         "temperature": "温度",
-        "usermenu": "用户菜单"
+        "usermenu": "用户菜单",
+        "updater": "更新"
     },
     "launch": {
         "notInstalled": "未安装 {name}。",
@@ -160,7 +161,8 @@
             "blur": "配置模糊效果",
             "apps": "安装我的应用程序",
             "hypr": "安装 Hyprland 配置",
-            "build": "编译并安装 Wayck"
+            "build": "编译并安装 Wayck",
+            "update": "更新 Wayck"
         },
         "title": "WAYCK 安装程序",
         "help": "使用方向键导航，空格键选择，回车键继续。按 ESC 退出。",
@@ -212,6 +214,16 @@
         "holding": "继续按住 · {progress}%",
         "cancelHint": "完成前松开即可取消。",
         "installing": "正在启动更新…",
-        "installHint": "Wayck 将更新文件并重新启动 shell。"
+        "installHint": "Wayck 将更新文件并重新启动 shell。",
+        "changelog": "查看更新日志"
+    },
+    "audioMixer": {
+        "title": "应用混音器",
+        "streams": "正在播放音频的应用：{count}",
+        "masterVolume": "主音量",
+        "appFallback": "应用程序",
+        "streamFallback": "音频输出",
+        "empty": "没有应用正在播放音频",
+        "connecting": "正在连接 PipeWire..."
     }
 }
