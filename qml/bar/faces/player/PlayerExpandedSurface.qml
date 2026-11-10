@@ -50,7 +50,7 @@ Item {
                 Text {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.player ? (root.player.identity || "Now playing") : "No player"
+                    text: root.player ? (root.player.identity || I18n.t("player.title")) : I18n.t("player.none")
                     color: Theme.outline
                     font.pixelSize: 11
                     elide: Text.ElideRight
