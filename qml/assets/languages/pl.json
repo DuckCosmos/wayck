@@ -225,5 +225,10 @@
         "streamFallback": "Wyjście audio",
         "empty": "Żadna aplikacja nie odtwarza dźwięku",
         "connecting": "Łączenie z PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "TAPETY",
+        "empty": "Nie znaleziono tapet",
+        "noResults": "Nie znaleziono wyników"
     }
 }
