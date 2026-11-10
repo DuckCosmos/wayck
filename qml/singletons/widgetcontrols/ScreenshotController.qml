@@ -90,8 +90,7 @@ Singleton {
             "wayck-screenshot",
             root.directory,
             mode,
-            action,
-            root.notificationColor
+            action
         ]
 
         stdout: StdioCollector {
@@ -111,8 +110,8 @@ Singleton {
 
                 if (action === "ocr") {
                     NotificationController.send(
-                        I18n.t("notifications.ocrTitle"),
-                        I18n.t("notifications.ocrBody")
+                        I18n.t("notifications.ocr.title"),
+                        I18n.t("notifications.ocr.body")
                     )
                 } else {
                     NotificationController.send(
