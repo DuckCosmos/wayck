@@ -225,5 +225,10 @@
         "streamFallback": "Аудио изход",
         "empty": "Няма приложение, което възпроизвежда звук",
         "connecting": "Свързване с PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "ТАПЕТИ",
+        "empty": "Не са намерени тапети",
+        "noResults": "Няма намерени резултати"
     }
 }
