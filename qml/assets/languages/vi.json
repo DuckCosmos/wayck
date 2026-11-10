@@ -225,5 +225,10 @@
         "streamFallback": "Đầu ra âm thanh",
         "empty": "Không có ứng dụng nào đang phát âm thanh",
         "connecting": "Đang kết nối với PipeWire..."
+    },
+    "wallpaperSelector": {
+        "title": "HÌNH NỀN",
+        "empty": "Không tìm thấy hình nền",
+        "noResults": "Không tìm thấy kết quả"
     }
 }
