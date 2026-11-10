@@ -34,7 +34,7 @@ Item {
             || props["application.process.binary"]
             || node.description
             || node.name
-            || "Aplicativo"
+            || I18n.t("audioMixer.appFallback")
     }
 
     function streamDescription(node): string {
@@ -43,7 +43,7 @@ Item {
             || props["media.title"]
             || props["window.title"]
             || node.name
-            || "Saída de áudio"
+            || I18n.t("audioMixer.streamFallback")
     }
 
     PwObjectTracker {
@@ -86,7 +86,7 @@ Item {
                 spacing: 1
 
                 Text {
-                    text: "MIXER DE APLICATIVOS"
+                    text: I18n.t("audioMixer.title")
                     color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
@@ -94,7 +94,7 @@ Item {
                 }
 
                 Text {
-                    text: root.audioStreams.length + " aplicativos emitindo áudio"
+                    text: I18n.t("audioMixer.streams", { count: root.audioStreams.length })
                     color: Theme.outline
                     font.pixelSize: 10
                 }
@@ -129,7 +129,7 @@ Item {
                 Layout.fillWidth: true
 
                 Text {
-                    text: "Volume principal"
+                    text: I18n.t("audioMixer.masterVolume")
                     color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
@@ -359,7 +359,7 @@ Item {
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Pipewire.ready ? "Nenhum aplicativo está emitindo áudio" : "Conectando ao PipeWire..."
+                    text: Pipewire.ready ? I18n.t("audioMixer.empty") : I18n.t("audioMixer.connecting")
                     color: Theme.outline
                     font.pixelSize: 10
                 }
