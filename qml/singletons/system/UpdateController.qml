@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../"
 
 Singleton {
     id: root
@@ -13,6 +14,7 @@ Singleton {
     property string localVersion: ""
     property string remoteVersion: ""
     property string error: ""
+    property string lastNotifiedVersion: ""
 
     readonly property string backend: Quickshell.shellPath("wayck-backend")
     readonly property string installerPath: Quickshell.shellPath("install.sh")
@@ -77,9 +79,23 @@ Singleton {
                     root.updateAvailable = data.available === true
                     root.error = ""
 
-                    if (root.updateAvailable)
+                    if (root.updateAvailable) {
                         console.log("[WAYCK UPDATE] update available:",
                             root.localVersion, "->", root.remoteVersion)
+
+                        if (root.remoteVersion.length > 0
+                                && root.remoteVersion !== root.lastNotifiedVersion) {
+                            NotificationController.send(
+                                I18n.t("notifications.update.title"),
+                                I18n.t("notifications.update.body", {
+                                    version: root.remoteVersion
+                                })
+                            )
+                            root.lastNotifiedVersion = root.remoteVersion
+                        }
+                    } else {
+                        root.lastNotifiedVersion = ""
+                    }
                 } catch (error) {
                     root.error = "Resposta de versão inválida"
                     console.warn("[WAYCK UPDATE] invalid version response:", error)
