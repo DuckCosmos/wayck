@@ -7,6 +7,9 @@ import "../../../"
 BarCard {
     id: root
 
+    // Morph snapshots are captured in local coordinates; keep the source anchor unscaled.
+    hoverScale: 1
+
     property var player: MprisController.activePlayer
     readonly property bool debug: Quickshell.env("WAYCK_DEBUG") === "1"
 
