@@ -265,6 +265,10 @@ Singleton {
         sourceOpacity = item.opacity
         sourceEnabled = item.enabled
         sourceHoverEnabled = ("hoverEnabled" in item) ? item.hoverEnabled : false
+        if ("hoverEnabled" in item) {
+            item.hoverEnabled = false
+            item.hovered = false
+        }
         sourceGlobalX = screen.x + localRect.x
         sourceGlobalY = screen.y + localRect.y
         sourceWidth = Math.max(1, localRect.width)
