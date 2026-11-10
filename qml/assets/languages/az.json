@@ -230,5 +230,19 @@
         "title": "DİVAR KAĞIZLARI",
         "empty": "Divar kağızı tapılmadı",
         "noResults": "Nəticə tapılmadı"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Ekran görüntüsü",
+            "body": "Şəkil saxlanıldı və mübadilə buferinə köçürüldü."
+        },
+        "ocr": {
+            "title": "Mətn kopyalandı",
+            "body": "Mətn tanındı və mübadilə buferinə köçürüldü."
+        },
+        "update": {
+            "title": "Yeniləmə mövcuddur",
+            "body": "Wayck {version} versiyası artıq mövcuddur."
+        }
     }
 }
