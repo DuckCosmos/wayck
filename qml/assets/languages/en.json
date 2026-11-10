@@ -230,5 +230,19 @@
         "title": "WALLPAPERS",
         "empty": "No wallpapers found",
         "noResults": "No results found"
+    },
+    "notifications": {
+        "screenshot": {
+            "title": "Screenshot",
+            "body": "Image saved and copied to the clipboard."
+        },
+        "ocr": {
+            "title": "Text copied",
+            "body": "Text recognized and copied to the clipboard."
+        },
+        "update": {
+            "title": "Update available",
+            "body": "Wayck version {version} is now available."
+        }
     }
 }
