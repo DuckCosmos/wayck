@@ -24,6 +24,7 @@ Singleton {
     property var grabResult: null
     property var surfaceData: null
     property real snapshotOpacity: 1
+    property bool morphStarted: false
 
     property real sourceGlobalX: 0
     property real sourceGlobalY: 0
@@ -35,6 +36,13 @@ Singleton {
     property int requestSerial: 0
 
     readonly property url snapshotUrl: grabResult ? grabResult.url : ""
+
+    Timer {
+        id: snapshotFallbackTimer
+        interval: 120
+        repeat: false
+        onTriggered: root.startMorph(root.requestSerial)
+    }
 
     Timer {
         id: hoverCloseTimer
@@ -54,31 +62,22 @@ Singleton {
             console.log("[WAYCK MORPH]", message)
     }
 
-    function activate(token, result): void {
-        if (token !== requestSerial || !sourceItem)
+    function startMorph(token): void {
+        if (token !== requestSerial || !active || closing || !sourceItem || morphStarted)
             return
 
-        grabResult = result && result.url ? result : null
+        snapshotFallbackTimer.stop()
+        morphStarted = true
+
+        // The source is hidden only when the overlay is ready to animate.
+        // This prevents the original and the expanded representation from
+        // being rendered simultaneously while grabToImage is still pending.
+        sourceItem.opacity = 0
         opening = false
-        active = true
+        progress = 1
 
-        log("overlay ativo: " + surfaceId
-            + (grabResult ? " (snapshot)" : " (fallback sem snapshot)"))
-
-        Qt.callLater(function() {
-            if (token !== root.requestSerial
-                    || !root.active
-                    || root.closing
-                    || !root.sourceItem) {
-                return
-            }
-
-            // Keep the source visible if capture failed; the overlay still opens.
-            if (root.grabResult)
-                root.sourceItem.opacity = 0
-
-            root.progress = 1
-        })
+        log("animação iniciada: " + surfaceId
+            + (grabResult ? " (snapshot)" : " (sem snapshot)"))
     }
 
     function open(item, requestedSurfaceId, data, windowRef): void {
@@ -148,6 +147,7 @@ Singleton {
         progress = 0
         grabResult = null
         snapshotOpacity = 1
+        morphStarted = false
         opening = true
         active = true
         hoverCloseTimer.stop()
@@ -158,41 +158,36 @@ Singleton {
             + Math.round(sourceGlobalY) + " "
             + Math.round(sourceWidth) + "x" + Math.round(sourceHeight))
 
-        // Do not gate visibility or animation on the asynchronous snapshot.
-        Qt.callLater(function() {
-            if (token !== root.requestSerial || !root.active || root.closing)
-                return
+        // Wait briefly for the snapshot so the collapsed source and expanded
+        // overlay never compete on screen. A timeout keeps opening non-blocking.
+        snapshotFallbackTimer.start()
 
-            root.opening = false
-            root.progress = 1
-            root.log("animação iniciada: " + requestedSurfaceId)
-        })
-
-        // A snapshot improves the first frames but is optional. Failure or latency
-        // cannot prevent the expanded surface from opening.
         try {
             const accepted = item.grabToImage(function(result) {
                 if (token !== root.requestSerial
                         || !root.active
                         || root.closing
-                        || root.sourceItem !== item) {
+                        || root.sourceItem !== item
+                        || root.morphStarted) {
                     return
                 }
 
-                if (!result || !result.url) {
-                    root.log("snapshot indisponível; morph continua sem captura")
-                    return
+                if (result && result.url) {
+                    root.grabResult = result
+                    root.log("snapshot recebido: " + requestedSurfaceId)
+                } else {
+                    root.log("snapshot indisponível; usando conteúdo do overlay")
                 }
 
-                root.grabResult = result
-                if (root.sourceItem)
-                    root.sourceItem.opacity = 0
-                root.log("snapshot recebido: " + requestedSurfaceId)
+                root.startMorph(token)
             })
 
             log("grabToImage enviado; accepted=" + accepted)
+            if (!accepted)
+                startMorph(token)
         } catch (error) {
-            log("grabToImage falhou; morph segue sem snapshot: " + error)
+            log("grabToImage falhou; usando conteúdo do overlay: " + error)
+            startMorph(token)
         }
     }
 
@@ -228,6 +223,7 @@ Singleton {
         }
 
         hoverCloseTimer.stop()
+        snapshotFallbackTimer.stop()
 
         if (sourceItem === item && surfaceData === data && !closing) {
             sourceHovered = true
@@ -317,6 +313,7 @@ Singleton {
 
         const alreadyCollapsed = animationProgress <= 0.001
         hoverCloseTimer.stop()
+        snapshotFallbackTimer.stop()
         opening = false
         closing = true
         progress = 0
@@ -336,6 +333,7 @@ Singleton {
         const opacityToRestore = sourceOpacity
 
         hoverCloseTimer.stop()
+        snapshotFallbackTimer.stop()
         ++requestSerial
 
         // Hide the overlay before restoring the original item. Restoring it
@@ -353,6 +351,7 @@ Singleton {
         targetScreen = null
         grabResult = null
         snapshotOpacity = 1
+        morphStarted = false
         surfaceData = null
         surfaceId = ""
 
