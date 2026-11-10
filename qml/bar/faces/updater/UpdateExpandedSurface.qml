@@ -104,8 +104,32 @@ Item {
             border.color: root.holdActive ? Theme.primary : Theme.outline
             clip: true
 
+            // A darker trailing liquid layer creates a subtle raised edge.
+            // It uses the same shader and phase, with a small offset and phase lag.
             WaveFill {
                 anchors.fill: parent
+                z: 0
+
+                radius: parent.radius
+                fillLevel: Math.min(1, root.holdProgress + 0.022)
+
+                waveAmp: root.holdProgress > 0.001
+                    && root.holdProgress < 0.99
+                    ? 35 * Math.sin(root.holdProgress * Math.PI)
+                    : 0
+
+                phase: root.wavePhase - 0.42
+
+                color1: Qt.darker(Theme.primary, 1.55)
+                color2: Qt.darker(Theme.primary, 1.32)
+                opacity: 0.92
+
+                visible: root.holdProgress > 0.001
+            }
+
+            WaveFill {
+                anchors.fill: parent
+                z: 1
 
                 radius: parent.radius
                 fillLevel: root.holdProgress
