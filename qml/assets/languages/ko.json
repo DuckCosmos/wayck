@@ -123,7 +123,8 @@
         "disk": "디스크",
         "network": "네트워크",
         "temperature": "온도",
-        "usermenu": "사용자 메뉴"
+        "usermenu": "사용자 메뉴",
+        "updater": "업데이트"
     },
     "launch": {
         "notInstalled": "{name}이(가) 설치되어 있지 않습니다.",
@@ -160,7 +161,8 @@
             "blur": "블러 설정",
             "apps": "내 응용 프로그램 설치",
             "hypr": "Hyprland 구성 설치",
-            "build": "Wayck 빌드 및 설치"
+            "build": "Wayck 빌드 및 설치",
+            "update": "Wayck 업데이트"
         },
         "title": "WAYCK 설치 관리자",
         "help": "방향키로 이동하고, 스페이스바로 선택하고, ENTER로 계속합니다. 종료하려면 ESC.",
@@ -212,6 +214,16 @@
         "holding": "계속 누르세요 · {progress}%",
         "cancelHint": "취소하려면 완료 전에 놓으세요.",
         "installing": "업데이트 시작 중…",
-        "installHint": "Wayck 파일을 업데이트하고 셸을 다시 시작합니다."
+        "installHint": "Wayck 파일을 업데이트하고 셸을 다시 시작합니다.",
+        "changelog": "변경 기록 보기"
+    },
+    "audioMixer": {
+        "title": "앱 믹서",
+        "streams": "오디오를 재생 중인 앱 {count}개",
+        "masterVolume": "마스터 볼륨",
+        "appFallback": "애플리케이션",
+        "streamFallback": "오디오 출력",
+        "empty": "오디오를 재생 중인 앱이 없습니다",
+        "connecting": "PipeWire에 연결하는 중..."
     }
 }
