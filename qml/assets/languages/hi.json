@@ -225,5 +225,10 @@
         "streamFallback": "ऑडियो आउटपुट",
         "empty": "कोई ऐप ऑडियो नहीं चला रहा है",
         "connecting": "PipeWire से कनेक्ट हो रहा है..."
+    },
+    "wallpaperSelector": {
+        "title": "वॉलपेपर",
+        "empty": "कोई वॉलपेपर नहीं मिला",
+        "noResults": "कोई परिणाम नहीं मिला"
     }
 }
