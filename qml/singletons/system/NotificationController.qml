@@ -19,6 +19,8 @@ Singleton {
         return `#${hex(c.r)}${hex(c.g)}${hex(c.b)}`
     }
 
+    property var queue: []
+
     readonly property string script: [
         'set -Eeuo pipefail',
         'title="$1"',
@@ -47,13 +49,21 @@ Singleton {
     ].join("\n")
 
     function send(title: string, body: string): void {
-        if (notificationProcess.running) {
-            console.warn("[Notification] notification already running; skipping")
-            return
-        }
+        const next = queue.slice()
+        next.push({ title, body })
+        queue = next
+        startNext()
+    }
 
-        notificationProcess.title = title
-        notificationProcess.body = body
+    function startNext(): void {
+        if (notificationProcess.running || queue.length === 0)
+            return
+
+        const next = queue[0]
+        queue = queue.slice(1)
+
+        notificationProcess.title = next.title
+        notificationProcess.body = next.body
         notificationProcess.running = true
     }
 
@@ -62,6 +72,8 @@ Singleton {
 
         property string title: ""
         property string body: ""
+
+        onExited: Qt.callLater(root.startNext)
 
         command: [
             "bash",
