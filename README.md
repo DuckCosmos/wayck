@@ -64,7 +64,7 @@ An integrated application launcher designed to provide quick access to installed
 | qs -c wayck ipc call bar toggle | Super + B | Active/Disable the Wayck Bar |
 | qs -c wayck ipc call screenshot full | Ctrl + Alt + Return | Save a full screenshot in Pictures |
 | qs -c wayck ipc call screenshot region | Ctrl + Shift +  Alt + Return | Save a region screenshot in Pictures |
-| qs -c wayck ipc call screenshot regionOCR | Ctrl + Shift + Alt + S + Return
+| qs -c wayck ipc call screenshot regionOCR | Ctrl + Shift + Alt + S + Return | Saves a region capture that copies texts to its history |
 
 ---
 
