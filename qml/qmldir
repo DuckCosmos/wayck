@@ -11,6 +11,7 @@ singleton BarModuleRegistry 1.0 bar/BarModuleRegistry.qml
 
 # Wallpaper
 WallpaperSelector 1.0 wallpaper/WallpaperSelector.qml
+WallpaperEngine 1.0 wallpaper/WallpaperEngine.qml
 singleton WallpaperService 1.0 singletons/system/WallpaperService.qml
 
 # Reutilizáveis

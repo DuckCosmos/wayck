@@ -41,7 +41,6 @@ ShellRoot {
         command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-wallpaper-selector-blur', match={namespace='^wayck-wallpaper-selector$'}, blur=true, ignore_alpha=0 })"]
     }
 
-    // Restaura o wallpaper persistido e atualiza a paleta antes do uso do shell.
     Process {
         running: true
         command: [Quickshell.env("WAYCK_WALLPAPER") || "wayck-wallpaper", "apply"]
@@ -80,6 +79,8 @@ ShellRoot {
     NotificationPopup {}
 
     WallpaperSelector {}
+
+    WallpaperEngine {}
 
     LazyLoader {
         id: launcherLoader

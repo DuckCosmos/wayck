@@ -1,3 +1,4 @@
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -49,7 +50,9 @@ Item {
             ? Math.min(390, Math.max(300, width - 32))
             : surfaceId === "updater"
                 ? Math.min(360, Math.max(300, width - 32))
-                : Math.min(460, Math.max(240, width - 48))
+                : surfaceId === "usermenu"
+                    ? Math.min(360, Math.max(300, width - 32))
+                    : Math.min(460, Math.max(240, width - 48))
 
     readonly property real targetHeight: surfaceId === "tray"
         ? Math.min(
@@ -60,7 +63,12 @@ Item {
             ? Math.min(300, Math.max(230, height - 32))
             : surfaceId === "updater"
                 ? Math.min(220, Math.max(180, height - 32))
-                : Math.min(260, Math.max(210, height - 48))
+                : surfaceId === "usermenu"
+                    ? Math.min(
+                        Math.max(280, surfaceContent.implicitHeight || 500),
+                        Math.max(300, height - 32)
+                    )
+                    : Math.min(260, Math.max(210, height - 48))
 
     readonly property real targetX: Math.max(0, Math.min(
         sourceX + sourceWidth / 2 - targetWidth / 2,
@@ -80,12 +88,14 @@ Item {
     property real animatedTargetHeight: targetHeight
 
     readonly property real collapsedRadius: surfaceId === "tray" ? 7 : 9
+
     readonly property real expandedRadius:
         surfaceId === "tray" ? 14
         : (surfaceId === "audio" || surfaceId === "updater" ? 17 : 20)
 
     Behavior on animatedTargetX {
         enabled: root.active && root.progress >= 0.98
+
         NumberAnimation {
             duration: Motion.surfaceRetargetDuration
             easing.type: Easing.BezierSpline
@@ -95,6 +105,7 @@ Item {
 
     Behavior on animatedTargetY {
         enabled: root.active && root.progress >= 0.98
+
         NumberAnimation {
             duration: Motion.surfaceRetargetDuration
             easing.type: Easing.BezierSpline
@@ -104,6 +115,7 @@ Item {
 
     Behavior on animatedTargetWidth {
         enabled: root.active && root.progress >= 0.98
+
         NumberAnimation {
             duration: Motion.surfaceRetargetDuration
             easing.type: Easing.BezierSpline
@@ -113,6 +125,7 @@ Item {
 
     Behavior on animatedTargetHeight {
         enabled: root.active && root.progress >= 0.98
+
         NumberAnimation {
             duration: Motion.surfaceRetargetDuration
             easing.type: Easing.BezierSpline
@@ -134,7 +147,8 @@ Item {
 
     Timer {
         id: hoverCloseTimer
-        interval: 420
+
+        interval: 100
         repeat: false
 
         onTriggered: {
@@ -147,6 +161,7 @@ Item {
 
     NumberAnimation {
         id: openAnimation
+
         target: root
         property: "progress"
         to: 1
@@ -163,6 +178,7 @@ Item {
 
     NumberAnimation {
         id: closeAnimation
+
         target: root
         property: "progress"
         to: 0
@@ -213,6 +229,7 @@ Item {
 
         for (const entry of entries) {
             const item = entry.item
+
             if (!item)
                 continue
 
@@ -253,7 +270,8 @@ Item {
         if (requestedSurfaceId !== "player"
                 && requestedSurfaceId !== "tray"
                 && requestedSurfaceId !== "audio"
-                && requestedSurfaceId !== "updater") {
+                && requestedSurfaceId !== "updater"
+                && requestedSurfaceId !== "usermenu") {
             console.warn("[WAYCK MORPH] superfície sem componente:", requestedSurfaceId)
             return
         }
@@ -284,6 +302,7 @@ Item {
 
     function setSourceGeometry(item): void {
         const position = item.mapToItem(root, 0, 0)
+
         sourceX = position.x
         sourceY = position.y
         sourceWidth = Math.max(1, item.width)
@@ -394,6 +413,7 @@ Item {
 
     Item {
         id: morphContentHost
+
         anchors.fill: parent
         visible: root.active
         z: 4
@@ -405,20 +425,25 @@ Item {
             y: root.animatedTargetY
             width: root.animatedTargetWidth
             height: root.animatedTargetHeight
+
             visible: root.active
             enabled: root.active && root.progress >= 0.98
 
             sourceComponent: !root.active
                 ? null
-                : (root.surfaceId === "tray"
+                : root.surfaceId === "tray"
                     ? trayContent
-                    : (root.surfaceId === "audio"
+                    : root.surfaceId === "audio"
                         ? audioContent
-                        : (root.surfaceId === "updater"
-                            ? updaterContent : playerContent)))
+                        : root.surfaceId === "updater"
+                            ? updaterContent
+                            : root.surfaceId === "usermenu"
+                                ? usermenuContent
+                                : playerContent
 
             HoverHandler {
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
                 onHoveredChanged: root.setSurfaceHovered(hovered)
             }
         }
@@ -437,10 +462,18 @@ Item {
     Rectangle {
         id: morphCarrier
 
-        x: root.sourceX + (root.animatedTargetX - root.sourceX) * root.progress
-        y: root.sourceY + (root.animatedTargetY - root.sourceY) * root.progress
-        width: root.sourceWidth + (root.animatedTargetWidth - root.sourceWidth) * root.progress
-        height: root.sourceHeight + (root.animatedTargetHeight - root.sourceHeight) * root.progress
+        x: root.sourceX
+            + (root.animatedTargetX - root.sourceX) * root.progress
+
+        y: root.sourceY
+            + (root.animatedTargetY - root.sourceY) * root.progress
+
+        width: root.sourceWidth
+            + (root.animatedTargetWidth - root.sourceWidth) * root.progress
+
+        height: root.sourceHeight
+            + (root.animatedTargetHeight - root.sourceHeight) * root.progress
+
         radius: root.collapsedRadius
             + (root.expandedRadius - root.collapsedRadius) * root.progress
 
@@ -449,6 +482,7 @@ Item {
         clip: true
         antialiasing: true
         color: Theme.surfaceContainer
+
         border.width: 1
         border.color: Theme.outline
 
@@ -465,6 +499,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
+
             enabled: root.active && root.progress < 0.98
             acceptedButtons: Qt.AllButtons
             hoverEnabled: false
@@ -476,6 +511,7 @@ Item {
 
         HoverHandler {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
             onHoveredChanged: root.setSurfaceHovered(hovered)
         }
     }
@@ -503,6 +539,7 @@ Item {
         visible: root.revealActive
         z: 3
         opacity: root.contentProgress
+
         maskEnabled: true
         maskSource: childRevealMaskItem
         maskThresholdMin: 0.5
@@ -518,11 +555,13 @@ Item {
         y: root.sourceY
         width: root.surfaceId === "tray" ? 0 : root.sourceWidth
         height: root.surfaceId === "tray" ? 0 : root.sourceHeight
+
         visible: root.active && root.surfaceId !== "tray"
         z: 5
 
         HoverHandler {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
             onHoveredChanged: {
                 if (root.sourceItem)
                     root.setSourceHovered(root.sourceItem, hovered)
@@ -532,803 +571,1527 @@ Item {
 
     Component {
         id: playerContent
+
         Item {
             id: expandedRoot
 
-    property var player: MprisController.activePlayer
+            property var player: MprisController.activePlayer
 
-    signal closeRequested()
+            signal closeRequested()
 
-    RowLayout {
-        anchors.fill: parent
-        anchors.margins: 24
-        spacing: 22
-
-        Rectangle {
-            Layout.preferredWidth: 172
-            Layout.preferredHeight: 172
-            radius: 14
-            color: Theme.surface
-            clip: true
-
-            Image {
+            RowLayout {
                 anchors.fill: parent
-                source: expandedRoot.player ? expandedRoot.player.trackArtUrl : ""
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                visible: expandedRoot.player !== null && expandedRoot.player.trackArtUrl !== ""
-            }
+                anchors.margins: 24
+                spacing: 22
 
-            Text {
-                anchors.centerIn: parent
-                text: "♫"
-                color: Theme.primary
-                font.pixelSize: 54
-                visible: !expandedRoot.player || !expandedRoot.player.trackArtUrl
-            }
-        }
+                Rectangle {
+                    Layout.preferredWidth: 172
+                    Layout.preferredHeight: 172
 
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
+                    radius: 14
+                    color: Theme.surface
+                    clip: true
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 22
+                    Image {
+                        anchors.fill: parent
 
-                Text {
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: expandedRoot.player ? (expandedRoot.player.identity || I18n.t("player.title")) : I18n.t("player.none")
-                    color: Theme.outline
-                    font.pixelSize: 11
-                    elide: Text.ElideRight
+                        source: expandedRoot.player
+                            ? expandedRoot.player.trackArtUrl
+                            : ""
+
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+
+                        visible: expandedRoot.player !== null
+                            && expandedRoot.player.trackArtUrl !== ""
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "♫"
+                        color: Theme.primary
+                        font.pixelSize: 54
+
+                        visible: !expandedRoot.player
+                            || !expandedRoot.player.trackArtUrl
+                    }
                 }
 
-                Text {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "×"
-                    color: Theme.surfaceForeground
-                    font.pixelSize: 22
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
 
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -8
-                        onClicked: expandedRoot.closeRequested()
-                        cursorShape: Qt.PointingHandCursor
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 22
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            text: expandedRoot.player
+                                ? (expandedRoot.player.identity
+                                    || I18n.t("player.title"))
+                                : I18n.t("player.none")
+
+                            color: Theme.outline
+                            font.pixelSize: 11
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            text: "×"
+                            color: Theme.surfaceForeground
+                            font.pixelSize: 22
+
+                            MouseArea {
+                                anchors.fill: parent
+                                anchors.margins: -8
+
+                                onClicked: expandedRoot.closeRequested()
+
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+
+                        text: expandedRoot.player
+                            ? (expandedRoot.player.trackTitle
+                                || I18n.t("player.title"))
+                            : I18n.t("player.none")
+
+                        color: Theme.surfaceForeground
+                        font.pixelSize: 19
+                        font.bold: true
+                        elide: Text.ElideRight
+                        maximumLineCount: 2
+                        wrapMode: Text.Wrap
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+
+                        text: expandedRoot.player
+                            ? (expandedRoot.player.trackArtist
+                                || I18n.t("player.unknownArtist"))
+                            : I18n.t("player.waiting")
+
+                        color: Theme.outline
+                        font.pixelSize: 13
+                        elide: Text.ElideRight
+                    }
+
+                    Item {
+                        Layout.fillHeight: true
+                    }
+
+                    RowLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        spacing: 26
+
+                        Text {
+                            text: "‹"
+
+                            color: expandedRoot.player
+                                && expandedRoot.player.canGoPrevious
+                                ? Theme.surfaceForeground
+                                : Theme.outline
+
+                            font.pixelSize: 34
+
+                            MouseArea {
+                                anchors.fill: parent
+                                anchors.margins: -10
+
+                                enabled: expandedRoot.player !== null
+                                    && expandedRoot.player.canGoPrevious
+
+                                onClicked: expandedRoot.player.previous()
+
+                                cursorShape: enabled
+                                    ? Qt.PointingHandCursor
+                                    : Qt.ArrowCursor
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.preferredWidth: 46
+                            Layout.preferredHeight: 46
+
+                            radius: 23
+                            color: Theme.primary
+
+                            Text {
+                                anchors.centerIn: parent
+
+                                text: expandedRoot.player
+                                    && expandedRoot.player.isPlaying
+                                    ? "Ⅱ"
+                                    : "▶"
+
+                                color: Theme.onPrimary
+                                font.pixelSize: 18
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                enabled: expandedRoot.player !== null
+                                    && expandedRoot.player.canTogglePlaying
+
+                                onClicked: expandedRoot.player.togglePlaying()
+
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+
+                        Text {
+                            text: "›"
+
+                            color: expandedRoot.player
+                                && expandedRoot.player.canGoNext
+                                ? Theme.surfaceForeground
+                                : Theme.outline
+
+                            font.pixelSize: 34
+
+                            MouseArea {
+                                anchors.fill: parent
+                                anchors.margins: -10
+
+                                enabled: expandedRoot.player !== null
+                                    && expandedRoot.player.canGoNext
+
+                                onClicked: expandedRoot.player.next()
+
+                                cursorShape: enabled
+                                    ? Qt.PointingHandCursor
+                                    : Qt.ArrowCursor
+                            }
+                        }
                     }
                 }
             }
 
-            Text {
-                Layout.fillWidth: true
-                text: expandedRoot.player
-                    ? (expandedRoot.player.trackTitle || I18n.t("player.title"))
-                    : I18n.t("player.none")
-                color: Theme.surfaceForeground
-                font.pixelSize: 19
-                font.bold: true
-                elide: Text.ElideRight
-                maximumLineCount: 2
-                wrapMode: Text.Wrap
+            onCloseRequested: root.close()
+        }
+    }
+
+    Component {
+        id: trayContent
+
+        Item {
+            id: expandedRoot
+
+            property var menu: root.surfaceData
+
+            signal closeRequested()
+
+            implicitWidth: menuCard.implicitWidth
+            implicitHeight: menuCard.implicitHeight
+
+            TrayMenu {
+                id: menuCard
+
+                anchors.left: parent.left
+                anchors.top: parent.top
+
+                menu: expandedRoot.menu
+
+                onCloseRequested: root.close()
             }
 
-            Text {
-                Layout.fillWidth: true
-                text: expandedRoot.player
-                    ? (expandedRoot.player.trackArtist || I18n.t("player.unknownArtist"))
-                    : I18n.t("player.waiting")
-                color: Theme.outline
-                font.pixelSize: 13
-                elide: Text.ElideRight
+            onCloseRequested: root.close()
+        }
+    }
+
+    Component {
+        id: audioContent
+
+        Item {
+            id: expandedRoot
+
+            signal closeRequested()
+
+            property var trackedNodes: []
+
+            readonly property var audioStreams: trackedNodes.filter(function(node) {
+                if (!node || !node.isStream || !node.audio)
+                    return false
+
+                const props = node.properties || ({})
+                const mediaClass = props["media.class"] || ""
+
+                return mediaClass === ""
+                    || mediaClass === "Stream/Output/Audio"
+            })
+
+            implicitWidth: 360
+            implicitHeight: 280
+
+            function refreshNodes(): void {
+                trackedNodes = Pipewire.nodes.values
             }
 
-            Item { Layout.fillHeight: true }
+            function appName(node): string {
+                const props = node && node.properties
+                    ? node.properties
+                    : ({})
 
-            RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 26
+                return props["application.name"]
+                    || props["application.process.binary"]
+                    || node.description
+                    || node.name
+                    || I18n.t("audioMixer.appFallback")
+            }
 
-                Text {
-                    text: "‹"
-                    color: expandedRoot.player && expandedRoot.player.canGoPrevious ? Theme.surfaceForeground : Theme.outline
-                    font.pixelSize: 34
+            function streamDescription(node): string {
+                const props = node && node.properties
+                    ? node.properties
+                    : ({})
 
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -10
-                        enabled: expandedRoot.player !== null && expandedRoot.player.canGoPrevious
-                        onClicked: expandedRoot.player.previous()
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                return props["media.name"]
+                    || props["media.title"]
+                    || props["window.title"]
+                    || node.name
+                    || I18n.t("audioMixer.streamFallback")
+            }
+
+            PwObjectTracker {
+                objects: expandedRoot.trackedNodes
+            }
+
+            PwObjectTracker {
+                objects: [Pipewire.defaultAudioSink]
+            }
+
+            Connections {
+                target: Pipewire.nodes
+                ignoreUnknownSignals: true
+
+                function onValuesChanged() {
+                    expandedRoot.refreshNodes()
+                }
+
+                function onObjectInsertedPost() {
+                    expandedRoot.refreshNodes()
+                }
+
+                function onObjectRemovedPost() {
+                    expandedRoot.refreshNodes()
+                }
+            }
+
+            Component.onCompleted: refreshNodes()
+
+            Rectangle {
+                anchors.fill: parent
+
+                radius: 16
+                color: Qt.alpha(Theme.surfaceContainer, 0.98)
+
+                border.width: 1
+                border.color: Theme.outline
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 17
+                spacing: 10
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 1
+
+                        Text {
+                            text: I18n.t("audioMixer.title")
+                            color: Theme.surfaceForeground
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 0.8
+                        }
+
+                        Text {
+                            text: I18n.t(
+                                "audioMixer.streams",
+                                { count: expandedRoot.audioStreams.length }
+                            )
+
+                            color: Theme.outline
+                            font.pixelSize: 10
+                        }
+                    }
+
+                    Text {
+                        text: "×"
+                        color: Theme.outline
+                        font.pixelSize: 20
+
+                        MouseArea {
+                            anchors.fill: parent
+                            anchors.margins: -7
+
+                            onClicked: expandedRoot.closeRequested()
+
+                            cursorShape: Qt.PointingHandCursor
+                        }
                     }
                 }
 
                 Rectangle {
-                    Layout.preferredWidth: 46
-                    Layout.preferredHeight: 46
-                    radius: 23
-                    color: Theme.primary
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: expandedRoot.player && expandedRoot.player.isPlaying ? "Ⅱ" : "▶"
-                        color: Theme.onPrimary
-                        font.pixelSize: 18
-                        font.bold: true
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: expandedRoot.player !== null && expandedRoot.player.canTogglePlaying
-                        onClicked: expandedRoot.player.togglePlaying()
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    }
-                }
-
-                Text {
-                    text: "›"
-                    color: expandedRoot.player && expandedRoot.player.canGoNext ? Theme.surfaceForeground : Theme.outline
-                    font.pixelSize: 34
-
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -10
-                        enabled: expandedRoot.player !== null && expandedRoot.player.canGoNext
-                        onClicked: expandedRoot.player.next()
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    }
-                }
-            }
-        }
-    }
-            onCloseRequested: root.close()
-        }
-    }
-    Component {
-        id: trayContent
-        Item {
-            id: expandedRoot
-
-    property var menu: root.surfaceData
-
-    signal closeRequested()
-
-    implicitWidth: menuCard.implicitWidth
-    implicitHeight: menuCard.implicitHeight
-
-    TrayMenu {
-        id: menuCard
-
-        anchors.left: parent.left
-        anchors.top: parent.top
-
-        menu: expandedRoot.menu
-        onCloseRequested: root.close()
-    }
-            onCloseRequested: root.close()
-        }
-    }
-    Component {
-        id: audioContent
-        Item {
-            id: expandedRoot
-
-    signal closeRequested()
-
-    property var trackedNodes: []
-
-    readonly property var audioStreams: trackedNodes.filter(function(node) {
-        if (!node || !node.isStream || !node.audio)
-            return false
-
-        const props = node.properties || ({})
-        const mediaClass = props["media.class"] || ""
-        return mediaClass === "" || mediaClass === "Stream/Output/Audio"
-    })
-
-    implicitWidth: 360
-    implicitHeight: 280
-
-    function refreshNodes(): void {
-        trackedNodes = Pipewire.nodes.values
-    }
-
-    function appName(node): string {
-        const props = node && node.properties ? node.properties : ({})
-        return props["application.name"]
-            || props["application.process.binary"]
-            || node.description
-            || node.name
-            || I18n.t("audioMixer.appFallback")
-    }
-
-    function streamDescription(node): string {
-        const props = node && node.properties ? node.properties : ({})
-        return props["media.name"]
-            || props["media.title"]
-            || props["window.title"]
-            || node.name
-            || I18n.t("audioMixer.streamFallback")
-    }
-
-    PwObjectTracker {
-        objects: expandedRoot.trackedNodes
-    }
-
-    PwObjectTracker {
-        objects: [Pipewire.defaultAudioSink]
-    }
-
-    Connections {
-        target: Pipewire.nodes
-        ignoreUnknownSignals: true
-        function onValuesChanged() { expandedRoot.refreshNodes() }
-        function onObjectInsertedPost() { expandedRoot.refreshNodes() }
-        function onObjectRemovedPost() { expandedRoot.refreshNodes() }
-    }
-
-    Component.onCompleted: refreshNodes()
-
-    Rectangle {
-        anchors.fill: parent
-        radius: 16
-        color: Qt.alpha(Theme.surfaceContainer, 0.98)
-        border.width: 1
-        border.color: Theme.outline
-    }
-
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 17
-        spacing: 10
-
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 1
-
-                Text {
-                    text: I18n.t("audioMixer.title")
-                    color: Theme.surfaceForeground
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.letterSpacing: 0.8
-                }
-
-                Text {
-                    text: I18n.t("audioMixer.streams", { count: expandedRoot.audioStreams.length })
+                    Layout.fillWidth: true
+                    height: 1
                     color: Theme.outline
-                    font.pixelSize: 10
+                    opacity: 0.22
                 }
-            }
 
-            Text {
-                text: "×"
-                color: Theme.outline
-                font.pixelSize: 20
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
 
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -7
-                    onClicked: expandedRoot.closeRequested()
-                    cursorShape: Qt.PointingHandCursor
-                }
-            }
-        }
+                    RowLayout {
+                        Layout.fillWidth: true
 
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Theme.outline
-            opacity: 0.22
-        }
+                        Text {
+                            text: I18n.t("audioMixer.masterVolume")
+                            color: Theme.surfaceForeground
+                            font.pixelSize: 11
+                            font.bold: true
+                        }
 
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 5
+                        Item {
+                            Layout.fillWidth: true
+                        }
 
-            RowLayout {
-                Layout.fillWidth: true
+                        Text {
+                            text: Pipewire.defaultAudioSink?.audio
+                                ? Math.round(
+                                    Pipewire.defaultAudioSink.audio.volume * 100
+                                ) + "%"
+                                : "--%"
 
-                Text {
-                    text: I18n.t("audioMixer.masterVolume")
-                    color: Theme.surfaceForeground
-                    font.pixelSize: 11
-                    font.bold: true
+                            color: Theme.outline
+                            font.pixelSize: 10
+                        }
+                    }
+
+                    Slider {
+                        id: masterVolumeSlider
+
+                        Layout.fillWidth: true
+
+                        from: 0
+                        to: 1.5
+
+                        enabled: !!Pipewire.defaultAudioSink?.audio
+
+                        value: Pipewire.defaultAudioSink?.audio
+                            ? Pipewire.defaultAudioSink.audio.volume
+                            : 0
+
+                        onMoved: {
+                            const sink = Pipewire.defaultAudioSink
+
+                            if (!sink?.audio)
+                                return
+
+                            sink.audio.volume = value
+
+                            if (value > 0)
+                                sink.audio.muted = false
+                        }
+                    }
                 }
 
                 Item {
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    ListView {
+                        id: streamList
+
+                        anchors.fill: parent
+                        clip: true
+                        spacing: 6
+                        model: expandedRoot.audioStreams
+                        boundsBehavior: Flickable.StopAtBounds
+
+                        add: Transition {
+                            ParallelAnimation {
+                                NumberAnimation {
+                                    property: "opacity"
+                                    from: 0
+                                    to: 1
+                                    duration: Motion.contentFadeDuration
+                                }
+
+                                NumberAnimation {
+                                    property: "y"
+                                    from: 12
+                                    duration: Motion.menuContentDuration
+                                    easing.type: Motion.standard
+                                }
+                            }
+                        }
+
+                        displaced: Transition {
+                            NumberAnimation {
+                                properties: "x,y"
+                                duration: Motion.menuContentDuration
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: Motion.layoutCurve
+                            }
+                        }
+
+                        delegate: Item {
+                            id: streamDelegate
+
+                            required property var modelData
+                            required property int index
+
+                            property var node: modelData
+
+                            readonly property var props: node && node.properties
+                                ? node.properties
+                                : ({})
+
+                            readonly property bool muted: node && node.audio
+                                ? node.audio.muted
+                                : false
+
+                            readonly property real volume: node && node.audio
+                                ? node.audio.volume
+                                : 0
+
+                            width: streamList.width
+                            height: 54
+
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 9
+
+                                Rectangle {
+                                    Layout.preferredWidth: 34
+                                    Layout.preferredHeight: 34
+
+                                    radius: 10
+                                    color: Qt.alpha(Theme.primary, 0.14)
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "♫"
+                                        color: Theme.primary
+                                        font.pixelSize: 17
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 5
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        spacing: 6
+
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 1
+
+                                            Text {
+                                                Layout.fillWidth: true
+
+                                                text: expandedRoot.appName(
+                                                    streamDelegate.node
+                                                )
+
+                                                color: Theme.surfaceForeground
+                                                font.pixelSize: 11
+                                                font.bold: true
+                                                elide: Text.ElideRight
+                                            }
+
+                                            Text {
+                                                Layout.fillWidth: true
+
+                                                text: expandedRoot.streamDescription(
+                                                    streamDelegate.node
+                                                )
+
+                                                color: Theme.outline
+                                                font.pixelSize: 9
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+
+                                        Text {
+                                            text: Math.round(
+                                                streamDelegate.volume * 100
+                                            ) + "%"
+
+                                            color: Theme.outline
+                                            font.pixelSize: 10
+                                        }
+                                    }
+
+                                    Slider {
+                                        id: volumeSlider
+
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 15
+
+                                        from: 0
+                                        to: 1.5
+                                        value: streamDelegate.volume
+
+                                        onMoved: {
+                                            if (!streamDelegate.node
+                                                    || !streamDelegate.node.audio)
+                                                return
+
+                                            streamDelegate.node.audio.volume = value
+
+                                            if (value > 0)
+                                                streamDelegate.node.audio.muted = false
+                                        }
+
+                                        background: Rectangle {
+                                            x: volumeSlider.leftPadding
+
+                                            y: volumeSlider.topPadding
+                                                + volumeSlider.availableHeight / 2
+                                                - height / 2
+
+                                            width: volumeSlider.availableWidth
+                                            height: 4
+                                            radius: 2
+
+                                            color: Qt.darker(
+                                                Theme.surfaceContainer,
+                                                1.5
+                                            )
+
+                                            Rectangle {
+                                                width: parent.width
+                                                    * volumeSlider.visualPosition
+
+                                                height: parent.height
+                                                radius: parent.radius
+                                                color: Theme.primary
+                                            }
+                                        }
+
+                                        handle: Rectangle {
+                                            x: volumeSlider.leftPadding
+                                                + volumeSlider.visualPosition
+                                                * (volumeSlider.availableWidth - width)
+
+                                            y: volumeSlider.topPadding
+                                                + volumeSlider.availableHeight / 2
+                                                - height / 2
+
+                                            width: 11
+                                            height: 11
+                                            radius: 6
+
+                                            color: Theme.primary
+
+                                            border.width: 2
+                                            border.color: Qt.lighter(
+                                                Theme.primary,
+                                                1.2
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.preferredWidth: 30
+                                    Layout.preferredHeight: 30
+
+                                    radius: 9
+
+                                    color: streamDelegate.muted
+                                        ? Qt.alpha(Theme.outline, 0.16)
+                                        : Qt.alpha(Theme.primary, 0.12)
+
+                                    Text {
+                                        anchors.centerIn: parent
+
+                                        text: streamDelegate.muted
+                                            ? "󰖁"
+                                            : "󰕾"
+
+                                        color: streamDelegate.muted
+                                            ? Theme.outline
+                                            : Theme.primary
+
+                                        font.pixelSize: 15
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+
+                                        onClicked: {
+                                            if (streamDelegate.node
+                                                    && streamDelegate.node.audio) {
+                                                streamDelegate.node.audio.muted =
+                                                    !streamDelegate.node.audio.muted
+                                            }
+                                        }
+
+                                        cursorShape: Qt.PointingHandCursor
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        anchors.centerIn: parent
+                        spacing: 5
+
+                        visible: expandedRoot.audioStreams.length === 0
+
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+
+                            text: "♪"
+                            color: Theme.outline
+                            font.pixelSize: 28
+                        }
+
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+
+                            text: Pipewire.ready
+                                ? I18n.t("audioMixer.empty")
+                                : I18n.t("audioMixer.connecting")
+
+                            color: Theme.outline
+                            font.pixelSize: 10
+                        }
+                    }
+                }
+            }
+
+            onCloseRequested: root.close()
+        }
+    }
+
+    Component {
+        id: updaterContent
+
+        Item {
+            id: expandedRoot
+
+            signal updateRequested()
+            signal closeRequested()
+
+            property real holdProgress: 0
+            property bool holdActive: false
+            property bool completed: false
+            property real wavePhase: 0
+
+            implicitWidth: 340
+            implicitHeight: 204
+
+            Rectangle {
+                anchors.fill: parent
+
+                radius: 17
+                color: Qt.alpha(Theme.surfaceContainer, 0.98)
+
+                border.width: 1
+                border.color: Theme.outline
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 18
+                spacing: 8
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 9
+
+                    Rectangle {
+                        Layout.preferredWidth: 38
+                        Layout.preferredHeight: 38
+
+                        radius: 12
+                        color: Qt.alpha(Theme.primary, 0.16)
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "󰇚"
+                            color: Theme.primary
+                            font.pixelSize: 20
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+
+                        Text {
+                            text: I18n.t("updater.title")
+                            color: Theme.surfaceForeground
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 0.6
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+
+                            text: UpdateController.localVersion
+                                + "  →  " + UpdateController.remoteVersion
+
+                            color: Theme.outline
+                            font.pixelSize: 10
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    Text {
+                        text: "×"
+                        color: Theme.outline
+                        font.pixelSize: 20
+
+                        MouseArea {
+                            anchors.fill: parent
+                            anchors.margins: -7
+
+                            onClicked: expandedRoot.closeRequested()
+
+                            cursorShape: Qt.PointingHandCursor
+                        }
+                    }
                 }
 
                 Text {
-                    text: Pipewire.defaultAudioSink?.audio
-                        ? Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%"
-                        : "--%"
-                    color: Theme.outline
+                    Layout.fillWidth: true
+
+                    text: I18n.t("updater.description")
+
+                    color: Theme.surfaceForeground
+                    opacity: 0.78
                     font.pixelSize: 10
+                    wrapMode: Text.WordWrap
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
+
+                Rectangle {
+                    id: holdButton
+
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 48
+
+                    radius: 12
+                    color: Qt.darker(Theme.surfaceContainer, 1.28)
+
+                    border.width: 1
+                    border.color: expandedRoot.holdActive
+                        ? Theme.primary
+                        : Theme.outline
+
+                    Behavior on border.color {
+                        ColorAnimation {
+                            duration: 600
+                            easing: Easing.OutCubic
+                        }
+                    }
+
+                    clip: true
+
+                    WaveFill {
+                        anchors.fill: parent
+                        z: 0
+
+                        radius: parent.radius
+                        threeDimensional: 1.0
+                        fillLevel: expandedRoot.holdProgress
+
+                        waveAmp: expandedRoot.holdProgress > 0.001
+                            && expandedRoot.holdProgress < 0.99
+                            ? 40 * Math.sin(
+                                expandedRoot.holdProgress * Math.PI
+                            )
+                            : 0
+
+                        phase: expandedRoot.wavePhase
+                        use3D: true
+
+                        color1: Qt.darker(Theme.primary, 1.08)
+                        color2: Theme.primary
+
+                        visible: expandedRoot.holdProgress > 0.001
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+
+                        text: expandedRoot.completed
+                            ? I18n.t("updater.installing")
+                            : (expandedRoot.holdActive
+                                ? I18n.t("updater.holding", {
+                                    progress: Math.round(
+                                        expandedRoot.holdProgress * 100
+                                    )
+                                })
+                                : I18n.t("updater.hold"))
+
+                        color: expandedRoot.holdProgress > 0.48
+                            ? Theme.onPrimary
+                            : Theme.surfaceForeground
+
+                        font.pixelSize: 11
+                        font.bold: true
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 450
+                                easing: Easing.InOutCubic
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: !expandedRoot.completed
+
+                        onPressed: {
+                            expandedRoot.holdActive = true
+                            holdAnimation.restart()
+                            SoundController.play("longCharge")
+                        }
+
+                        onReleased: {
+                            expandedRoot.holdActive = false
+                            SoundController.stop("longCharge")
+
+                            if (!expandedRoot.completed) {
+                                holdAnimation.stop()
+                                drainAnimation.restart()
+                            }
+                        }
+
+                        onCanceled: {
+                            expandedRoot.holdActive = false
+                            SoundController.stop("longCharge")
+
+                            if (!expandedRoot.completed) {
+                                holdAnimation.stop()
+                                drainAnimation.restart()
+                            }
+                        }
+
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                }
+
+                Text {
+                    Layout.fillWidth: true
+
+                    text: expandedRoot.holdActive
+                        ? I18n.t("updater.cancelHint")
+                        : I18n.t("updater.installHint")
+
+                    color: Theme.outline
+                    font.pixelSize: 9
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                }
+
+                Text {
+                    Layout.fillWidth: true
+
+                    text: I18n.t("updater.changelog") + " ↗"
+                    color: Theme.primary
+                    font.pixelSize: 9
+                    horizontalAlignment: Text.AlignHCenter
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            const parts = String(UpdateController.localVersion)
+                                .split(".")
+                                .map(Number)
+
+                            parts[parts.length - 1]++
+
+                            const version = parts.join("")
+
+                            Qt.openUrlExternally(
+                                "https://github.com/DuckCosmos/wayck/blob/main/CHANGELOG.md#"
+                                + version
+                            )
+                        }
+                    }
                 }
             }
 
-            Slider {
-                id: masterVolumeSlider
+            NumberAnimation {
+                id: holdAnimation
 
-                Layout.fillWidth: true
+                target: expandedRoot
+                property: "holdProgress"
+
                 from: 0
-                to: 1.5
+                to: 1
+                duration: 3904
+                easing.type: Easing.Linear
 
-                enabled: !!Pipewire.defaultAudioSink?.audio
-
-                value: Pipewire.defaultAudioSink?.audio
-                    ? Pipewire.defaultAudioSink.audio.volume
-                    : 0
-
-                onMoved: {
-                    const sink = Pipewire.defaultAudioSink
-
-                    if (!sink?.audio)
+                onFinished: {
+                    if (!expandedRoot.holdActive || expandedRoot.completed)
                         return
 
-                    sink.audio.volume = value
-
-                    if (value > 0)
-                        sink.audio.muted = false
+                    expandedRoot.completed = true
+                    expandedRoot.updateRequested()
+                    SoundController.stop("longCharge")
                 }
             }
+
+            NumberAnimation {
+                id: drainAnimation
+
+                target: expandedRoot
+                property: "holdProgress"
+
+                to: 0
+                duration: Math.max(
+                    100,
+                    expandedRoot.holdProgress * 210
+                )
+
+                easing.type: Easing.OutCubic
+            }
+
+            NumberAnimation on wavePhase {
+                running: expandedRoot.holdProgress > 0.0
+                    && expandedRoot.holdProgress < 1.0
+
+                from: 0
+                to: Math.PI * 2
+
+                duration: 600
+                loops: Animation.Infinite
+            }
+
+            onUpdateRequested: {
+                UpdateController.installUpdate()
+                root.close()
+            }
+
+            onCloseRequested: root.close()
         }
+    }
+
+    Component {
+        id: usermenuContent
 
         Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            id: expandedRoot
 
-            ListView {
-                id: streamList
+            property string page: "home"
+            property string pendingAction: ""
+            property real holdProgress: 0
+
+            readonly property var settingsItems: [
+                { id: "hyprland", symbol: "H" },
+                { id: "displays", symbol: "▣" },
+                { id: "network", symbol: "⌁" },
+                { id: "audio", symbol: "♫" },
+                { id: "bluetooth", symbol: "ᛒ" },
+                { id: "appearance", symbol: "◈" },
+                { id: "system", symbol: "⚙" },
+                { id: "monitor", symbol: "▥" }
+            ]
+
+            readonly property var powerItems: [
+                { id: "lock", symbol: "▣" },
+                { id: "suspend", symbol: "☾" },
+                { id: "reboot", symbol: "↻" },
+                { id: "poweroff", symbol: "⏻" },
+                { id: "logout", symbol: "⇥" }
+            ]
+
+            readonly property var confirmActions: [
+                "suspend",
+                "reboot",
+                "poweroff",
+                "logout"
+            ]
+
+            implicitWidth: 360
+
+            implicitHeight: page === "home"
+                ? 500
+                : page === "power"
+                    ? 410
+                    : 280
+
+            LayoutMirroring.enabled: I18n.rtl
+            LayoutMirroring.childrenInherit: true
+
+            function actionTitle(action): string {
+                return confirmActions.includes(action)
+                    ? I18n.t("usermenu.confirm." + action + ".title")
+                    : I18n.t("usermenu.confirm.default.title")
+            }
+
+            function actionDescription(action): string {
+                return confirmActions.includes(action)
+                    ? I18n.t("usermenu.confirm." + action + ".description")
+                    : ""
+            }
+
+            Rectangle {
                 anchors.fill: parent
-                clip: true
-                spacing: 6
-                model: expandedRoot.audioStreams
-                boundsBehavior: Flickable.StopAtBounds
 
-                add: Transition {
-                    ParallelAnimation {
-                        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Motion.contentFadeDuration }
-                        NumberAnimation { property: "y"; from: 12; duration: Motion.menuContentDuration; easing.type: Motion.standard }
-                    }
-                }
+                radius: 18
+                color: Theme.surfaceContainer
 
-                displaced: Transition {
-                    NumberAnimation {
-                        properties: "x,y"
-                        duration: Motion.menuContentDuration
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Motion.layoutCurve
-                    }
-                }
+                border.width: 1
+                border.color: Qt.darker(Theme.outline, 1.15)
 
-                delegate: Item {
-                    id: streamDelegate
-                    required property var modelData
-                    required property int index
-
-                    property var node: modelData
-                    readonly property var props: node && node.properties ? node.properties : ({})
-                    readonly property bool muted: node && node.audio ? node.audio.muted : false
-                    readonly property real volume: node && node.audio ? node.audio.volume : 0
-
-                    width: streamList.width
-                    height: 54
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 15
+                    spacing: 10
 
                     RowLayout {
-                        anchors.fill: parent
-                        spacing: 9
+                        Layout.fillWidth: true
+                        spacing: 11
 
                         Rectangle {
-                            Layout.preferredWidth: 34
-                            Layout.preferredHeight: 34
-                            radius: 10
-                            color: Qt.alpha(Theme.primary, 0.14)
+                            Layout.preferredWidth: 46
+                            Layout.preferredHeight: 46
+
+                            radius: 15
+                            color: Theme.primary
 
                             Text {
                                 anchors.centerIn: parent
-                                text: "♫"
-                                color: Theme.primary
-                                font.pixelSize: 17
+
+                                text: UserController.username.length > 0
+                                    ? UserController.username
+                                        .substring(0, 1).toUpperCase()
+                                    : "?"
+
+                                color: Theme.onPrimary
+                                font.pixelSize: 23
+                                font.bold: true
                             }
                         }
 
                         ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 5
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 1
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: expandedRoot.appName(streamDelegate.node)
-                                        color: Theme.surfaceForeground
-                                        font.pixelSize: 11
-                                        font.bold: true
-                                        elide: Text.ElideRight
-                                    }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: expandedRoot.streamDescription(streamDelegate.node)
-                                        color: Theme.outline
-                                        font.pixelSize: 9
-                                        elide: Text.ElideRight
-                                    }
-                                }
-
-                                Text {
-                                    text: Math.round(streamDelegate.volume * 100) + "%"
-                                    color: Theme.outline
-                                    font.pixelSize: 10
-                                }
-                            }
-
-                            Slider {
-                                id: volumeSlider
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 15
-                                from: 0
-                                to: 1.5
-                                value: streamDelegate.volume
-
-                                onMoved: {
-                                    if (!streamDelegate.node || !streamDelegate.node.audio)
-                                        return
-                                    streamDelegate.node.audio.volume = value
-                                    if (value > 0)
-                                        streamDelegate.node.audio.muted = false
-                                }
-
-                                background: Rectangle {
-                                    x: volumeSlider.leftPadding
-                                    y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                    width: volumeSlider.availableWidth
-                                    height: 4
-                                    radius: 2
-                                    color: Qt.darker(Theme.surfaceContainer, 1.5)
-
-                                    Rectangle {
-                                        width: parent.width * volumeSlider.visualPosition
-                                        height: parent.height
-                                        radius: parent.radius
-                                        color: Theme.primary
-                                    }
-                                }
-
-                                handle: Rectangle {
-                                    x: volumeSlider.leftPadding
-                                        + volumeSlider.visualPosition * (volumeSlider.availableWidth - width)
-                                    y: volumeSlider.topPadding + volumeSlider.availableHeight / 2 - height / 2
-                                    width: 11
-                                    height: 11
-                                    radius: 6
-                                    color: Theme.primary
-                                    border.width: 2
-                                    border.color: Qt.lighter(Theme.primary, 1.2)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.preferredWidth: 30
-                            Layout.preferredHeight: 30
-                            radius: 9
-                            color: streamDelegate.muted
-                                ? Qt.alpha(Theme.outline, 0.16)
-                                : Qt.alpha(Theme.primary, 0.12)
+                            spacing: 2
 
                             Text {
-                                anchors.centerIn: parent
-                                text: streamDelegate.muted ? "󰖁" : "󰕾"
-                                color: streamDelegate.muted ? Theme.outline : Theme.primary
-                                font.pixelSize: 15
+                                text: UserController.username
+                                color: Theme.surfaceForeground
+                                font.pixelSize: 16
+                                font.bold: true
                             }
 
-                            MouseArea {
+                            Text {
+                                Layout.fillWidth: true
+
+                                text: UserController.hostname
+                                    + "  ·  " + UserController.desktop
+
+                                color: Theme.outline
+                                font.pixelSize: 10
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        Text {
+                            text: "WAYCK"
+                            color: Theme.primary
+                            font.pixelSize: 10
+                            font.bold: true
+                        }
+                    }
+
+RowLayout {
+    Layout.fillWidth: true
+    spacing: 0
+
+    visible: expandedRoot.page !== "confirm"
+
+    Item {
+        id: tabs
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: 34
+
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 9
+            color: Qt.darker(Theme.surfaceContainer, 1.08)
+        }
+
+        Rectangle {
+            id: indicator
+
+            width: tabs.width / 2
+
+            height: tabs.height
+
+            radius: 9
+            color: Theme.primary
+
+            x: expandedRoot.page === "power"
+                ? (I18n.rtl ? 0 : width)
+                : (I18n.rtl ? width : 0)
+
+            Behavior on x {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+
+                        RowLayout {
                                 anchors.fill: parent
-                                onClicked: {
-                                    if (streamDelegate.node && streamDelegate.node.audio)
-                                        streamDelegate.node.audio.muted = !streamDelegate.node.audio.muted
+                                spacing: 0
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: I18n.t("usermenu.tabs.control")
+
+                                        color: expandedRoot.page === "home"
+                                            ? Theme.onPrimary
+                                            : Theme.surfaceForeground
+
+                                        font.pixelSize: 12
+                                        font.bold: true
+
+                                        Behavior on color {
+                                            ColorAnimation {
+                                                duration: 400
+                                                easing: Easing.OutCubic
+                                            }
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: expandedRoot.page = "home"
+                                        cursorShape: Qt.PointingHandCursor
+                                    }
                                 }
-                                cursorShape: Qt.PointingHandCursor
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: I18n.t("usermenu.tabs.power")
+
+                                        color: expandedRoot.page === "power"
+                                            ? Theme.onPrimary
+                                            : Theme.surfaceForeground
+
+                                        font.pixelSize: 12
+                                        font.bold: true
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: expandedRoot.page = "power"
+                                        cursorShape: Qt.PointingHandCursor
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
 
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 5
-                visible: expandedRoot.audioStreams.length === 0
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "♪"
-                    color: Theme.outline
-                    font.pixelSize: 28
-                }
+                        visible: expandedRoot.page === "home"
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: Pipewire.ready ? I18n.t("audioMixer.empty") : I18n.t("audioMixer.connecting")
-                    color: Theme.outline
-                    font.pixelSize: 10
-                }
-            }
-        }
-    }
-            onCloseRequested: root.close()
-        }
-    }
-    Component {
-        id: updaterContent
-        Item {
-            id: expandedRoot
+                        Text {
+                            text: I18n.t("usermenu.sections.settings")
+                            color: Theme.outline
+                            font.pixelSize: 10
+                            font.bold: true
+                            font.capitalization: Font.AllUppercase
+                        }
 
-    signal updateRequested()
-    signal closeRequested()
+                        GridLayout {
+                            columns: 2
+                            Layout.fillWidth: true
+                            rowSpacing: 8
+                            columnSpacing: 8
 
-    property real holdProgress: 0
-    property bool holdActive: false
-    property bool completed: false
-    property real wavePhase: 0
+                            Repeater {
+                                model: expandedRoot.settingsItems
 
-    implicitWidth: 340
-    implicitHeight: 204
+                                delegate: Rectangle {
+                                    required property var modelData
 
-    Rectangle {
-        anchors.fill: parent
-        radius: 17
-        color: Qt.alpha(Theme.surfaceContainer, 0.98)
-        border.width: 1
-        border.color: Theme.outline
-    }
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 66
 
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 18
-        spacing: 8
+                                    radius: 11
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 9
+                                    color: tileMouse.containsMouse
+                                        ? Qt.lighter(
+                                            Theme.surfaceContainer,
+                                            1.12
+                                        )
+                                        : Qt.darker(
+                                            Theme.surfaceContainer,
+                                            1.04
+                                        )
 
-            Rectangle {
-                Layout.preferredWidth: 38
-                Layout.preferredHeight: 38
-                radius: 12
-                color: Qt.alpha(Theme.primary, 0.16)
+                                    border.width: 1
+                                    border.color: Qt.darker(
+                                        Theme.outline,
+                                        1.25
+                                    )
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "󰇚"
-                    color: Theme.primary
-                    font.pixelSize: 20
-                }
-            }
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 9
+                                        spacing: 9
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 2
+                                        Text {
+                                            Layout.preferredWidth: 25
 
-                Text {
-                    text: I18n.t("updater.title")
-                    color: Theme.surfaceForeground
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.letterSpacing: 0.6
-                }
+                                            text: modelData.symbol
+                                            color: Theme.primary
+                                            font.pixelSize: 20
+                                            font.bold: true
 
-                Text {
-                    Layout.fillWidth: true
-                    text: UpdateController.localVersion + "  →  " + UpdateController.remoteVersion
-                    color: Theme.outline
-                    font.pixelSize: 10
-                    elide: Text.ElideRight
-                }
-            }
+                                            horizontalAlignment: Text.AlignHCenter
+                                        }
 
-            Text {
-                text: "×"
-                color: Theme.outline
-                font.pixelSize: 20
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 3
 
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -7
-                    onClicked: expandedRoot.closeRequested()
-                    cursorShape: Qt.PointingHandCursor
-                }
-            }
-        }
+                                            Text {
+                                                Layout.fillWidth: true
 
-        Text {
-            Layout.fillWidth: true
-            text: I18n.t("updater.description")
-            color: Theme.surfaceForeground
-            opacity: 0.78
-            font.pixelSize: 10
-            wrapMode: Text.WordWrap
-        }
+                                                text: I18n.t(
+                                                    "usermenu.settings."
+                                                    + modelData.id + ".title"
+                                                )
 
-        Item { Layout.fillHeight: true }
+                                                color: Theme.surfaceForeground
+                                                font.pixelSize: 11
+                                                font.bold: true
+                                                elide: Text.ElideRight
+                                            }
 
-        Rectangle {
-            id: holdButton
-            Layout.fillWidth: true
-            Layout.preferredHeight: 48
-            radius: 12
-            color: Qt.darker(Theme.surfaceContainer, 1.28)
-            border.width: 1
-            border.color: expandedRoot.holdActive ? Theme.primary : Theme.outline
-            clip: true
+                                            Text {
+                                                Layout.fillWidth: true
 
-            WaveFill {
-                anchors.fill: parent
-                z: 0
+                                                text: I18n.t(
+                                                    "usermenu.settings."
+                                                    + modelData.id + ".subtitle"
+                                                )
 
-                radius: parent.radius
-                threeDimensional: 1.0
-                fillLevel: expandedRoot.holdProgress
+                                                color: Theme.outline
+                                                font.pixelSize: 9
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+                                    }
 
-                waveAmp: expandedRoot.holdProgress > 0.001
-                    && expandedRoot.holdProgress < 0.99
-                    ? 40 * Math.sin(expandedRoot.holdProgress * Math.PI)
-                    : 0
+                                    MouseArea {
+                                        id: tileMouse
 
-                phase: expandedRoot.wavePhase
+                                        anchors.fill: parent
+                                        hoverEnabled: true
 
-                use3D: true
+                                        onClicked: {
+                                            UserController.openSettings(
+                                                modelData.id
+                                            )
 
-                color1: Qt.darker(Theme.primary, 1.08)
-                color2: Theme.primary
+                                            root.close()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-                visible: expandedRoot.holdProgress > 0.001
-            }
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
 
-            Text {
-                anchors.centerIn: parent
-                text: expandedRoot.completed
-                    ? I18n.t("updater.installing")
-                    : (expandedRoot.holdActive
-                        ? I18n.t("updater.holding", { progress: Math.round(expandedRoot.holdProgress * 100) })
-                        : I18n.t("updater.hold"))
-                color: expandedRoot.holdProgress > 0.48 ? Theme.onPrimary : Theme.surfaceForeground
-                font.pixelSize: 11
-                font.bold: true
-            }
+                        visible: expandedRoot.page === "power"
 
-            MouseArea {
-                anchors.fill: parent
-                enabled: !expandedRoot.completed
+                        Text {
+                            text: I18n.t("usermenu.sections.power")
+                            color: Theme.outline
+                            font.pixelSize: 10
+                            font.bold: true
+                            font.capitalization: Font.AllUppercase
+                        }
 
-                onPressed: {
-                    expandedRoot.holdActive = true
-                    holdAnimation.restart()
-                    SoundController.play("longCharge")
-                }
+                        GridLayout {
+                            columns: 2
+                            Layout.fillWidth: true
+                            rowSpacing: 8
+                            columnSpacing: 8
 
-                onReleased: {
-                    expandedRoot.holdActive = false
-                    SoundController.stop("longCharge")
+                            Repeater {
+                                model: expandedRoot.powerItems
 
-                    if (!expandedRoot.completed) {
-                        holdAnimation.stop()
-                        drainAnimation.restart()
+                                delegate: Rectangle {
+                                    required property var modelData
+
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 66
+
+                                    radius: 11
+
+                                    color: powerTileMouse.containsMouse
+                                        ? Qt.lighter(
+                                            Theme.surfaceContainer,
+                                            1.12
+                                        )
+                                        : Qt.darker(
+                                            Theme.surfaceContainer,
+                                            1.04
+                                        )
+
+                                    border.width: 1
+                                    border.color: Qt.darker(
+                                        Theme.outline,
+                                        1.25
+                                    )
+
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        anchors.margins: 9
+                                        spacing: 9
+
+                                        Text {
+                                            Layout.preferredWidth: 25
+
+                                            text: modelData.symbol
+                                            color: Theme.primary
+                                            font.pixelSize: 19
+                                            font.bold: true
+
+                                            horizontalAlignment: Text.AlignHCenter
+                                        }
+
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: 3
+
+                                            Text {
+                                                Layout.fillWidth: true
+
+                                                text: I18n.t(
+                                                    "usermenu.power."
+                                                    + modelData.id + ".title"
+                                                )
+
+                                                color: Theme.surfaceForeground
+                                                font.pixelSize: 11
+                                                font.bold: true
+                                                elide: Text.ElideRight
+                                            }
+
+                                            Text {
+                                                Layout.fillWidth: true
+
+                                                text: I18n.t(
+                                                    "usermenu.power."
+                                                    + modelData.id + ".subtitle"
+                                                )
+
+                                                color: Theme.outline
+                                                font.pixelSize: 9
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        id: powerTileMouse
+
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+
+                                        onClicked: {
+                                            if (modelData.id === "lock") {
+                                                UserController.executePower(
+                                                    "lock"
+                                                )
+
+                                                root.close()
+                                            } else {
+                                                expandedRoot.pendingAction =
+                                                    modelData.id
+
+                                                expandedRoot.page = "confirm"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        Layout.fillHeight: true
+
+                        visible: expandedRoot.page !== "confirm"
+                    }
+
+                    Text {
+                        visible: expandedRoot.page !== "confirm"
+                        Layout.fillWidth: true
+
+                        text: "Wayck "
+                            + I18n.t("usermenu.footer")
+                            + "  ·  Linux"
+
+                        color: Theme.outline
+                        font.pixelSize: 9
+
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
-
-                onCanceled: {
-                    expandedRoot.holdActive = false
-                    SoundController.stop("longCharge")
-
-                    if (!expandedRoot.completed) {
-                        holdAnimation.stop()
-                        drainAnimation.restart()
-                    }
-                }
-
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
-
-        Text {
-            Layout.fillWidth: true
-            text: expandedRoot.holdActive
-                ? I18n.t("updater.cancelHint")
-                : I18n.t("updater.installHint")
-            color: Theme.outline
-            font.pixelSize: 9
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-        }
-
-        Text {
-            Layout.fillWidth: true
-
-            text: I18n.t("updater.changelog") + " ↗"
-            color: Theme.primary
-            font.pixelSize: 9
-            horizontalAlignment: Text.AlignHCenter
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-
-                onClicked: {
-                    const parts = String(UpdateController.localVersion)
-                        .split(".")
-                        .map(Number)
-
-                    parts[parts.length - 1]++
-
-                    const version = parts.join("")
-
-                    Qt.openUrlExternally(
-                        "https://github.com/DuckCosmos/wayck/blob/main/CHANGELOG.md#" + version
-                    )
-                }
             }
         }
     }
-
-    NumberAnimation {
-        id: holdAnimation
-        target: expandedRoot
-        property: "holdProgress"
-        from: 0
-        to: 1
-        duration: 3904
-        easing.type: Easing.Linear
-
-        onFinished: {
-            if (!expandedRoot.holdActive || expandedRoot.completed)
-                return
-
-            expandedRoot.completed = true
-            expandedRoot.updateRequested()
-            SoundController.stop("longCharge")
-        }
-    }
-
-    NumberAnimation {
-        id: drainAnimation
-        target: expandedRoot
-        property: "holdProgress"
-        to: 0
-        duration: Math.max(100, expandedRoot.holdProgress * 210)
-        easing.type: Easing.OutCubic
-    }
-
-    NumberAnimation on wavePhase {
-        running: expandedRoot.holdProgress > 0.0
-            && expandedRoot.holdProgress < 1.0
-
-        from: 0
-        to: Math.PI * 2
-
-        duration: 600
-        loops: Animation.Infinite
-    }
-            onUpdateRequested: { UpdateController.installUpdate(); root.close() }
-            onCloseRequested: root.close()
-        }
-    }
-
 }

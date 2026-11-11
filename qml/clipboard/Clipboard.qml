@@ -182,7 +182,6 @@ PanelWindow {
             }
         }
 
-        // Idiomas RTL (árabe, persa): espelha o layout da janela.
         LayoutMirroring.enabled: I18n.rtl
         LayoutMirroring.childrenInherit: true
 
@@ -362,6 +361,8 @@ PanelWindow {
                         onTextChanged: searchDebounceTimer.restart()
                         
                         Keys.onPressed: (event) => {
+                            if (!event.isAutoRepeat)
+                                SoundController.play("click")
                             if (event.key === Qt.Key_Down) {
                                 if (root.clipboardList.length > 0)
                                     root.selectedIndex = Math.min(root.selectedIndex + 1, root.clipboardList.length - 1);

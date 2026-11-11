@@ -20,8 +20,6 @@ Item {
     property bool showBackground: true
     property bool showBorder: true
 
-    // Opt-in hover deformation. The layout metrics stay unchanged; only the
-    // rendered surface lifts and rounds, so neighboring modules do not reflow.
     property bool hoverEnabled: true
     property real hoverScale: 1.035
     property real hoverRadiusBoost: 3

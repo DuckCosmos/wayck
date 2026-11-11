@@ -55,54 +55,224 @@ An integrated application launcher designed to provide quick access to installed
 | [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) | UI components and rendering |
 | [Cargo](https://doc.rust-lang.org/cargo/) | Dependency and build management |
 
+## Shortcuts
+
+| Command | Shortcut | Description
+|:---|:---|:---|
+| qs -c wayck ipc call launcher toggle | Super + Space | Open/Hide the Wayck Launcher |
+| qs -c wayck ipc call clipboard toggle | Super + V |  Open/Hide the Wayck Clipboard |
+| qs -c wayck ipc call bar toggle | Super + B | Active/Disable the Wayck Bar |
+| qs -c wayck ipc call screenshot full | Ctrl + Alt + Return | Save a full screenshot in Pictures |
+| qs -c wayck ipc call screenshot region | Ctrl + Shift +  Alt + Return | Save a region screenshot in Pictures |
+| qs -c wayck ipc call screenshot regionOCR | Ctrl + Shift + Alt + S + Return
+
+---
+
+## Observation
+
+You need to have selected the "My Settings" option to have the same shortcuts.
+
 ## Architecture
 
 Wayck keeps each interface in its own directory (`bar`, `launcher`, `clipboard`) and shared state in `singletons/`. Every type and singleton is registered once in `qml/qmldir`, so files just `import` the QML root and use things by name.
 
 ```text
 wayck/
-├── docs/
+├── docs
 │   ├── bar.png
 │   ├── clipboard.png
 │   └── launcher.png
-├── hypr/
-├── qml/
-│   ├── shell.qml                  # entry point
-│   ├── qmldir                     # registers every type and singleton
-│   ├── bar/
-│   │   ├── Bar.qml
+├── hypr
+│   ├── config
+│   │   ├── animations.lua
+│   │   ├── exec.lua
+│   │   ├── keybinds.lua
+│   │   ├── monitors.lua
+│   │   ├── settings.lua
+│   │   └── variables.lua
+│   └── hyprland.lua
+├── qml
+│   ├── assets
+│   │   ├── languages
+│   │   │   ├── ar.json
+│   │   │   ├── az.json
+│   │   │   ├── bg.json
+│   │   │   ├── de.json
+│   │   │   ├── en.json
+│   │   │   ├── es.json
+│   │   │   ├── fa.json
+│   │   │   ├── fr.json
+│   │   │   ├── hi.json
+│   │   │   ├── hy.json
+│   │   │   ├── id.json
+│   │   │   ├── it.json
+│   │   │   ├── ja.json
+│   │   │   ├── ko.json
+│   │   │   ├── nl.json
+│   │   │   ├── pl.json
+│   │   │   ├── pt.json
+│   │   │   ├── ru.json
+│   │   │   ├── tr.json
+│   │   │   ├── ua.json
+│   │   │   ├── vi.json
+│   │   │   ├── zh.json
+│   │   │   └── zh_tw.json
+│   │   ├── matugen
+│   │   │   └── colors.json.template
+│   │   ├── shaders
+│   │   │   ├── hold_wave.frag
+│   │   │   └── hold_wave.frag.qsb
+│   │   └── sounds
+│   │       ├── guide
+│   │       │   └── barconfig
+│   │       │       ├── in.wav
+│   │       │       └── out.wav
+│   │       ├── musicpopup
+│   │       │   └── swoosh.wav
+│   │       ├── network
+│   │       │   ├── connect.wav
+│   │       │   ├── disconnect.wav
+│   │       │   ├── power_off.wav
+│   │       │   ├── power_on.wav
+│   │       │   └── switch.wav
+│   │       ├── notifications
+│   │       │   ├── Botanica.wav
+│   │       │   ├── Curious.mp3
+│   │       │   ├── Progress.wav
+│   │       │   ├── Sine.wav
+│   │       │   ├── Sneak.mp3
+│   │       │   ├── WakeUp.mp3
+│   │       │   └── Wobbly.mp3
+│   │       ├── quickactions
+│   │       │   └── usage.wav
+│   │       ├── reusables
+│   │       │   ├── clickbutton
+│   │       │   │   ├── click2.wav
+│   │       │   │   └── click.wav
+│   │       │   ├── draggable
+│   │       │   │   └── tick.wav
+│   │       │   ├── dropdown
+│   │       │   │   ├── click.wav
+│   │       │   │   └── list.wav
+│   │       │   ├── fillbutton
+│   │       │   │   ├── button.wav
+│   │       │   │   ├── charge_loop2.wav
+│   │       │   │   └── charge_loop.wav
+│   │       │   ├── iconbutton
+│   │       │   │   └── click.wav
+│   │       │   ├── input
+│   │       │   │   └── type.wav
+│   │       │   ├── switch
+│   │       │   │   └── sfx.wav
+│   │       │   └── toggle
+│   │       │       └── sfx.wav
+│   │       ├── start
+│   │       │   ├── background.wav
+│   │       │   ├── exit.wav
+│   │       │   ├── pop_author.wav
+│   │       │   ├── start.wav
+│   │       │   ├── transition_serp.wav
+│   │       │   ├── type.wav
+│   │       │   └── wave.wav
+│   │       ├── system
+│   │       │   └── quick_click.wav
+│   │       └── tutorial
+│   │           ├── tip_guide.wav
+│   │           └── tip.wav
+│   ├── bar
+│   │   ├── faces
+│   │   │   ├── audio
+│   │   │   │   └── AudioFace.qml
+│   │   │   ├── clock
+│   │   │   │   └── ClockFace.qml
+│   │   │   ├── cpu
+│   │   │   │   └── CpuFace.qml
+│   │   │   ├── disk
+│   │   │   │   └── DiskFace.qml
+│   │   │   ├── gpu
+│   │   │   │   └── GpuFace.qml
+│   │   │   ├── network
+│   │   │   │   └── NetworkFace.qml
+│   │   │   ├── player
+│   │   │   │   └── PlayerFace.qml
+│   │   │   ├── ram
+│   │   │   │   └── RamFace.qml
+│   │   │   ├── temperature
+│   │   │   │   └── TemperatureFace.qml
+│   │   │   ├── tray
+│   │   │   │   ├── qmldir
+│   │   │   │   ├── TrayFace.qml
+│   │   │   │   ├── TrayItem.qml
+│   │   │   │   └── TrayMenu.qml
+│   │   │   ├── updater
+│   │   │   │   └── UpdaterFace.qml
+│   │   │   ├── usermenu
+│   │   │   │   └── UserMenuFace.qml
+│   │   │   └── workspaces
+│   │   │       └── WorkspacesFace.qml
 │   │   ├── BarConfig.qml
-│   │   ├── BarModule.qml          # loads one module's face
-│   │   ├── BarModuleRegistry.qml  # module catalog
+│   │   ├── BarModule.qml
+│   │   ├── BarModuleRegistry.qml
+│   │   ├── Bar.qml
 │   │   ├── BarSection.qml
-│   │   └── faces/                 # one folder per bar module
-│   │       ├── audio/AudioFace.qml
-│   │       ├── clock/ClockFace.qml
-│   │       ├── cpu/CpuFace.qml
-│   │       └── ...
-│   ├── clipboard/
+│   │   └── qmldir
+│   ├── clipboard
 │   │   └── Clipboard.qml
-│   ├── assets/
-│   │   └── languages/             # one JSON per language (en.json is the base)
-│   ├── launcher/
+│   ├── launcher
 │   │   └── Launcher.qml
-│   ├── notifications/
-│   ├── reusables/
-│   │   └── BarCard.qml
-│   └── singletons/
-│       ├── audio/                 # MprisController
-│       ├── info/                  # SysData
-│       ├── system/                # Config, I18n, SysNotif
-│       ├── theme/                 # Theme
-│       └── widgetcontrols/        # *Controller (IPC)
-├── scripts/
-│   └── i18n-check.sh              # validates the translation files
-├── src/
-├── Cargo.toml
+│   ├── notifications
+│   │   ├── NotificationCard.qml
+│   │   └── NotificationPopup.qml
+│   ├── reusables
+│   │   ├── BarCard.qml
+│   │   ├── Morph.qml
+│   │   └── WaveFill.qml
+│   ├── singletons
+│   │   ├── audio
+│   │   │   └── MprisController.qml
+│   │   ├── info
+│   │   │   └── SysData.qml
+│   │   ├── system
+│   │   │   ├── Config.qml
+│   │   │   ├── I18n.qml
+│   │   │   ├── NotificationController.qml
+│   │   │   ├── SoundController.qml
+│   │   │   ├── SysNotif.qml
+│   │   │   ├── UpdateController.qml
+│   │   │   └── WallpaperService.qml
+│   │   ├── theme
+│   │   │   ├── Motion.qml
+│   │   │   └── Theme.qml
+│   │   └── widgetcontrols
+│   │       ├── BarController.qml
+│   │       ├── ClipboardController.qml
+│   │       ├── LanguageController.qml
+│   │       ├── LauncherController.qml
+│   │       ├── ScreenshotController.qml
+│   │       ├── TrayController.qml
+│   │       └── UserController.qml
+│   ├── wallpaper
+│   │   ├── WallpaperEngine.qml
+│   │   └── WallpaperSelector.qml
+│   ├── qmldir
+│   └── shell.qml
+├── scripts
+│   ├── i18n-check.sh
+│   └── wayck-wallpaper.sh
+├── src
+│   ├── clipboard.rs
+│   ├── launcher.rs
+│   ├── main.rs
+│   ├── monitor.rs
+│   ├── update.rs
+│   └── utils.rs
 ├── Cargo.lock
-├── build.sh
+├── Cargo.toml
+├── CHANGELOG.md
+├── .gitignore
 ├── install.sh
-└── README.md
+├── README.md
+└── version.txt
 ```
 
 ### Design Principles
