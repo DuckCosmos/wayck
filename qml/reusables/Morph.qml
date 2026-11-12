@@ -2007,6 +2007,8 @@ Item {
                                         radius: parent.radius
                                         threeDimensional: 1.0
 
+                                        direction: 2
+
                                         fillLevel: powerTile.holdProgress
 
                                         waveAmp: powerTile.holdProgress > 0.001
@@ -2139,7 +2141,6 @@ Item {
                                         cursorShape: Qt.PointingHandCursor
                                     }
 
-                                    // Animação de preenchimento deste botão.
                                     NumberAnimation {
                                         id: holdAnimation
 
@@ -2180,7 +2181,6 @@ Item {
                                         }
                                     }
 
-                                    // Animação de retorno ao estado inicial.
                                     NumberAnimation {
                                         id: drainAnimation
 
@@ -2197,7 +2197,6 @@ Item {
                                         easing.type: Easing.OutCubic
                                     }
 
-                                    // Movimento independente da onda.
                                     NumberAnimation on wavePhase {
                                         running: powerTile.holdProgress > 0.0
                                             && powerTile.holdProgress < 1.0

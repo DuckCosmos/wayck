@@ -1,3 +1,4 @@
+
 import QtQuick
 import "../"
 
@@ -10,8 +11,9 @@ ShaderEffect {
     property vector2d itemSize: Qt.vector2d(width, height)
     property real phase: 0
 
-    property bool use3D: false
+    property int direction: 0
 
+    property bool use3D: false
     property real threeDimensional: use3D ? 1.0 : 0.0
 
     property color color1: Theme.primary

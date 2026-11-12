@@ -14,6 +14,7 @@ layout(std140, binding = 0) uniform buf {
     vec2 itemSize;
     float phase;
     float threeDimensional;
+    int direction;
 
     vec4 color1;
     vec4 color2;
@@ -33,7 +34,6 @@ void main() {
     vec2 p = qt_TexCoord0 * itemSize;
     vec2 halfSize = itemSize * 0.5;
 
-    // Rounded box clipping.
     float clampedRadius = clamp(
         radius,
         0.0,
@@ -48,9 +48,26 @@ void main() {
 
     float boxAlpha = clamp(0.5 - boxDistance, 0.0, 1.0);
 
-    // Main fluid surface.
-    float fillX = itemSize.x * clamp(fillLevel, 0.0, 1.0);
-    float t = clamp(p.y / max(itemSize.y, 1.0), 0.0, 1.0);
+    bool horizontal = direction < 2;
+
+    float axisLength = horizontal ? itemSize.x : itemSize.y;
+
+    float perpendicularLength = horizontal ? itemSize.y : itemSize.x;
+
+    float axisPosition = direction == 0 ? p.x
+        : direction == 1 ? itemSize.x - p.x
+        : direction == 2 ? itemSize.y - p.y
+        : p.y;
+
+    float perpendicularPosition = horizontal ? p.y : p.x;
+
+    float t = clamp(
+        perpendicularPosition / max(perpendicularLength, 1.0),
+        0.0,
+        1.0
+    );
+
+    float fillAxis = axisLength * clamp(fillLevel, 0.0, 1.0);
 
     float b1 = 3.0 * (1.0 - t) * (1.0 - t) * t;
     float b2 = 3.0 * (1.0 - t) * t * t;
@@ -59,8 +76,8 @@ void main() {
         b2 * sin(phase) - b1 * cos(phase)
     );
 
-    float surfaceX = fillX + waveOffset;
-    float fluidDistance = surfaceX - p.x;
+    float surfaceAxis = fillAxis + waveOffset;
+    float fluidDistance = surfaceAxis - axisPosition;
 
     float fluidAlpha = clamp(
         0.5 + fluidDistance,
@@ -68,9 +85,8 @@ void main() {
         1.0
     );
 
-    // Color gradient.
     float gradient = clamp(
-        p.x / max(itemSize.x, 1.0),
+        axisPosition / max(axisLength, 1.0),
         0.0,
         1.0
     );
@@ -78,17 +94,14 @@ void main() {
     vec4 col = mix(color1, color2, gradient);
     vec4 backCol = mix(color1, color2, gradient);
 
-    // Back fluid surface.
     float backAlpha = 0.0;
 
     if (threeDimensional > 0.5) {
-        // Opposite movement relative to the main wave.
         float backWaveOffset = -waveOffset * 0.72;
 
-        // Small horizontal displacement to expose the depth.
-        float backSurfaceX = fillX + backWaveOffset + 3.0;
+        float backSurfaceAxis = fillAxis + backWaveOffset + 3.0;
 
-        float backDistance = backSurfaceX - p.x;
+        float backDistance = backSurfaceAxis - axisPosition;
 
         backAlpha = clamp(
             0.5 + backDistance,
@@ -96,10 +109,8 @@ void main() {
             1.0
         );
 
-        // Darker rear layer.
         backCol.rgb *= 0.58;
 
-        // Main surface shading.
         float edgeShadow = 1.0 - smoothstep(
             0.0,
             4.0,
@@ -112,7 +123,9 @@ void main() {
             abs(fluidDistance - 2.0)
         );
 
-        float surfaceSlope = dFdy(surfaceX);
+        float surfaceSlope = horizontal
+            ? dFdy(surfaceAxis)
+            : dFdx(surfaceAxis);
 
         float slopeShade = clamp(
             1.0 - abs(surfaceSlope) * 0.0025,
@@ -124,7 +137,6 @@ void main() {
         col.rgb += col.rgb * edgeHighlight * 0.17;
     }
 
-    // Front and rear layer composition.
     float frontAlpha = fluidAlpha * col.a;
     float rearAlpha = backAlpha * backCol.a;
 
@@ -136,7 +148,6 @@ void main() {
         frontAlpha +
         rearAlpha * (1.0 - frontAlpha);
 
-    // Rounded clipping and Qt opacity.
     float finalAlpha = composedAlpha * boxAlpha * qt_Opacity;
 
     composedRgb *= boxAlpha * qt_Opacity;
