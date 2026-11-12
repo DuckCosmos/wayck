@@ -37,15 +37,15 @@ ensure_matugen_config() {
     mkdir -p "$MATUGEN_DIR/templates"
 
     if [[ ! -f "$MATUGEN_CONFIG" ]]; then
+        sed -i '/^[[:space:]]*wallpaper[[:space:]]*=[[:space:]]*""[[:space:]]*$/d' "$MATUGEN_CONFIG"
         cat > "$MATUGEN_CONFIG" <<EOF
-[config]
-reload_apps = true
-set_wallpaper = false
-wallpaper = ""
+        [config]
+        reload_apps = true
+        set_wallpaper = false
 
-[templates.wayck]
-input_path = "$MATUGEN_TEMPLATE"
-output_path = "$COLORS_OUT"
+        [templates.wayck]
+        input_path = "$MATUGEN_TEMPLATE"
+        output_path = "$COLORS_OUT"
 EOF
     fi
 

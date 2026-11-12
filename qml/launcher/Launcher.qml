@@ -153,13 +153,12 @@ PanelWindow {
 
         property real progress: root.shown ? 1 : 0
 
-        readonly property real collapsedWidth:
-            Math.min(190, parent.width * 0.55)
+        readonly property real collapsedWidth: 0
 
-        readonly property real collapsedHeight: 54
+        readonly property real collapsedHeight: 0
 
         readonly property real expandedWidth: parent.width
-        readonly property real expandedHeight: parent.height
+        readonly property real expandedHeight: parent.height - collapsedHeight
 
         readonly property real collapsedX:
             (parent.width - collapsedWidth) / 2
