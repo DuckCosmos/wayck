@@ -21,7 +21,7 @@ Singleton {
 
     function isNewer(local: string, remote: string): bool {
         const localParts = local.split(".").map(Number)
-        const remoteParts = local.split(".").map(Number)
+        const remoteParts = remote.split(".").map(Number)
 
         for (let i = 0; i < 3; i++) {
             if (remoteParts[i] > localParts[i])
