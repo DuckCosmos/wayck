@@ -1,3 +1,4 @@
+
 pragma Singleton
 
 import QtQuick
@@ -23,9 +24,8 @@ Singleton {
         root.notifications = root.notifications.filter(n => n.id !== id)
 
         try {
-            if (notification.original && notification.original.tracked) {
+            if (notification.original && notification.original.tracked)
                 notification.original.tracked = false
-            }
         } catch (error) {
             console.warn(
                 "[SysNotif] original já fechado ou indisponível:",
@@ -44,6 +44,9 @@ Singleton {
             notification.tracked = true
             SoundController.play("notification")
 
+            const hints = notification.hints || {}
+            const filePath = hints["wayck-file-path"] || ""
+
             root.notifications = [
                 {
                     id: notification.id,
@@ -51,6 +54,8 @@ Singleton {
                     body: notification.body,
                     appName: notification.appName,
                     appIcon: notification.appIcon,
+                    desktopEntry: notification.desktopEntry,
+                    filePath: filePath,
                     image: notification.image,
                     urgency: notification.urgency,
                     timestamp: new Date(),
@@ -59,8 +64,16 @@ Singleton {
                 ...root.notifications
             ]
 
+            console.log(
+                "[SysNotif] notification:",
+                notification.appName,
+                "desktopEntry:",
+                notification.desktopEntry,
+                "filePath:",
+                filePath
+            )
+
             console.log("[SysNotif] history:", root.notifications.length)
         }
     }
-    
 }

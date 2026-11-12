@@ -1,9 +1,12 @@
+
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import "../"
 
 Item {
     id: root
+
     required property var notification
 
     property int cornerRadius: 12
@@ -62,7 +65,10 @@ Item {
         spacing: root.contentSpacing
 
         Image {
-            source: root.notification.image ? root.notification.image : root.notification.appIcon
+            source: root.notification.image
+                ? root.notification.image
+                : root.notification.appIcon
+
             Layout.preferredWidth: 30
             Layout.preferredHeight: 30
             Layout.alignment: Qt.AlignVCenter
@@ -72,6 +78,7 @@ Item {
 
         ColumnLayout {
             id: textColumn
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 0
@@ -134,7 +141,47 @@ Item {
         motionProgress = 0
     }
 
-    HoverHandler { id: hoverHandler }
+    function openNotification(): void {
+        const filePath = root.notification.filePath || ""
+
+        if (filePath) {
+            const directory = filePath.substring(0, filePath.lastIndexOf("/"))
+
+            if (directory) {
+                Quickshell.execDetached(["xdg-open", directory])
+                return
+            }
+        }
+
+        let entry = root.notification.desktopEntry || ""
+        entry = entry.replace(/\.desktop$/, "")
+
+        if (entry) {
+            Quickshell.execDetached(["gtk-launch", entry])
+        } else {
+            console.warn(
+                "[NotificationCard] sem desktopEntry:",
+                root.notification.appName
+            )
+        }
+    }
+
+    HoverHandler {
+        id: hoverHandler
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        onClicked: mouse => {
+            if (mouse.button === Qt.LeftButton) {
+                root.openNotification()
+            } else if (mouse.button === Qt.RightButton) {
+                root.dismiss()
+            }
+        }
+    }
 
     Timer {
         interval: 5000

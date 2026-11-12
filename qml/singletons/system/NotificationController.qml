@@ -1,3 +1,4 @@
+
 pragma Singleton
 
 import QtQuick
@@ -26,6 +27,7 @@ Singleton {
         'title="$1"',
         'body="$2"',
         'notification_color="$3"',
+        'file_path="$4"',
         '[[ "$notification_color" =~ ^#[[:xdigit:]]{6}$ ]] || notification_color="#444444"',
         'command -v notify-send >/dev/null 2>&1 || exit 0',
         'source_icon="/usr/share/icons/Papirus/22x22/actions/stock_bell.svg"',
@@ -42,15 +44,22 @@ Singleton {
         '        fi',
         '        mv "$tmp" "$icon" || { rm -f "$tmp"; exit 0; }',
         '    fi',
-        '    notify-send --app-name="Wayck" --app-icon="$icon" --expire-time=5000 "$title" "$body" || true',
         'else',
-        '    notify-send --app-name="Wayck" --expire-time=5000 "$title" "$body" || true',
-        'fi'
+        '    icon=""',
+        'fi',
+        'args=(--app-name="Wayck" --expire-time=5000)',
+        'if [ -n "$icon" ]; then',
+        '    args+=(--app-icon="$icon")',
+        'fi',
+        'if [ -n "$file_path" ]; then',
+        '    args+=(--hint="string:wayck-file-path:$file_path")',
+        'fi',
+        'notify-send "${args[@]}" "$title" "$body" || true'
     ].join("\n")
 
-    function send(title: string, body: string): void {
+    function send(title: string, body: string, filePath = ""): void {
         const next = queue.slice()
-        next.push({ title, body })
+        next.push({ title, body, filePath })
         queue = next
         startNext()
     }
@@ -64,6 +73,7 @@ Singleton {
 
         notificationProcess.title = next.title
         notificationProcess.body = next.body
+        notificationProcess.filePath = next.filePath || ""
         notificationProcess.running = true
     }
 
@@ -72,6 +82,7 @@ Singleton {
 
         property string title: ""
         property string body: ""
+        property string filePath: ""
 
         onExited: Qt.callLater(root.startNext)
 
@@ -82,7 +93,8 @@ Singleton {
             "wayck-notification",
             title,
             body,
-            root.notificationColor
+            root.notificationColor,
+            filePath
         ]
     }
 }
