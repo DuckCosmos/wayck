@@ -32,6 +32,15 @@ ShellRoot {
     }
 
     Process {
+        running: true
+        command: [
+            "sh",
+            "-c",
+            "wl-paste --type image --watch cliphist store & wl-paste --type text --watch cliphist store & wait"
+        ]
+    }
+
+    Process {
         running: root.isHyprland && Config.blur
         command: ["hyprctl", "eval", "hl.layer_rule({ name='wayck-launcher-blur', match={namespace='^wayck-launcher$'}, blur=true, ignore_alpha=0 })"]
     }

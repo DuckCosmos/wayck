@@ -1,3 +1,9 @@
+### 0.1.5
+
+- fix(menu): hold buttons fixed
+- feat(unique morph): better morphing animations
+- fix(matugen): matugen colors fixed
+
 ### 0.1.4
 
 - feat: add new system matugen

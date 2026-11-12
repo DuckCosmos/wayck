@@ -19,6 +19,21 @@ Singleton {
     readonly property string backend: Quickshell.shellPath("wayck-backend")
     readonly property string installerPath: Quickshell.shellPath("install.sh")
 
+    function isNewer(local: string, remote: string): bool {
+        const localParts = local.split(".").map(Number)
+        const remoteParts = local.split(".").map(Number)
+
+        for (let i = 0; i < 3; i++) {
+            if (remoteParts[i] > localParts[i])
+                return true
+                            
+            if (remoteParts[i] < localParts[i])
+                return false
+        }
+
+        return false
+    }
+
     function check(): void {
         if (checking || installing)
             return
@@ -76,7 +91,7 @@ Singleton {
                     const data = JSON.parse(versionOutput.text.trim())
                     root.localVersion = data.local || ""
                     root.remoteVersion = data.remote || ""
-                    root.updateAvailable = data.available === true
+                    root.updateAvailable = data.available === true && isNewer(root.localVersion, root.remoteVersion)
                     root.error = ""
 
                     if (root.updateAvailable) {

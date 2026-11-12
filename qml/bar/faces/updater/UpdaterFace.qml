@@ -6,7 +6,6 @@ import "../../../"
 BarCard {
     id: root
 
-    // Keep morph capture geometry aligned with the unscaled source anchor.
     hoverScale: 1
 
     signal expandRequested(var sourceItem, var surfaceData)

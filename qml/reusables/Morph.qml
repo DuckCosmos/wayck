@@ -1,4 +1,3 @@
-
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -1611,8 +1610,6 @@ Item {
             id: expandedRoot
 
             property string page: "home"
-            property string pendingAction: ""
-            property real holdProgress: 0
 
             readonly property var settingsItems: [
                 { id: "hyprland", symbol: "H" },
@@ -1629,15 +1626,13 @@ Item {
                 { id: "lock", symbol: "▣" },
                 { id: "suspend", symbol: "☾" },
                 { id: "reboot", symbol: "↻" },
-                { id: "poweroff", symbol: "⏻" },
-                { id: "logout", symbol: "⇥" }
+                { id: "poweroff", symbol: "⏻" }
             ]
 
             readonly property var confirmActions: [
                 "suspend",
                 "reboot",
-                "poweroff",
-                "logout"
+                "poweroff"
             ]
 
             implicitWidth: 360
@@ -1733,48 +1728,46 @@ Item {
                         }
                     }
 
-RowLayout {
-    Layout.fillWidth: true
-    spacing: 0
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 0
 
-    visible: expandedRoot.page !== "confirm"
+                        visible: expandedRoot.page !== "confirm"
 
-    Item {
-        id: tabs
+                        Item {
+                            id: tabs
 
-        Layout.fillWidth: true
-        Layout.preferredHeight: 34
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 34
 
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: 9
+                                color: Qt.darker(Theme.surfaceContainer, 1.08)
+                            }
 
-        Rectangle {
-            anchors.fill: parent
-            radius: 9
-            color: Qt.darker(Theme.surfaceContainer, 1.08)
-        }
+                            Rectangle {
+                                id: indicator
 
-        Rectangle {
-            id: indicator
+                                width: tabs.width / 2
+                                height: tabs.height
 
-            width: tabs.width / 2
+                                radius: 9
+                                color: Theme.primary
 
-            height: tabs.height
+                                x: expandedRoot.page === "power"
+                                    ? (I18n.rtl ? 0 : width)
+                                    : (I18n.rtl ? width : 0)
 
-            radius: 9
-            color: Theme.primary
+                                Behavior on x {
+                                    NumberAnimation {
+                                        duration: 250
+                                        easing.type: Easing.OutCubic
+                                    }
+                                }
+                            }
 
-            x: expandedRoot.page === "power"
-                ? (I18n.rtl ? 0 : width)
-                : (I18n.rtl ? width : 0)
-
-            Behavior on x {
-                NumberAnimation {
-                    duration: 250
-                    easing.type: Easing.OutCubic
-                }
-            }
-        }
-
-                        RowLayout {
+                            RowLayout {
                                 anchors.fill: parent
                                 spacing: 0
 
@@ -1796,7 +1789,7 @@ RowLayout {
                                         Behavior on color {
                                             ColorAnimation {
                                                 duration: 400
-                                                easing: Easing.OutCubic
+                                                easing.type: Easing.OutCubic
                                             }
                                         }
                                     }
@@ -1973,12 +1966,23 @@ RowLayout {
                                 model: expandedRoot.powerItems
 
                                 delegate: Rectangle {
+                                    id: powerTile
+
                                     required property var modelData
+
+                                    property string action: modelData.id
+
+                                    // Estado individual deste botão.
+                                    property real holdProgress: 0
+                                    property real wavePhase: 0
+                                    property bool holdActive: false
+                                    property bool completed: false
 
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 66
 
                                     radius: 11
+                                    clip: true
 
                                     color: powerTileMouse.containsMouse
                                         ? Qt.lighter(
@@ -1996,6 +2000,31 @@ RowLayout {
                                         1.25
                                     )
 
+                                    WaveFill {
+                                        anchors.fill: parent
+                                        z: 0
+
+                                        radius: parent.radius
+                                        threeDimensional: 1.0
+
+                                        fillLevel: powerTile.holdProgress
+
+                                        waveAmp: powerTile.holdProgress > 0.001
+                                            && powerTile.holdProgress < 0.99
+                                            ? 40 * Math.sin(
+                                                powerTile.holdProgress * Math.PI
+                                            )
+                                            : 0
+
+                                        phase: powerTile.wavePhase
+                                        use3D: true
+
+                                        color1: Qt.darker(Theme.primary, 1.08)
+                                        color2: Theme.primary
+
+                                        visible: powerTile.holdProgress > 0.001
+                                    }
+
                                     RowLayout {
                                         anchors.fill: parent
                                         anchors.margins: 9
@@ -2004,7 +2033,7 @@ RowLayout {
                                         Text {
                                             Layout.preferredWidth: 25
 
-                                            text: modelData.symbol
+                                            text: powerTile.modelData.symbol
                                             color: Theme.primary
                                             font.pixelSize: 19
                                             font.bold: true
@@ -2021,7 +2050,7 @@ RowLayout {
 
                                                 text: I18n.t(
                                                     "usermenu.power."
-                                                    + modelData.id + ".title"
+                                                    + powerTile.action + ".title"
                                                 )
 
                                                 color: Theme.surfaceForeground
@@ -2035,7 +2064,7 @@ RowLayout {
 
                                                 text: I18n.t(
                                                     "usermenu.power."
-                                                    + modelData.id + ".subtitle"
+                                                    + powerTile.action + ".subtitle"
                                                 )
 
                                                 color: Theme.outline
@@ -2049,22 +2078,135 @@ RowLayout {
                                         id: powerTileMouse
 
                                         anchors.fill: parent
-                                        hoverEnabled: true
+                                        enabled: !powerTile.completed
 
-                                        onClicked: {
-                                            if (modelData.id === "lock") {
-                                                UserController.executePower(
-                                                    "lock"
-                                                )
+                                        onPressed: {
+                                            const longHold =
+                                                powerTile.action === "poweroff"
+                                                || powerTile.action === "reboot"
 
-                                                root.close()
-                                            } else {
-                                                expandedRoot.pendingAction =
-                                                    modelData.id
+                                            drainAnimation.stop()
+                                            powerTile.holdProgress = 0
+                                            powerTile.holdActive = true
 
-                                                expandedRoot.page = "confirm"
+                                            holdAnimation.restart()
+
+                                            SoundController.play(
+                                                longHold
+                                                    ? "longCharge"
+                                                    : "shortCharge"
+                                            )
+                                        }
+
+                                        onReleased: {
+                                            powerTile.holdActive = false
+
+                                            const longHold =
+                                                powerTile.action === "poweroff"
+                                                || powerTile.action === "reboot"
+
+                                            SoundController.stop(
+                                                longHold
+                                                    ? "longCharge"
+                                                    : "shortCharge"
+                                            )
+
+                                            if (!powerTile.completed) {
+                                                holdAnimation.stop()
+                                                drainAnimation.restart()
                                             }
                                         }
+
+                                        onCanceled: {
+                                            powerTile.holdActive = false
+
+                                            const longHold =
+                                                powerTile.action === "poweroff"
+                                                || powerTile.action === "reboot"
+
+                                            SoundController.stop(
+                                                longHold
+                                                    ? "longCharge"
+                                                    : "shortCharge"
+                                            )
+
+                                            if (!powerTile.completed) {
+                                                holdAnimation.stop()
+                                                drainAnimation.restart()
+                                            }
+                                        }
+
+                                        cursorShape: Qt.PointingHandCursor
+                                    }
+
+                                    // Animação de preenchimento deste botão.
+                                    NumberAnimation {
+                                        id: holdAnimation
+
+                                        target: powerTile
+                                        property: "holdProgress"
+
+                                        from: 0
+                                        to: 1
+
+                                        duration:
+                                            powerTile.action === "poweroff"
+                                            || powerTile.action === "reboot"
+                                            ? 3904
+                                            : 1535
+
+                                        easing.type: Easing.Linear
+
+                                        onFinished: {
+                                            if (!powerTile.holdActive
+                                                    || powerTile.completed)
+                                                return
+
+                                            powerTile.completed = true
+
+                                            UserController.executePower(
+                                                powerTile.action
+                                            )
+
+                                            const longHold =
+                                                powerTile.action === "poweroff"
+                                                || powerTile.action === "reboot"
+
+                                            SoundController.stop(
+                                                longHold
+                                                    ? "longCharge"
+                                                    : "shortCharge"
+                                            )
+                                        }
+                                    }
+
+                                    // Animação de retorno ao estado inicial.
+                                    NumberAnimation {
+                                        id: drainAnimation
+
+                                        target: powerTile
+                                        property: "holdProgress"
+
+                                        to: 0
+
+                                        duration: Math.max(
+                                            100,
+                                            powerTile.holdProgress * 210
+                                        )
+
+                                        easing.type: Easing.OutCubic
+                                    }
+
+                                    // Movimento independente da onda.
+                                    NumberAnimation on wavePhase {
+                                        running: powerTile.holdProgress > 0.0
+                                            && powerTile.holdProgress < 1.0
+
+                                        from: 0
+                                        to: Math.PI * 2
+
+                                        duration: 600
+                                        loops: Animation.Infinite
                                     }
                                 }
                             }
@@ -2073,7 +2215,6 @@ RowLayout {
 
                     Item {
                         Layout.fillHeight: true
-
                         visible: expandedRoot.page !== "confirm"
                     }
 

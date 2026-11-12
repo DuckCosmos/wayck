@@ -15,8 +15,6 @@ Singleton {
     readonly property string desktop:
         Quickshell.env("XDG_CURRENT_DESKTOP") || "Hyprland"
 
-    // label = chave de launch.labels.* (ex.: "displays"). O texto traduzido vai como
-    // argumento posicional ($1), nunca dentro do script, então aspas/$ nas traduções são inofensivos.
     function launchCandidates(commands, label) {
         const names = commands.join(" ")
 
@@ -121,13 +119,6 @@ Singleton {
 
         case "poweroff":
             Quickshell.execDetached(["systemctl", "poweroff"])
-            break
-
-        case "logout":
-            Quickshell.execDetached([
-                "sh", "-c",
-                'if command -v uwsm >/dev/null 2>&1 && uwsm check is-active hyprland >/dev/null 2>&1; then exec uwsm stop; elif command -v hyprshutdown >/dev/null 2>&1; then exec hyprshutdown; else exec hyprctl dispatch exit; fi'
-            ])
             break
         }
     }
