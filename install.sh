@@ -728,6 +728,8 @@ update_dot() {
     ln -sf -- "$DEST/wayck-wallpaper" \
         "$HOME/.local/bin/wayck-wallpaper"
 
+    install_matugen_template
+
     printf '%b%s%b\n' "$GREEN" "$(msg update.done)" "$RESET"
 
     [[ -n "$UPDATE_BACKUP" ]] &&
@@ -777,6 +779,8 @@ build_and_install() {
     ln -sf -- "$DEST/wayck-wallpaper" "$HOME/.local/bin/wayck-wallpaper"
 
     install_matugen
+
+    install_matugen_template
 }
 
 install_matugen() {
@@ -786,6 +790,16 @@ install_matugen() {
 
     "$AUR_HELPER" -S --needed matugen-bin ||
         printf '%b%s%b\n' "$YELLOW" "$(msg aur_install_failed)" "$RESET"
+}
+
+install_matugen_template() {
+    local source="$ROOT/matugen/templates/wayck.json"
+    local destination="$CFG_DIR/matugen/templates/wayck.json"
+
+    [[ -f "$source" ]] ||
+        die "Matugen template não encontrado no repositório: $source"
+
+    install -D -m 644 "$source" "$destination"
 }
 
 # ============================================================
