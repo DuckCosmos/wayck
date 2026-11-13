@@ -115,22 +115,27 @@ PanelWindow {
         }
 
         onExited: exitCode => {
-            console.log("Exit code:", exitCode)
+            console.log("EXIT:", exitCode)
+            console.log("STDOUT:", JSON.stringify(output.text))
+            console.log("STDERR:", errors.text)
 
-            if (exitCode === 0) {
-                root.wallpapers = output.text
-                    .trim()
-                    .split("\n")
-                    .filter(line => line.trim() !== "")
+            if (exitCode !== 0)
+                return
 
-                root.filterWallpapers(searchWallpaper.text)
+            const result = output.text.trim()
 
-                console.log("Total:", root.wallpapers.length)
+            root.wallpapers = result.length > 0
+                ? result.split("\n").filter(path => path.trim().length > 0)
+                : []
 
-                wallpaperIndex.running = true
-            } else {
-                console.log("Erro:", errors.text)
-            }
+            root.filteredWallpapers = root.wallpapers
+
+            wallpaperView.currentIndex =
+                root.wallpapers.length > 0 ? 0 : -1
+
+            console.log("WALLPAPERS:", root.wallpapers.length)
+
+            wallpaperIndex.running = true
         }
     }
 
