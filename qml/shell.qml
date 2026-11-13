@@ -12,6 +12,9 @@ ShellRoot {
     readonly property var screenshotController: ScreenshotController
     readonly property var languageController: LanguageController
     readonly property var sysNotif: SysNotif
+    readonly property string wallpaperExecutable:
+        Quickshell.env("WAYCK_WALLPAPER") ||
+        Quickshell.env("HOME") + "/.local/bin/wayck-wallpaper"
 
     readonly property var i18n: I18n
 
@@ -52,7 +55,7 @@ ShellRoot {
 
     Process {
         running: true
-        command: [Quickshell.env("WAYCK_WALLPAPER") || "wayck-wallpaper", "apply"]
+        command: [wallpaperExecutable, "apply"]
         onExited: exitCode => {
             if (exitCode !== 0)
                 console.warn("[Wayck] Não foi possível restaurar o wallpaper na inicialização.");
@@ -94,6 +97,7 @@ ShellRoot {
         active: WallpaperService.opened
 
         WallpaperSelector {
+            wallpaperExecutable: root.wallpaperExecutable
             onDismissed: WallpaperService.close()
         }
     }

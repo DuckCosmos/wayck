@@ -10,6 +10,7 @@ import "../"
 
 PanelWindow {
     id: root
+    required property string wallpaperExecutable
 
     signal dismissed()
 
@@ -102,32 +103,9 @@ PanelWindow {
     }
 
     Process {
-        id: wallpaperProcess
-
-        command: ["sh", "-c", "command -v wayck-wallpaper"]
-
-        stdout: StdioCollector {
-            id: wallpaperPath
-        }
-
-        onExited: {
-            const path = wallpaperPath.text.trim()
-
-            if (exitCode !== 0 || !path) {
-                console.error("wayck-wallpaper não encontrado no PATH")
-                return
-            }
-
-            console.log("Executável:", path)
-
-            wallpaperList.running = true
-        }
-    }
-
-    Process {
         id: wallpaperList
 
-        command: [wallpaperPath.text.trim(), "list"]
+        command: [root.wallpaperExecutable, "list"]
 
         stdout: StdioCollector {
             id: output
@@ -165,7 +143,7 @@ PanelWindow {
     Process {
         id: wallpaperIndex
 
-        command: [wallpaperPath.text.trim(), "current"]
+        command: [root.wallpaperExecutable, "current"]
 
         stdout: StdioCollector {
             onStreamFinished: {
@@ -195,7 +173,7 @@ PanelWindow {
     Process {
         id: setWallpaper
 
-        command: [wallpaperPath.text.trim(), "set", root.selectedWallpaper]
+        command: [root.wallpaperExecutable, "set", root.selectedWallpaper]
     }
 
     Rectangle {
@@ -439,7 +417,7 @@ PanelWindow {
     }
 
     Component.onCompleted: {
-        wallpaperProcess.running = true
+        wallpaperList.running = true
 
         Qt.callLater(() => {
             root.open()
