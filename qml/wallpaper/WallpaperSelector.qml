@@ -111,11 +111,16 @@ PanelWindow {
         }
 
         onExited: {
-            if (exitCode === 0) {
-                console.log("Executável:", wallpaperPath.text.trim())
-            } else {
-                console.error("wayck-wallpaper não encontrado")
+            const path = wallpaperPath.text.trim()
+
+            if (exitCode !== 0 || !path) {
+                console.error("wayck-wallpaper não encontrado no PATH")
+                return
             }
+
+            console.log("Executável:", path)
+
+            wallpaperList.running = true
         }
     }
 
@@ -247,7 +252,6 @@ PanelWindow {
                 currentIndex: -1
 
                 snapMode: ListView.SnapOneItem
-                highlightRangeMode: ListView.NonHighlightRange
 
                 boundsBehavior: Flickable.StopAtBounds
 
@@ -435,7 +439,7 @@ PanelWindow {
     }
 
     Component.onCompleted: {
-        wallpaperList.running = true
+        wallpaperProcess.running = true
 
         Qt.callLater(() => {
             root.open()
