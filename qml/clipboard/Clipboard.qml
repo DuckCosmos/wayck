@@ -122,8 +122,8 @@ PanelWindow {
     Behavior on revealProgress {
         NumberAnimation {
             duration: root.closing
-                ? Motion.surfaceCloseDuration
-                : Motion.surfaceOpenDuration
+                ? 650
+                : 800
             easing.type: Easing.BezierSpline
             easing.bezierCurve: root.closing
                 ? Motion.surfaceCloseCurve

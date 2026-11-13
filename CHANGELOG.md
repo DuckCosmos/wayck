@@ -1,4 +1,10 @@
-### 1.0.6
+### 0.1.7
+
+- fix(wallpaper): wallpaper selector array fixed
+- change(clipboard): animation more slow
+- change(launcher): animation more slow too
+
+### 0.1.6
 
 - fix(matugen archive): new matugen configs archive
 - feat(wallpaperSelector): new menu wallpaper selector

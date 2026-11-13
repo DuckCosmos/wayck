@@ -190,9 +190,9 @@ PanelWindow {
         Behavior on progress {
             NumberAnimation {
                 duration: root.shown
-                    ? Motion.surfaceOpenDuration
-                    : Motion.surfaceCloseDuration
-
+                    ? 800
+                    : 600
+                    
                 easing.type: Easing.BezierSpline
 
                 easing.bezierCurve: root.shown
