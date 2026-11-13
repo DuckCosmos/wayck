@@ -488,6 +488,7 @@ PanelWindow {
 
                             if (event.key === Qt.Key_Escape) {
                                 root.close()
+                                event.accepted = true
 
                             } else if (event.key === Qt.Key_Down) {
                                 if (root.appList.length > 0) {

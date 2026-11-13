@@ -87,9 +87,16 @@ ShellRoot {
 
     NotificationPopup {}
 
-    WallpaperSelector {}
-
     WallpaperEngine {}
+
+    LazyLoader {
+        id: wallpaperSelectorLoader
+        active: WallpaperService.opened
+
+        WallpaperSelector {
+            onDismissed: WallpaperService.close()
+        }
+    }
 
     LazyLoader {
         id: launcherLoader

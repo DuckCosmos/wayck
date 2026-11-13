@@ -1,3 +1,9 @@
+### 1.0.6
+
+- fix(matugen archive): new matugen configs archive
+- feat(wallpaperSelector): new menu wallpaper selector
+- feat(animationWallpaper): smooth animations when you select a wallpaper
+
 ### 0.1.5
 
 - fix(menu): hold buttons fixed
