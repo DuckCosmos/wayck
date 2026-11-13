@@ -102,9 +102,27 @@ PanelWindow {
     }
 
     Process {
+        id: wallpaperProcess
+
+        command: ["sh", "-c", "command -v wayck-wallpaper"]
+
+        stdout: StdioCollector {
+            id: wallpaperPath
+        }
+
+        onExited: {
+            if (exitCode === 0) {
+                console.log("Executável:", wallpaperPath.text.trim())
+            } else {
+                console.error("wayck-wallpaper não encontrado")
+            }
+        }
+    }
+
+    Process {
         id: wallpaperList
 
-        command: ["wayck-wallpaper", "list"]
+        command: [wallpaperPath.text.trim(), "list"]
 
         stdout: StdioCollector {
             id: output
@@ -142,7 +160,7 @@ PanelWindow {
     Process {
         id: wallpaperIndex
 
-        command: ["wayck-wallpaper", "current"]
+        command: [wallpaperPath.text.trim(), "current"]
 
         stdout: StdioCollector {
             onStreamFinished: {
@@ -172,7 +190,7 @@ PanelWindow {
     Process {
         id: setWallpaper
 
-        command: ["wayck-wallpaper", "set", root.selectedWallpaper]
+        command: [wallpaperPath.text.trim(), "set", root.selectedWallpaper]
     }
 
     Rectangle {

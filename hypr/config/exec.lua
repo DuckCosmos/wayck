@@ -1,3 +1,3 @@
 hl.on("hyprland.start", function()
-    hl.exec_cmd("quickshell -c wayck")
+    hl.exec_cmd("qs -c wayck")
 end)
