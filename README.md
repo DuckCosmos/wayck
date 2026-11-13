@@ -64,6 +64,7 @@ An integrated application launcher designed to provide quick access to installed
 | Launcher | qs -c wayck ipc call launcher toggle | Super + Space | Open/Hide the Wayck Launcher |
 | Clipboard | qs -c wayck ipc call clipboard toggle | Super + V |  Open/Hide the Wayck Clipboard |
 | Bar | qs -c wayck ipc call bar toggle | Super + B | Active/Disable the Wayck Bar |
+| Wallpaper | qs -c wayck ipc call wallpaper open | Opens the wallpapers selector |
 | Screenshot Full | qs -c wayck ipc call screenshot full | Ctrl + Alt + Return | Save a full screenshot in Pictures |
 | Screenshot Region | qs -c wayck ipc call screenshot region | Ctrl + Shift +  Alt + Return | Save a region screenshot in Pictures |
 | Screenshot OCR | qs -c wayck ipc call screenshot regionOCR | Ctrl + Shift + Alt + S + Return | Saves a region capture that copies texts to its history |

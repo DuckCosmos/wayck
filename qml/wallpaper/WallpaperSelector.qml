@@ -1,3 +1,4 @@
+
 import Quickshell
 import Quickshell.Wayland
 import QtQuick.Layouts
@@ -11,8 +12,18 @@ PanelWindow {
     id: root
 
     signal dismissed()
+
     property bool show: false
     property bool closing: false
+
+    property var wallpapers: []
+    property var filteredWallpapers: wallpapers
+
+    property string selectedWallpaper:
+        wallpaperView.currentIndex >= 0 &&
+        wallpaperView.currentIndex < filteredWallpapers.length
+        ? filteredWallpapers[wallpaperView.currentIndex]
+        : ""
 
     anchors {
         bottom: true
@@ -24,7 +35,12 @@ PanelWindow {
 
     WlrLayershell.layer: WlrLayer.Overlay
     exclusiveZone: -1
-    WlrLayershell.keyboardFocus: closing ? WlrKeyboardFocus.None : show ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
+    WlrLayershell.keyboardFocus:
+        closing ? WlrKeyboardFocus.None :
+        show ? WlrKeyboardFocus.Exclusive :
+        WlrKeyboardFocus.None
+
     implicitHeight: 280
     implicitWidth: 800
     color: "transparent"
@@ -45,8 +61,9 @@ PanelWindow {
         if (show || closing)
             return
 
-        closing = false 
+        closing = false
         show = true
+
         Qt.callLater(() => {
             searchWallpaper.forceActiveFocus()
         })
@@ -61,9 +78,28 @@ PanelWindow {
         closeTimer.start()
     }
 
-    property var wallpapers: []
-    property var filteredWallpapers: wallpapers
-    
+    function filterWallpapers(query) {
+        const search = query.toLowerCase().trim()
+
+        filteredWallpapers = !search
+            ? wallpapers
+            : wallpapers.filter(path => {
+                const filename = path.split("/").pop().toLowerCase()
+                return filename.includes(search)
+            })
+
+        wallpaperView.currentIndex =
+            filteredWallpapers.length > 0 ? 0 : -1
+
+        if (filteredWallpapers.length > 0) {
+            Qt.callLater(() => {
+                wallpaperView.positionViewAtIndex(
+                    0,
+                    ListView.Center
+                )
+            })
+        }
+    }
 
     Process {
         id: wallpaperList
@@ -86,33 +122,17 @@ PanelWindow {
                     .trim()
                     .split("\n")
                     .filter(line => line.trim() !== "")
+
                 root.filterWallpapers(searchWallpaper.text)
 
                 console.log("Total:", root.wallpapers.length)
+
                 wallpaperIndex.running = true
+            } else {
+                console.log("Erro:", errors.text)
             }
         }
     }
-
-    function filterWallpapers(query) {
-        const search = query.toLowerCase().trim()
-
-        if (!search) {
-            filteredWallpapers = wallpapers
-            return
-        }
-
-        filteredWallpapers = wallpapers.filter(path => {
-            const filename = path.split("/").pop().toLowerCase()
-
-            return filename.includes(search)
-        })
-
-        wallpaperView.currentIndex =
-            filteredWallpapers.length > 0 ? 0 : -1
-    }
-
-    property string selectedWallpaper: wallpaperView.currentIndex >= 0 && wallpaperView.currentIndex < filteredWallpapers.length ? filteredWallpapers[wallpaperView.currentIndex] : ""
 
     Process {
         id: wallpaperIndex
@@ -123,14 +143,22 @@ PanelWindow {
             onStreamFinished: {
                 const currentWallpaper = text.trim()
 
-                const index = root.filteredWallpapers.indexOf(currentWallpaper)
+                const index = root.wallpapers.indexOf(currentWallpaper)
 
                 if (index >= 0) {
-                    wallpaperView.currentIndex = index
+                    const filteredIndex =
+                        root.filteredWallpapers.indexOf(currentWallpaper)
 
-                    Qt.callLater(() =>  {
-                        wallpaperView.positionViewAtIndex(wallpaperView.currentIndex, ListView.Center)
-                    })
+                    if (filteredIndex >= 0) {
+                        wallpaperView.currentIndex = filteredIndex
+
+                        Qt.callLater(() => {
+                            wallpaperView.positionViewAtIndex(
+                                filteredIndex,
+                                ListView.Center
+                            )
+                        })
+                    }
                 }
             }
         }
@@ -144,8 +172,11 @@ PanelWindow {
 
     Rectangle {
         id: wallpaperCard
+
         opacity: show ? 1 : 0
+
         anchors.fill: parent
+
         color: Theme.surfaceContainer
         border.color: Theme.primary
         border.width: 1
@@ -169,7 +200,7 @@ PanelWindow {
                 duration: 200
             }
         }
-        
+
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 24
@@ -180,15 +211,18 @@ PanelWindow {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+
                 model: root.filteredWallpapers
 
                 orientation: ListView.Horizontal
                 spacing: 15
                 clip: true
+
                 cacheBuffer: width * 3
                 reuseItems: true
 
-                currentIndex: 0
+                currentIndex: -1
+
                 snapMode: ListView.SnapOneItem
                 highlightRangeMode: ListView.NonHighlightRange
 
@@ -224,9 +258,12 @@ PanelWindow {
 
                     Rectangle {
                         id: wallpaperContainer
+
                         width: parent.selected ? 190 : 170
                         height: parent.selected ? 160 : 145
+
                         anchors.centerIn: parent
+
                         radius: 8
                         color: Theme.primary
                         clip: true
@@ -234,14 +271,14 @@ PanelWindow {
                         Behavior on width {
                             NumberAnimation {
                                 duration: 350
-                                easing: Easing.OutCubic
+                                easing.type: Easing.OutCubic
                             }
                         }
 
                         Behavior on height {
                             NumberAnimation {
                                 duration: 350
-                                easing: Easing.OutCubic
+                                easing.type: Easing.OutCubic
                             }
                         }
 
@@ -249,21 +286,27 @@ PanelWindow {
                             id: wallpaperImage
 
                             anchors.fill: parent
+
                             source: "file://" + modelData
+
                             fillMode: Image.PreserveAspectCrop
                             asynchronous: true
                             cache: true
+
                             sourceSize: Qt.size(280, 220)
+
                             visible: false
                         }
 
                         OpacityMask {
                             anchors.fill: parent
+
                             source: wallpaperImage
 
                             maskSource: Rectangle {
                                 width: wallpaperContainer.width
                                 height: wallpaperContainer.height
+
                                 radius: 8
                                 color: "white"
                             }
@@ -284,10 +327,14 @@ PanelWindow {
                         currentIndex = -1
                     } else if (currentIndex < 0 || currentIndex >= count) {
                         currentIndex = 0
-                        positionViewAtIndex(0, ListView.Center)
+
+                        positionViewAtIndex(
+                            0,
+                            ListView.Center
+                        )
                     }
                 }
-                
+
                 onCurrentIndexChanged: {
                     Qt.callLater(() => {
                         if (!currentItem)
@@ -304,6 +351,7 @@ PanelWindow {
             Rectangle {
                 Layout.preferredHeight: 32
                 Layout.fillWidth: true
+
                 color: "transparent"
                 border.color: Theme.primary
                 border.width: 1
@@ -311,10 +359,12 @@ PanelWindow {
 
                 TextInput {
                     id: searchWallpaper
+
                     anchors.fill: parent
                     anchors.margins: 8
 
                     color: Theme.surfaceForeground
+
                     verticalAlignment: TextInput.AlignVCenter
 
                     font.family: Qt.application.font.family
@@ -326,8 +376,8 @@ PanelWindow {
 
                         if (event.key === Qt.Key_Escape) {
                             root.close()
-
                             event.accepted = true
+
                         } else if (event.key === Qt.Key_Right) {
                             if (wallpaperView.currentIndex < wallpaperView.count - 1) {
                                 wallpaperView.currentIndex++
@@ -342,7 +392,10 @@ PanelWindow {
 
                             event.accepted = true
 
-                        } else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                        } else if (
+                            event.key === Qt.Key_Enter ||
+                            event.key === Qt.Key_Return
+                        ) {
                             SoundController.play("clickbutton")
                             setWallpaper.running = true
 
@@ -357,6 +410,7 @@ PanelWindow {
             }
         }
     }
+
     Component.onCompleted: {
         wallpaperList.running = true
 
