@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../../"
+import "."
 
 MorphSurface {
     id: expandedRoot
@@ -15,6 +15,16 @@ MorphSurface {
     morphHeightAvailableFloor: 300
 
     property string page: "home"
+
+    // The Face can request the Power tab when opening this surface.
+    onMorphChanged: {
+        const requestedPage = morph && morph.surfaceData
+            ? morph.surfaceData.page
+            : ""
+
+        if (requestedPage === "home" || requestedPage === "power")
+            page = requestedPage
+    }
 
     readonly property var settingsItems: [
         { id: "hyprland", symbol: "H" },

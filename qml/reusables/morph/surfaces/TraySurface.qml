@@ -1,5 +1,5 @@
 import QtQuick
-import "../../../"
+import "."
 import "../../../bar/faces/tray"
 
 MorphSurface {

@@ -13,50 +13,6 @@ BarCard {
 
     signal expandRequested(var sourceItem, var surfaceData)
 
-    readonly property var settingsItems: [
-        { id: "hyprland", symbol: "H" },
-        { id: "displays", symbol: "▣" },
-        { id: "network", symbol: "⌁" },
-        { id: "audio", symbol: "♫" },
-        { id: "bluetooth", symbol: "ᛒ" },
-        { id: "appearance", symbol: "◈" },
-        { id: "system", symbol: "⚙" },
-        { id: "monitor", symbol: "▥" }
-    ]
-
-    readonly property var powerItems: [
-        { id: "lock", symbol: "▣" },
-        { id: "suspend", symbol: "☾" },
-        { id: "reboot", symbol: "↻" },
-        { id: "poweroff", symbol: "⏻" },
-        { id: "logout", symbol: "⇥" }
-    ]
-
-    readonly property var confirmActions: ["suspend", "reboot", "poweroff", "logout"]
-
-    function togglePage(pageName) {
-        if (popup.visible && popup.page === pageName) {
-            popup.visible = false
-            return
-        }
-
-        popup.page = pageName
-        popup.pendingAction = ""
-        popup.visible = true
-    }
-
-    function actionTitle(action) {
-        return confirmActions.includes(action)
-            ? I18n.t("usermenu.confirm." + action + ".title")
-            : I18n.t("usermenu.confirm.default.title")
-    }
-
-    function actionDescription(action) {
-        return confirmActions.includes(action)
-            ? I18n.t("usermenu.confirm." + action + ".description")
-            : ""
-    }
-
     Item {
         id: profileButton
 
@@ -154,7 +110,7 @@ BarCard {
             repeat: false
 
             onTriggered: {
-                root.expandRequested(root, null)
+                root.expandRequested(root, { page: "power" })
             }
         }
 
@@ -162,7 +118,7 @@ BarCard {
             id: powerMouse
             anchors.fill: parent
             hoverEnabled: true
-            onClicked: root.togglePage("power")
+            onClicked: root.expandRequested(root, { page: "power" })
         }
     }
 }
