@@ -22,6 +22,28 @@ BarCard {
         Layout.preferredWidth: implicitWidth
         Layout.preferredHeight: implicitHeight
 
+        // Hover em toda a área do perfil, não apenas no texto ou no ícone.
+        HoverHandler {
+            enabled: root.hoverEnabled
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                QsWindow.window.morph.setSourceHovered(root, hovered)
+
+                if (hovered)
+                    expandTimer.restart()
+                else
+                    expandTimer.stop()
+            }
+        }
+
+        Timer {
+            id: expandTimer
+            interval: Motion.hoverDwellDuration
+            repeat: false
+            onTriggered: root.expandRequested(root, null)
+        }
+
         RowLayout {
             id: profileRow
 
@@ -87,31 +109,6 @@ BarCard {
 
             font.pixelSize: 19
             font.bold: true
-        }
-
-        HoverHandler {
-            enabled: root.hoverEnabled
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-
-            onHoveredChanged: {
-                QsWindow.window.morph.setSourceHovered(root, hovered)
-
-                if (hovered)
-                    expandTimer.restart()
-                else
-                    expandTimer.stop()
-            }
-        }
-
-        Timer {
-            id: expandTimer
-
-            interval: Motion.hoverDwellDuration
-            repeat: false
-
-            onTriggered: {
-                root.expandRequested(root, { page: "power" })
-            }
         }
 
         MouseArea {

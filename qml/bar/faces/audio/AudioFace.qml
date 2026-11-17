@@ -49,9 +49,33 @@ RowLayout {
     BarCard {
         id: volumeCard
 
-        // Morph the complete card so its background and input region are hidden too.
+        // Hover covers the complete card, including its border.
         hoverScale: 1
         implicitHeight: 36
+
+        HoverHandler {
+            enabled: volumeCard.hoverEnabled
+            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+            onHoveredChanged: {
+                QsWindow.window.morph.setSourceHovered(volumeCard, hovered)
+                if (hovered)
+                    mixerOpenTimer.restart()
+                else
+                    mixerOpenTimer.stop()
+            }
+        }
+
+        Timer {
+            id: mixerOpenTimer
+            interval: Motion.hoverDwellDuration
+            repeat: false
+            onTriggered: {
+                if (root.debug)
+                    console.log("[WAYCK INPUT] audio mixer hover dwell")
+                root.expandRequested(volumeCard, null)
+            }
+        }
 
         Item {
             id: volumeAnchor
@@ -76,30 +100,6 @@ RowLayout {
                     color: Theme.surfaceForeground
                     font.pixelSize: 11
                     font.bold: true
-                }
-            }
-
-            HoverHandler {
-                enabled: volumeCard.hoverEnabled
-                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-
-                onHoveredChanged: {
-                    QsWindow.window.morph.setSourceHovered(volumeCard, hovered)
-                    if (hovered)
-                        mixerOpenTimer.restart()
-                    else
-                        mixerOpenTimer.stop()
-                }
-            }
-
-            Timer {
-                id: mixerOpenTimer
-                interval: Motion.hoverDwellDuration
-                repeat: false
-                onTriggered: {
-                    if (root.debug)
-                        console.log("[WAYCK INPUT] audio mixer hover dwell")
-                    root.expandRequested(volumeCard, null)
                 }
             }
 
