@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell.Services.Pipewire
-import "."
-
+import "../../../"
 MorphSurface {
     id: expandedRoot
 

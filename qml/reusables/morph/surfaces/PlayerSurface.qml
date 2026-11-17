@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "."
-
+import "../../../"
 MorphSurface {
     id: expandedRoot
 

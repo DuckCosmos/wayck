@@ -45,3 +45,5 @@ singleton TrayController 1.0 singletons/widgetcontrols/TrayController.qml
 singleton UserController 1.0 singletons/widgetcontrols/UserController.qml
 singleton Motion 1.0 singletons/theme/Motion.qml
 singleton SoundController 1.0 singletons/system/SoundController.qml
+# Morph surfaces
+MorphSurface 1.0 reusables/morph/surfaces/MorphSurface.qml
