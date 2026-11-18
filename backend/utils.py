@@ -15,12 +15,45 @@ _OPERATORS = {
     ast.UAdd: operator.pos,
     ast.USub: operator.neg,
 }
+_FUNCTIONS = {
+    "abs": abs,
+    "acos": math.acos,
+    "asin": math.asin,
+    "atan": math.atan,
+    "ceil": math.ceil,
+    "cos": math.cos,
+    "cosh": math.cosh,
+    "exp": math.exp,
+    "floor": math.floor,
+    "ln": math.log,
+    "log": math.log,
+    "log10": math.log10,
+    "log2": math.log2,
+    "round": round,
+    "sin": math.sin,
+    "sinh": math.sinh,
+    "sqrt": math.sqrt,
+    "tan": math.tan,
+    "tanh": math.tanh,
+}
+_CONSTANTS = {"e": math.e, "pi": math.pi, "tau": math.tau}
 
 def _calculate_node(node):
     if isinstance(node, ast.Expression):
         return _calculate_node(node.body)
     if isinstance(node, ast.Constant) and type(node.value) in (int, float):
         return node.value
+    if isinstance(node, ast.Name) and node.id in _CONSTANTS:
+        return _CONSTANTS[node.id]
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in _FUNCTIONS and not node.keywords:
+        function = _FUNCTIONS[node.func.id]
+        arguments = [_calculate_node(argument) for argument in node.args]
+        if node.func.id in ("log", "ln", "round"):
+            if not 1 <= len(arguments) <= 2:
+                raise ValueError("Quantidade inválida de argumentos")
+        elif len(arguments) != 1:
+            raise ValueError("Quantidade inválida de argumentos")
+        return function(*arguments)
     if isinstance(node, ast.UnaryOp) and type(node.op) in _OPERATORS:
         return _OPERATORS[type(node.op)](_calculate_node(node.operand))
     if isinstance(node, ast.BinOp) and type(node.op) in _OPERATORS:

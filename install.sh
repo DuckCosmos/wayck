@@ -598,7 +598,7 @@ update_dot() {
     must "$(msg update.pull_failed)" \
         git -C "$ROOT" pull --ff-only
 
-    printf '%b%s%b\n' "$BLUE" "$(msg update.preparing_backend)" "$RESET"
+    printf '%b%s%b\n' "$BLUE" "$(msg update.compiling)" "$RESET"
 
     must "$(msg update.compile_failed)" \
         python3 -c 'import pathlib,sys; [compile(p.read_text(), str(p), "exec") for p in pathlib.Path(sys.argv[1]).glob("*.py")]' "$ROOT/backend"
