@@ -30,7 +30,7 @@ PanelWindow {
         Math.min(root.flare, card.height * 0.35)
 
     readonly property string homeDir: Quickshell.env("HOME")
-    readonly property string backend: Quickshell.shellPath("wayck-backend")
+    readonly property string backend: Quickshell.shellPath("backend/main.py")
 
     property var appList: []
     property int selectedIndex: 0
@@ -66,12 +66,12 @@ PanelWindow {
     color: "transparent"
 
     function triggerSearch() {
-        if (rustBackend.running) {
+        if (backendProcess.running) {
             searchPending = true
             return
         }
 
-        rustBackend.running = true
+        backendProcess.running = true
     }
 
     function launchApp(item) {
@@ -79,6 +79,7 @@ PanelWindow {
             return
 
         Quickshell.execDetached([
+            "python3",
             root.backend,
             "--exec",
             item.nome,
@@ -100,9 +101,10 @@ PanelWindow {
     }
 
     Process {
-        id: rustBackend
+        id: backendProcess
 
         command: [
+            "python3",
             root.backend,
             "--filter",
             searchInput.text

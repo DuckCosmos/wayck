@@ -20,7 +20,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel
+    quickshell qt6-declarative qt6-wayland git base-devel python
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -265,7 +265,7 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have cargo || missing+=(rust)
+    have python3 || missing+=(python)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -278,7 +278,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -f "$script_dir/Cargo.toml" && -d "$script_dir/qml" ]]; then
+        if [[ -f "$script_dir/backend/main.py" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -297,7 +297,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -f "$ROOT/Cargo.toml" && -d "$ROOT/qml" ]] ||
+    [[ -f "$ROOT/backend/main.py" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
@@ -667,11 +667,10 @@ update_dot() {
     must "$(msg update.pull_failed)" \
         git -C "$ROOT" pull --ff-only
 
-    printf '%b%s%b\n' "$BLUE" "$(msg update.compiling)" "$RESET"
+    printf '%b%s%b\n' "$BLUE" "$(msg update.preparing_backend)" "$RESET"
 
     must "$(msg update.compile_failed)" \
-        cargo build --release --bin wayck-backend \
-        --manifest-path "$ROOT/Cargo.toml"
+        python3 -c 'import pathlib,sys; [compile(p.read_text(), str(p), "exec") for p in pathlib.Path(sys.argv[1]).glob("*.py")]' "$ROOT/backend"
 
     local parent
     parent="$(dirname "$DEST")"
@@ -686,9 +685,8 @@ update_dot() {
         die "$(msg update.copy_failed)"
     fi
 
-    install -m 755 \
-        "$ROOT/target/release/wayck-backend" \
-        "$UPDATE_STAGE/wayck-backend"
+    copy_dir "$ROOT/backend" "$UPDATE_STAGE/backend"
+    install -m 644 "$ROOT/version.txt" "$UPDATE_STAGE/version.txt"
 
     install -m 755 \
         "$ROOT/scripts/wayck-wallpaper.sh" \
@@ -740,8 +738,7 @@ build_and_install() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg build_msg)" "$RESET"
 
     must "$(msg build_failed)" \
-        cargo build --release --bin wayck-backend \
-        --manifest-path "$ROOT/Cargo.toml"
+        python3 -c 'import pathlib,sys; [compile(p.read_text(), str(p), "exec") for p in pathlib.Path(sys.argv[1]).glob("*.py")]' "$ROOT/backend"
 
     local parent stage backup=""
     parent="$(dirname "$DEST")"
@@ -754,7 +751,8 @@ build_and_install() {
         die "$(msg fail_copy)"
     fi
 
-    install -m 755 "$ROOT/target/release/wayck-backend" "$stage/wayck-backend"
+    copy_dir "$ROOT/backend" "$stage/backend"
+    install -m 644 "$ROOT/version.txt" "$stage/version.txt"
     install -m 755 "$ROOT/scripts/wayck-wallpaper.sh" "$stage/wayck-wallpaper"
     install -m 755 "$ROOT/install.sh" "$stage/install.sh"
 

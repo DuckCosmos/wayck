@@ -2,7 +2,7 @@
 
 **A modern, modular and customizable desktop shell for Linux.**
 
-Wayck is a Linux desktop shell built with **Rust, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
+Wayck is a Linux desktop shell built with **Python, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
 
 It combines desktop controls, system monitoring and productivity tools in a unified interface.
 
@@ -49,11 +49,11 @@ An integrated application launcher designed to provide quick access to installed
 
 | Technology | Purpose |
 |:---|:---|
-| [Rust](https://www.rust-lang.org/) | Backend and system operations |
+| [Python](https://www.python.org/) | Backend and system operations |
 | [Quickshell](https://quickshell.org/) | Desktop shell framework |
 | [QML](https://doc.qt.io/qt-6/qmlapplications.html) | Interface composition and interaction |
 | [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) | UI components and rendering |
-| [Cargo](https://doc.rust-lang.org/cargo/) | Dependency and build management |
+| Python 3 | Backend runtime and standard library |
 
 ## Shortcuts
 
@@ -269,8 +269,13 @@ wayck/
 │   ├── monitor.rs
 │   ├── update.rs
 │   └── utils.rs
-├── Cargo.lock
-├── Cargo.toml
+├── backend/
+│   ├── main.py
+│   ├── launcher.py
+│   ├── monitor.py
+│   ├── clipboard.py
+│   ├── update.py
+│   └── utils.py
 ├── CHANGELOG.md
 ├── .gitignore
 ├── install.sh
@@ -283,7 +288,7 @@ wayck/
 - **Feature isolation:** each interface has its own dedicated directory.
 - **Centralized state:** shared functionality lives in `singletons/`, with one controller per widget.
 - **Modularity:** each bar module is a self-contained face in `bar/faces/`.
-- **Separation of concerns:** QML handles presentation and interaction, while Rust handles backend operations.
+- **Separation of concerns:** QML handles presentation and interaction, while Python handles backend operations.
 - **Single source of truth:** colors live in `Theme`, settings in `Config`, texts in `qml/assets/languages/*.json` (via `I18n`), and the list of bar modules in `BarModuleRegistry`.
 - **Maintainability:** a consistent structure avoids unnecessary directory fragmentation.
 
@@ -292,7 +297,7 @@ wayck/
 ## Requirements
 
 - Linux
-- Rust and Cargo
+- Python 3
 - Quickshell
 - Qt dependencies required by Quickshell
 - Hyprland for Hyprland-specific integrations
@@ -320,10 +325,10 @@ git clone https://github.com/DuckCosmos/wayck.git
 cd wayck
 ```
 
-**2. Build the Rust backend**
+**2. Validate the Python backend**
 
 ```bash
-cargo build --release --bins
+python -m compileall -q backend
 ```
 
 **3. Create the Quickshell configuration directory**
@@ -352,16 +357,16 @@ quickshell -c wayck
 
 ## Building from Source
 
-Check all Rust binaries:
+Check the Python backend:
 
 ```bash
-cargo check --bins
+python -m compileall -q backend
 ```
 
-Build all binaries in release mode:
+Validate Python backend syntax:
 
 ```bash
-cargo build --release --bins
+python -m compileall -q backend
 ```
 
 Run the project build script:
@@ -422,7 +427,7 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 
 | Directory | Responsibility |
 |:---|:---|
-| `src/` | Rust backend |
+| `backend/` | Python backend |
 | `qml/` | QML application |
 | `qml/bar/` | Desktop bar (`Bar`, `BarModule`, `BarSection`, module registry) |
 | `qml/bar/faces/` | One folder per bar module |
@@ -453,7 +458,7 @@ Wayck is organized to allow independent development of its interface features an
 | Clipboard | `qml/clipboard/` |
 | Launcher | `qml/launcher/` |
 | Widget controllers (IPC) | `qml/singletons/widgetcontrols/` |
-| Rust backend | `src/` |
+| Python backend | `backend/` |
 
 ### Adding a Bar Module
 
@@ -508,13 +513,10 @@ When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language`
 ### Development Commands
 
 ```bash
-# Check Rust binaries
-cargo check --bins
+python -m compileall -q backend
 
-# Build in release mode
-cargo build --release --bins
+python -m compileall -q backend
 
-# Run the build script
 ./build.sh
 
 # Check the translation files against en.json
@@ -541,4 +543,4 @@ See the repository for licensing information.
 
 ---
 
-**Wayck** — Built with Rust, Quickshell and QML.
+**Wayck** — Built with Python, Quickshell and QML.
