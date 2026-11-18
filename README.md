@@ -262,13 +262,6 @@ wayck/
 ├── scripts
 │   ├── i18n-check.sh
 │   └── wayck-wallpaper.sh
-├── src
-│   ├── clipboard.rs
-│   ├── launcher.rs
-│   ├── main.rs
-│   ├── monitor.rs
-│   ├── update.rs
-│   └── utils.rs
 ├── backend/
 │   ├── main.py
 │   ├── launcher.py
@@ -343,9 +336,13 @@ mkdir -p ~/.config/quickshell/wayck
 cp -r qml/* ~/.config/quickshell/wayck/
 ```
 
-**5. Install the backend binaries**
+**5. Install the Python backend**
 
-Install the generated binaries in the location expected by the project's QML singletons and scripts. Check `install.sh` for the exact deployment paths.
+```bash
+mkdir -p ~/.config/quickshell/wayck/backend
+cp backend/*.py ~/.config/quickshell/wayck/backend/
+cp version.txt ~/.config/quickshell/wayck/
+```
 
 **6. Start Wayck**
 
@@ -355,25 +352,12 @@ quickshell -c wayck
 
 ---
 
-## Building from Source
+## Backend Validation
 
-Check the Python backend:
-
-```bash
-python -m compileall -q backend
-```
-
-Validate Python backend syntax:
+Validate the Python backend syntax:
 
 ```bash
 python -m compileall -q backend
-```
-
-Run the project build script:
-
-```bash
-chmod +x build.sh
-./build.sh
 ```
 
 ## Running
@@ -515,11 +499,7 @@ When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language`
 ```bash
 python -m compileall -q backend
 
-python -m compileall -q backend
 
-./build.sh
-
-# Check the translation files against en.json
 ./scripts/i18n-check.sh
 ```
 

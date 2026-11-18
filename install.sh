@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# ============================================================
-# WAYCK INSTALLER
-# ============================================================
-
 readonly REPO_URL="https://github.com/DuckCosmos/wayck.git"
 readonly SRC_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/wayck-src"
 readonly HOME_DIR="${HOME:?HOME is not defined}"
@@ -52,8 +48,6 @@ CURSOR=0
 readonly SUPPORTED_LANGS=(
     ar az bg de en es fa fr hi hy id it ja ko nl pl pt ru tr ua vi zh zh_tw
 )
-
-# código | sistema não suportado | falha ao preparar (dependências/repositório)
 readonly EARLY_MESSAGES='en|This installer only supports Arch Linux and pacman-based distributions.|Could not prepare the installation (dependencies or repository).
 pt|Este instalador suporta apenas Arch Linux e derivados com pacman.|Não foi possível preparar a instalação (dependências ou repositório).
 es|Este instalador solo es compatible con Arch Linux y derivados que usen pacman.|No se pudo preparar la instalación (dependencias o repositorio).
@@ -80,10 +74,6 @@ hy|Այս տեղադրիչը աջակցում է միայն Arch Linux-ին և p
 
 declare -A MSG=()
 declare -a YES_WORDS=()
-
-# ============================================================
-# LANGUAGE
-# ============================================================
 
 normalize_lang() {
     local raw="${1,,}"
@@ -178,10 +168,6 @@ msg() {
     printf '%s' "$text"
 }
 
-# ============================================================
-# TERMINAL AND UTILITIES
-# ============================================================
-
 have() {
     command -v "$1" >/dev/null 2>&1
 }
@@ -255,10 +241,6 @@ copy_dir() {
     cp -a -- "$source/." "$destination/"
 }
 
-# ============================================================
-# REPOSITORY BOOTSTRAP
-# ============================================================
-
 bootstrap() {
     have pacman || die "$(early_msg no_pacman)"
 
@@ -302,10 +284,6 @@ bootstrap() {
 
     load_messages
 }
-
-# ============================================================
-# INTERACTIVE MENU
-# ============================================================
 
 menu_label() {
     msg "menu.$1"
@@ -373,10 +351,6 @@ interactive_menu() {
     done
 }
 
-# ============================================================
-# PACKAGE SELECTION MENU
-# ============================================================
-
 package_menu() {
     local title="$1"
     shift
@@ -386,16 +360,10 @@ package_menu() {
 
     local cursor=0
     local key sequence index pointer checkbox
-
-    # Não abre um menu sem pacotes.
     ((${#packages[@]})) || return 1
-
-    # Inicializa todos os pacotes como selecionados.
     for index in "${!packages[@]}"; do
         selected[index]=1
     done
-
-    # Configura o terminal para leitura individual das teclas.
     [[ -t 0 ]] || return 1
 
     TERMINAL_STATE="$(stty -g)"
@@ -474,10 +442,6 @@ package_menu() {
     done
 }
 
-# ============================================================
-# REQUIRED PACKAGES
-# ============================================================
-
 install_packages() {
     printf '%b%s%b\n' "$BLUE" "$(msg pkgs_installing)" "$RESET"
 
@@ -486,13 +450,6 @@ install_packages() {
 
     printf '%b%s%b\n' "$GREEN" "$(msg pkgs_ok)" "$RESET"
 }
-
-# ============================================================
-# BLUR CONFIGURATION
-# ============================================================
-
-# config_set <chave> <valor-json>
-# Modifica apenas a chave indicada e preserva o restante do config.json.
 config_set() {
     local key="$1" value="$2"
     local config="$CFG_DIR/config.json" temp
@@ -538,10 +495,6 @@ persist_language() {
     config_set language "\"$LANGUAGE\""
 }
 
-# ============================================================
-# AUR
-# ============================================================
-
 install_aur_helper() {
     if have paru; then
         AUR_HELPER=paru
@@ -581,10 +534,6 @@ install_aur_helper() {
     printf '%b%s%b\n' "$GREEN" "$(msg aur_installed name "$AUR_HELPER")" "$RESET"
 }
 
-# ============================================================
-# PERSONAL APPLICATIONS
-# ============================================================
-
 install_personal_apps() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg personal_installing)" "$RESET"
     printf '%b%s%b\n' "$YELLOW" "$(msg steam_note)" "$RESET"
@@ -594,32 +543,24 @@ install_personal_apps() {
     local -a selected_flatpak=()
 
     local install_zsh=false
-
-    # PACMAN
     if package_menu "PACMAN PACKAGES" "${PERSONAL_REPO_PKGS[@]}"; then
         selected_repo=("${SELECTED_PACKAGES[@]}")
     else
         printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
         return 0
     fi
-
-    # AUR
     if package_menu "AUR PACKAGES" "${PERSONAL_AUR_PKGS[@]}"; then
         selected_aur=("${SELECTED_PACKAGES[@]}")
     else
         printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
         return 0
     fi
-
-    # FLATPAK
     if package_menu "FLATPAK PACKAGES" "${PERSONAL_FLATPAK_PKGS[@]}"; then
         selected_flatpak=("${SELECTED_PACKAGES[@]}")
     else
         printf '%bPersonal applications cancelled.%b\n' "$YELLOW" "$RESET"
         return 0
     fi
-
-    # PACMAN INSTALLATION
     if ((${#selected_repo[@]})); then
         must "$(msg personal_failed)" \
             sudo pacman -S --needed "${selected_repo[@]}"
@@ -628,24 +569,18 @@ install_personal_apps() {
             [[ "$package" == zsh ]] && install_zsh=true
         done
     fi
-
-    # AUR INSTALLATION
     if ((${#selected_aur[@]})); then
         install_aur_helper
 
         must "$(msg personal_failed)" \
             "$AUR_HELPER" -S --needed "${selected_aur[@]}"
     fi
-
-    # FLATPAK INSTALLATION
     if ((${#selected_flatpak[@]})); then
         have flatpak || die "$(msg missing_tool name flatpak)"
 
         must "$(msg personal_failed)" \
             flatpak install flathub "${selected_flatpak[@]}"
     fi
-
-    # ZSH DEFAULT SHELL
     if [[ "$install_zsh" == true ]] && have zsh; then
         local zsh_path
         zsh_path="$(command -v zsh)"
@@ -656,10 +591,6 @@ install_personal_apps() {
         fi
     fi
 }
-
-# ============================================================
-# BUILD AND UPDATE
-# ============================================================
 
 update_dot() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg update.pulling)" "$RESET"
@@ -800,10 +731,6 @@ install_matugen_template() {
     install -D -m 644 "$source" "$destination"
 }
 
-# ============================================================
-# HYPRLAND
-# ============================================================
-
 install_hypr() {
     local source="$ROOT/hypr"
     local destination="$CONFIG_HOME/hypr"
@@ -831,10 +758,6 @@ install_hypr() {
     printf '%b%s%b\n' "$GREEN" "$(msg hypr_done)" "$RESET"
 }
 
-# ============================================================
-# FINAL MESSAGE
-# ============================================================
-
 print_final() {
     printf '\n%b========================================%b\n' "$GREEN" "$RESET"
     printf '%b%s%b\n' "$GREEN" "$(msg final_title)" "$RESET"
@@ -852,10 +775,6 @@ print_final() {
     printf '%b%s%b\n' "$RED" "$(msg reboot)" "$RESET"
     printf '%b========================================%b\n' "$RED" "$RESET"
 }
-
-# ============================================================
-# MAIN
-# ============================================================
 
 main() {
     if [[ "${1:-}" == "--update-only" ]]; then

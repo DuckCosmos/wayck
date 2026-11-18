@@ -32,7 +32,7 @@ def _calculate_node(node):
     raise ValueError("Expressão não permitida")
 
 def calculate(text):
-    expression = text.replace("×", "*").replace("÷", "/").replace("x", "*").replace("X", "*").replace(",", ".").strip()
+    expression = text.replace("×", "*").replace("÷", "/").replace("^", "**").replace("x", "*").replace("X", "*").replace(",", ".").strip()
     if not expression or len(expression) > 120 or not any(char.isdigit() for char in expression):
         return None
     try:
