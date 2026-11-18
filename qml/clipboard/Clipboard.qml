@@ -14,7 +14,7 @@ PanelWindow {
     property real revealProgress: 0
 
     readonly property string homeDir: Quickshell.env("HOME")
-    readonly property string backend: Quickshell.shellPath("wayck-backend")
+    readonly property string backend: Quickshell.shellPath("backend/main.py")
 
     property var clipboardList: []
     property int selectedIndex: 0
@@ -29,7 +29,7 @@ PanelWindow {
     }
 
     function copyItem(item) {
-        Quickshell.execDetached([root.backend, "--clipboard-copy", item.id]);
+        Quickshell.execDetached(["python3", root.backend, "--clipboard-copy", item.id]);
         root.close();
     }
 
@@ -46,11 +46,11 @@ PanelWindow {
             root.selectedIndex = Math.max(0, root.clipboardList.length - 1);
         }
 
-        Quickshell.execDetached([root.backend, "--clipboard-delete", item.id]);
+        Quickshell.execDetached(["python3", root.backend, "--clipboard-delete", item.id]);
     }
 
     function clearClipboard() {
-        Quickshell.execDetached([root.backend, "--clipboard-clear"]);
+        Quickshell.execDetached(["python3", root.backend, "--clipboard-clear"]);
         root.close()
     }
 
@@ -102,7 +102,7 @@ PanelWindow {
 
     Process {
         id: clipboardBackend
-        command: [root.backend, "--clipboard-list", searchInput.text]
+        command: ["python3", root.backend, "--clipboard-list", searchInput.text]
 
         stdout: StdioCollector {
             onStreamFinished: {
@@ -230,7 +230,6 @@ PanelWindow {
                 delegate: Rectangle {
                     id: delegateItem
                     property bool isSelected: index === root.selectedIndex
-                    property bool imgReady: false
 
                     property bool deleting: false
 
@@ -267,13 +266,6 @@ PanelWindow {
                     }
                     color: isSelected ? Theme.primary : (mouseArea.containsMouse ? Qt.rgba(Theme.surfaceForeground.r, Theme.surfaceForeground.g, Theme.surfaceForeground.b, 0.08) : Qt.darker(Theme.surfaceContainer, 1.8))
 
-                    Process {
-                        id: extractImg
-                        running: modelData.is_image && !imgReady
-                        command: ["sh", "-c", "cliphist decode " + modelData.id + " > /tmp/wayck_clip_" + modelData.id + ".png"]
-                        onExited: imgReady = true
-                    }
-
                     Item {
                         anchors.fill: parent
                         anchors.margins: 12
@@ -300,7 +292,7 @@ PanelWindow {
                         Image {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            source: (modelData.is_image && imgReady) ? "file:///tmp/wayck_clip_" + modelData.id + ".png" : ""
+                            source: modelData.path ? "file://" + modelData.path : ""
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
                             cache: true
