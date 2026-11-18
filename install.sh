@@ -260,7 +260,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -f "$script_dir/backend/main.py" && -d "$script_dir/qml" ]]; then
+        if [[ -d "$script_dir/.git" && -f "$script_dir/backend/main.py" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -279,7 +279,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -f "$ROOT/backend/main.py" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/backend/main.py" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
