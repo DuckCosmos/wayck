@@ -5,6 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::os::unix::process::CommandExt;
+use std::os::unix::fs::PermissionsExt;
 
 #[derive(Clone, Serialize)]
 pub struct AppData {
@@ -109,12 +110,16 @@ pub fn filter_apps(text: &str) -> Vec<AppData> {
     apps
 }
 
+fn is_executable(path: &Path) -> bool {
+    path.is_file() && fs::metadata(path).map(|metadata| metadata.permissions().mode() & 0o111 != 0).unwrap_or(false)
+}
+
 fn which(program: &str) -> Option<PathBuf> {
     if program.contains('/') {
         let path = PathBuf::from(program);
-        return if path.is_file() { Some(path) } else { None };
+        return if is_executable(&path) { Some(path) } else { None };
     }
-    std::env::var_os("PATH").and_then(|paths| std::env::split_paths(&paths).map(|p| p.join(program)).find(|p| p.is_file()))
+    std::env::var_os("PATH").and_then(|paths| std::env::split_paths(&paths).map(|p| p.join(program)).find(|p| is_executable(p)))
 }
 
 fn terminal() -> Vec<String> {

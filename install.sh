@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel rust
+    quickshell qt6-declarative qt6-wayland git base-devel rust cargo
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -247,7 +247,7 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have cargo || missing+=(rust)
+    have cargo || missing+=(rust cargo)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
