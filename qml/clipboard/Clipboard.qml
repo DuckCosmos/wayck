@@ -14,7 +14,7 @@ PanelWindow {
     property real revealProgress: 0
 
     readonly property string homeDir: Quickshell.env("HOME")
-    readonly property string backend: Quickshell.shellPath("backend/main.py")
+    readonly property string backend: Quickshell.shellPath("wayck-backend")
 
     property var clipboardList: []
     property int selectedIndex: 0
@@ -29,7 +29,7 @@ PanelWindow {
     }
 
     function copyItem(item) {
-        Quickshell.execDetached(["python3", root.backend, "--clipboard-copy", item.id]);
+        Quickshell.execDetached([root.backend, "--clipboard-copy", item.id]);
         root.close();
     }
 
@@ -46,11 +46,11 @@ PanelWindow {
             root.selectedIndex = Math.max(0, root.clipboardList.length - 1);
         }
 
-        Quickshell.execDetached(["python3", root.backend, "--clipboard-delete", item.id]);
+        Quickshell.execDetached([root.backend, "--clipboard-delete", item.id]);
     }
 
     function clearClipboard() {
-        Quickshell.execDetached(["python3", root.backend, "--clipboard-clear"]);
+        Quickshell.execDetached([root.backend, "--clipboard-clear"]);
         root.close()
     }
 
@@ -102,7 +102,7 @@ PanelWindow {
 
     Process {
         id: clipboardBackend
-        command: ["python3", root.backend, "--clipboard-list", searchInput.text]
+        command: [root.backend, "--clipboard-list", searchInput.text]
 
         stdout: StdioCollector {
             onStreamFinished: {

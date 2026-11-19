@@ -30,7 +30,7 @@ PanelWindow {
         Math.min(root.flare, card.height * 0.35)
 
     readonly property string homeDir: Quickshell.env("HOME")
-    readonly property string backend: Quickshell.shellPath("backend/main.py")
+    readonly property string backend: Quickshell.shellPath("wayck-backend")
 
     property var appList: []
     property int selectedIndex: 0
@@ -79,7 +79,6 @@ PanelWindow {
             return
 
         Quickshell.execDetached([
-            "python3",
             root.backend,
             "--exec",
             item.nome,
@@ -104,7 +103,6 @@ PanelWindow {
         id: backendProcess
 
         command: [
-            "python3",
             root.backend,
             "--filter",
             searchInput.text

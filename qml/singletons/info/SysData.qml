@@ -55,8 +55,7 @@ Singleton {
         id: monitorProcess
 
         command: [
-            "python3",
-            Quickshell.shellPath("backend/main.py"),
+            Quickshell.shellPath("wayck-backend"),
             "--monitor"
         ]
 

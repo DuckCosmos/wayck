@@ -1,8 +1,7 @@
-__pycache__/
-*.py[cod]
-
 /push.sh
 /build.sh
 
 *.swp
 .DS_Store
+
+/backend/target/
