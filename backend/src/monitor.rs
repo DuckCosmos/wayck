@@ -97,6 +97,9 @@ fn gpu_data() -> (bool, Option<f64>, Option<f64>, Option<f64>, Option<f64>, Opti
 }
 
 pub fn run() {
+    use std::io::Write;
+    let stdout = std::io::stdout();
+    let mut output = stdout.lock();
     let mut previous_cpu: Option<(u64, u64)> = None;
     let mut previous_network: Option<(u64, u64, Instant)> = None;
     loop {
@@ -130,9 +133,7 @@ pub fn run() {
             "gpu_vram_percent": vram_percent, "gpu_vram_used_mb": vram_used, "gpu_vram_total_mb": vram_total,
             "network_down_kib_s": down, "network_up_kib_s": up, "temperature_c": cpu_temperature()
         });
-        println!("{data}");
-        use std::io::Write;
-        if std::io::stdout().flush().is_err() { return; }
+        if writeln!(output, "{data}").is_err() || output.flush().is_err() { return; }
         thread::sleep(Duration::from_secs_f64((1.0 - started.elapsed().as_secs_f64()).max(0.0)));
     }
 }

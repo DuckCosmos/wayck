@@ -12,10 +12,21 @@ pub struct VersionInfo {
 }
 
 fn local_version() -> String {
-    let path = std::env::current_exe().ok()
-        .and_then(|p| p.parent().map(|p| p.join("version.txt")))
-        .or_else(|| Some(std::path::PathBuf::from("version.txt")));
-    path.and_then(|p| fs::read_to_string(p).ok()).unwrap_or_default().trim().to_string()
+    let mut candidates = Vec::new();
+    if let Ok(executable) = std::env::current_exe() {
+        if let Some(parent) = executable.parent() {
+            candidates.push(parent.join("version.txt"));
+            if let Some(root) = parent.parent().and_then(|p| p.parent()).and_then(|p| p.parent()) {
+                candidates.push(root.join("version.txt"));
+            }
+        }
+    }
+    candidates.push(std::path::PathBuf::from("version.txt"));
+    candidates.into_iter()
+        .find_map(|path| fs::read_to_string(path).ok())
+        .unwrap_or_default()
+        .trim()
+        .to_string()
 }
 
 fn remote_version() -> Result<String, Box<dyn std::error::Error>> {
