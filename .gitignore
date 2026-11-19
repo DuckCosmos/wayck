@@ -4,4 +4,4 @@
 *.swp
 .DS_Store
 
-/backend/target/
+/target/

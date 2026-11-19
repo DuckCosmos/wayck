@@ -321,7 +321,7 @@ cd wayck
 **2. Build the Rust backend**
 
 ```bash
-cargo build --manifest-path backend/Cargo.toml --release
+cargo build --release
 ```
 
 **3. Create the Quickshell configuration directory**
@@ -339,7 +339,7 @@ cp -r qml/* ~/.config/quickshell/wayck/
 **5. Install the Rust backend**
 
 ```bash
-install -m 755 backend/target/release/wayck-backend ~/.config/quickshell/wayck/wayck-backend
+install -m 755 target/release/wayck-backend ~/.config/quickshell/wayck/wayck-backend
 cp version.txt ~/.config/quickshell/wayck/
 ```
 
@@ -356,7 +356,7 @@ quickshell -c wayck
 Validate and compile the Rust backend:
 
 ```bash
-cargo build --manifest-path backend/Cargo.toml --release
+cargo build --release
 ```
 
 ## Running
@@ -410,7 +410,7 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 
 | Directory | Responsibility |
 |:---|:---|
-| `backend/` | Rust backend |
+| `src/` | Rust source code |
 | `qml/` | QML application |
 | `qml/bar/` | Desktop bar (`Bar`, `BarModule`, `BarSection`, module registry) |
 | `qml/bar/faces/` | One folder per bar module |
@@ -441,7 +441,7 @@ Wayck is organized to allow independent development of its interface features an
 | Clipboard | `qml/clipboard/` |
 | Launcher | `qml/launcher/` |
 | Widget controllers (IPC) | `qml/singletons/widgetcontrols/` |
-| Rust backend | `backend/` |
+| Rust backend | `src/` |
 
 ### Adding a Bar Module
 
@@ -496,7 +496,7 @@ When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language`
 ### Development Commands
 
 ```bash
-cargo build --manifest-path backend/Cargo.toml --release
+cargo build --release
 
 
 ./scripts/i18n-check.sh
