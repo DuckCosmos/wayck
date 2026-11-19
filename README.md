@@ -262,13 +262,14 @@ wayck/
 ├── scripts
 │   ├── i18n-check.sh
 │   └── wayck-wallpaper.sh
-├── backend/
-│   ├── main.py
-│   ├── launcher.py
-│   ├── monitor.py
-│   ├── clipboard.py
-│   ├── update.py
-│   └── utils.py
+├── src/
+│   ├── main.rs
+│   ├── launcher.rs
+│   ├── monitor.rs
+│   ├── clipboard.rs
+│   ├── update.rs
+│   └── utils.rs
+├── Cargo.toml
 ├── CHANGELOG.md
 ├── .gitignore
 ├── install.sh
