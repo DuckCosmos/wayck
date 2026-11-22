@@ -133,10 +133,10 @@ internal static class Monitor
             oldNet = (net.recv, net.sent, Stopwatch.StartNew());
             var (gpuAvailable, gpu, gpuTemp, vramPercent, vramUsed, vramTotal) = GpuData();
             var data = new MonitorData(
-                cpu_percent = cpu, ram_percent = ram, ram_used_mb = ramUsed, ram_total_mb = ramTotal,
-                disk_percent = disk, disk_used_gib = diskUsed, disk_total_gib = diskTotal,
-                gpu_available = gpuAvailable, gpu_percent = gpu, gpu_temp_c = gpuTemp,
-                gpu_vram_percent = vramPercent, gpu_vram_used_mb = vramUsed, gpu_vram_total_mb = vramTotal,
+                cpu, ram, ramUsed, ramTotal,
+                disk, diskUsed, diskTotal,
+                gpuAvailable, gpu, gpuTemp,
+                vramPercent, vramUsed, vramTotal,
                 down, up, CpuTemperature()
             );
             Console.WriteLine(JsonSerializer.Serialize(data)); Console.Out.Flush();
