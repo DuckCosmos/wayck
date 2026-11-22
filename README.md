@@ -53,7 +53,7 @@ An integrated application launcher designed to provide quick access to installed
 | [Quickshell](https://quickshell.org/) | Desktop shell framework |
 | [QML](https://doc.qt.io/qt-6/qmlapplications.html) | Interface composition and interaction |
 | [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) | UI components and rendering |
-| .NET SDK | Backend build system |
+| [Go](https://go.dev/) | Backend build system |
 
 ## Shortcuts
 
