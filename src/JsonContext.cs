@@ -6,4 +6,4 @@ namespace Wayck.Backend;
 [JsonSerializable(typeof(List<ClipboardItem>))]
 [JsonSerializable(typeof(VersionInfo))]
 [JsonSerializable(typeof(MonitorData))]
-internal partial class WayckJsonContext : JsonSerializerContext;
+internal partial class WayckJsonContext : JsonSerializerContext { }
