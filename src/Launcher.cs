@@ -154,10 +154,13 @@ internal static class Launcher
             var process = System.Diagnostics.Process.Start(info);
             if (process is not null)
             {
+                process.OutputDataReceived += (_, _) => { };
+                process.ErrorDataReceived += (_, _) => { };
+                process.EnableRaisingEvents = true;
+                process.Exited += (_, _) => process.Dispose();
                 process.StandardInput.Close();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                process.Dispose();
             }
         } catch { }
     }
