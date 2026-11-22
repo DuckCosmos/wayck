@@ -291,7 +291,7 @@ wayck/
 ## Requirements
 
 - Linux
-- C# Native AOT and Cargo (build time)
+- .NET SDK, Clang and zlib (build time)
 - Quickshell
 - Qt dependencies required by Quickshell
 - Hyprland for Hyprland-specific integrations
@@ -340,7 +340,7 @@ cp -r qml/* ~/.config/quickshell/wayck/
 **5. Install the C# Native AOT backend**
 
 ```bash
-install -m 755 src/bin/Release/net10.0/linux-x64/publish/wayck-backend ~/.config/quickshell/wayck/wayck-backend
+install -m 755 .build/publish/wayck-backend ~/.config/quickshell/wayck/wayck-backend
 cp version.txt ~/.config/quickshell/wayck/
 ```
 
