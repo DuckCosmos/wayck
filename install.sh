@@ -249,7 +249,7 @@ bootstrap() {
     have git || missing+=(git)
     have dotnet || missing+=(dotnet-sdk)
     have clang || missing+=(clang)
-    have zlib || missing+=(zlib)
+    pacman -Q zlib >/dev/null 2>&1 || missing+=(zlib)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -619,8 +619,7 @@ update_dot() {
 
     printf '%b%s%b\n' "$BLUE" "$(msg update.compiling)" "$RESET"
 
-    must "$(msg update.compile_failed)" \
-        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$(backend_rid)" --self-contained true -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
+    publish_backend
 
     local parent
     parent="$(dirname "$DEST")"
@@ -688,7 +687,7 @@ build_and_install() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg build_msg)" "$RESET"
 
     must "$(msg build_failed)" \
-        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$(backend_rid)" --self-contained true -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
+    publish_backend
 
     local parent stage backup=""
     parent="$(dirname "$DEST")"
