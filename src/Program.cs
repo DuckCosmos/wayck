@@ -15,7 +15,7 @@ int Run()
         switch (command)
         {
             case "--monitor":
-                Monitor.Run();
+                Wayck.Backend.Monitor.Run();
                 return 0;
             case "--filter":
                 EmitApps(Launcher.FilterApps(rest.FirstOrDefault() ?? ""));
