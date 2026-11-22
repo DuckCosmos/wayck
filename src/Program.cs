@@ -37,7 +37,7 @@ int Run()
                 Clipboard.Clear();
                 return 0;
             case "--check_version":
-                Console.WriteLine(Update.Check());
+                Console.WriteLine(Update.Check() ? "true" : "false");
                 return 0;
             case "--version_info":
                 EmitVersion(Update.CheckInfo());
