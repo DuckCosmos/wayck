@@ -269,7 +269,7 @@ wayck/
 │   ├── Clipboard.cs
 │   ├── Update.cs
 │   └── Utils.cs
-├── Wayck.Backend.csproj
+├── src/Wayck.Backend.csproj
 ├── CHANGELOG.md
 ├── .gitignore
 ├── install.sh
