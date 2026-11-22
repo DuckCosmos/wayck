@@ -152,7 +152,13 @@ internal static class Launcher
             var info = new System.Diagnostics.ProcessStartInfo(args[0]) { UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true };
             foreach (var arg in args.Skip(1)) info.ArgumentList.Add(arg);
             var process = System.Diagnostics.Process.Start(info);
-            if (process is not null) { process.StandardInput.Close(); process.Dispose(); }
+            if (process is not null)
+            {
+                process.StandardInput.Close();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                process.Dispose();
+            }
         } catch { }
     }
     public static void Execute(string execCommand, string appName)
