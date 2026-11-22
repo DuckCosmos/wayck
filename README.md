@@ -2,7 +2,7 @@
 
 **A modern, modular and customizable desktop shell for Linux.**
 
-Wayck is a Linux desktop shell built with **Rust, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
+Wayck is a Linux desktop shell built with **.NET Native AOT, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
 
 It combines desktop controls, system monitoring and productivity tools in a unified interface.
 
@@ -49,11 +49,11 @@ An integrated application launcher designed to provide quick access to installed
 
 | Technology | Purpose |
 |:---|:---|
-| [Rust](https://www.rust-lang.org/) | Backend and system operations |
+| [.NET Native AOT](https://learn.microsoft.com/dotnet/core/deploying/native-aot/) | Backend and system operations |
 | [Quickshell](https://quickshell.org/) | Desktop shell framework |
 | [QML](https://doc.qt.io/qt-6/qmlapplications.html) | Interface composition and interaction |
 | [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) | UI components and rendering |
-| Cargo | Backend build system |
+| .NET SDK | Backend build system |
 
 ## Shortcuts
 
@@ -263,13 +263,16 @@ wayck/
 │   ├── i18n-check.sh
 │   └── wayck-wallpaper.sh
 ├── src/
-│   ├── main.rs
-│   ├── launcher.rs
-│   ├── monitor.rs
-│   ├── clipboard.rs
-│   ├── update.rs
-│   └── utils.rs
-├── Cargo.toml
+│   ├── Program.cs
+│   ├── Launcher.cs
+│   ├── Monitor.cs
+│   ├── Clipboard.cs
+│   ├── ClipboardItem.cs
+│   ├── MonitorData.cs
+│   ├── JsonContext.cs
+│   ├── Update.cs
+│   ├── Utils.cs
+│   └── Wayck.Backend.csproj
 ├── CHANGELOG.md
 ├── .gitignore
 ├── install.sh
@@ -282,7 +285,7 @@ wayck/
 - **Feature isolation:** each interface has its own dedicated directory.
 - **Centralized state:** shared functionality lives in `singletons/`, with one controller per widget.
 - **Modularity:** each bar module is a self-contained face in `bar/faces/`.
-- **Separation of concerns:** QML handles presentation and interaction, while Rust handles backend operations.
+- **Separation of concerns:** QML handles presentation and interaction, while C# Native AOT handles backend operations.
 - **Single source of truth:** colors live in `Theme`, settings in `Config`, texts in `qml/assets/languages/*.json` (via `I18n`), and the list of bar modules in `BarModuleRegistry`.
 - **Maintainability:** a consistent structure avoids unnecessary directory fragmentation.
 
@@ -291,7 +294,7 @@ wayck/
 ## Requirements
 
 - Linux
-- Rust and Cargo (build time)
+- .NET SDK, Clang and zlib (build time)
 - Quickshell
 - Qt dependencies required by Quickshell
 - Hyprland for Hyprland-specific integrations
@@ -319,10 +322,10 @@ git clone https://github.com/DuckCosmos/wayck.git
 cd wayck
 ```
 
-**2. Build the Rust backend**
+**2. Build the C# Native AOT backend**
 
 ```bash
-cargo build --release
+mkdir -p .build && dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true -o .build/publish
 ```
 
 **3. Create the Quickshell configuration directory**
@@ -337,10 +340,10 @@ mkdir -p ~/.config/quickshell/wayck
 cp -r qml/* ~/.config/quickshell/wayck/
 ```
 
-**5. Install the Rust backend**
+**5. Install the C# Native AOT backend**
 
 ```bash
-install -m 755 target/release/wayck-backend ~/.config/quickshell/wayck/wayck-backend
+install -m 755 .build/publish/wayck-backend ~/.config/quickshell/wayck/wayck-backend
 cp version.txt ~/.config/quickshell/wayck/
 ```
 
@@ -354,10 +357,10 @@ quickshell -c wayck
 
 ## Backend Validation
 
-Validate and compile the Rust backend:
+Validate and compile the C# Native AOT backend:
 
 ```bash
-cargo build --release
+dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true
 ```
 
 ## Running
@@ -411,7 +414,7 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 
 | Directory | Responsibility |
 |:---|:---|
-| `src/` | Rust source code |
+| `src/` | C# source code |
 | `qml/` | QML application |
 | `qml/bar/` | Desktop bar (`Bar`, `BarModule`, `BarSection`, module registry) |
 | `qml/bar/faces/` | One folder per bar module |
@@ -442,7 +445,7 @@ Wayck is organized to allow independent development of its interface features an
 | Clipboard | `qml/clipboard/` |
 | Launcher | `qml/launcher/` |
 | Widget controllers (IPC) | `qml/singletons/widgetcontrols/` |
-| Rust backend | `src/` |
+| C# Native AOT backend | `src/` |
 
 ### Adding a Bar Module
 
@@ -497,7 +500,7 @@ When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language`
 ### Development Commands
 
 ```bash
-cargo build --release
+dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true
 
 
 ./scripts/i18n-check.sh
@@ -523,4 +526,4 @@ See the repository for licensing information.
 
 ---
 
-**Wayck** — Built with Rust, Quickshell and QML.
+**Wayck** — Built with .NET Native AOT, Quickshell and QML.
