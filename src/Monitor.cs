@@ -38,8 +38,11 @@ internal static class Monitor
         try
         {
             using var p = Process.Start(new ProcessStartInfo("df", "-B1 --output=size,used,avail /") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true });
-            if (p is null || !p.WaitForExit() || p.ExitCode != 0) return (0, 0, 0);
-            var row = p.StandardOutput.ReadToEnd().Split('\n').Skip(1).FirstOrDefault()?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+            if (p is null) return (0, 0, 0);
+            var outputText = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            if (p.ExitCode != 0) return (0, 0, 0);
+            var row = outputText.Split('\n').Skip(1).FirstOrDefault()?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
             var v = row.Select(s => double.TryParse(s, CultureInfo.InvariantCulture, out var x) ? x : 0).ToArray();
             if (v.Length < 3 || v[0] <= 0) return (0, 0, 0);
             return (Round(v[1] / v[0] * 100), Round(v[1] / 1073741824), Round(v[0] / 1073741824));
@@ -89,8 +92,11 @@ internal static class Monitor
         try
         {
             using var p = Process.Start(new ProcessStartInfo("nvidia-smi", "--query-gpu=utilization.gpu,temperature.gpu,memory.used,memory.total --format=csv,noheader,nounits") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true });
-            if (p is null || !p.WaitForExit() || p.ExitCode != 0) return (false, null, null, null, null, null);
-            var line = p.StandardOutput.ReadToEnd().Split('\n').FirstOrDefault(); if (line is null) return (false, null, null, null, null, null);
+            if (p is null) return (false, null, null, null, null, null);
+            var outputText = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            if (p.ExitCode != 0) return (false, null, null, null, null, null);
+            var line = outputText.Split('\n').FirstOrDefault(); if (line is null) return (false, null, null, null, null, null);
             var values = line.Split(',').Select(s => s.Trim().Equals("N/A", StringComparison.OrdinalIgnoreCase) ? (double?)null : double.TryParse(s.Trim(), CultureInfo.InvariantCulture, out var v) ? v : null).ToArray();
             if (values.Length < 4) return (false, null, null, null, null, null);
             var (u, t, used, total) = (values[0], values[1], values[2], values[3]);
@@ -121,8 +127,8 @@ internal static class Monitor
             {
                 var elapsed = oldNet.Value.time.Elapsed.TotalSeconds;
                 if (elapsed < .001) elapsed = .001;
-                down = Round((net.recv - oldNet.Value.recv) / 1024.0 / elapsed);
-                up = Round((net.sent - oldNet.Value.sent) / 1024.0 / elapsed);
+                down = Round((net.recv >= oldNet.Value.recv ? net.recv - oldNet.Value.recv : 0) / 1024.0 / elapsed);
+                up = Round((net.sent >= oldNet.Value.sent ? net.sent - oldNet.Value.sent : 0) / 1024.0 / elapsed);
             }
             oldNet = (net.recv, net.sent, Stopwatch.StartNew());
             var (gpuAvailable, gpu, gpuTemp, vramPercent, vramUsed, vramTotal) = GpuData();
