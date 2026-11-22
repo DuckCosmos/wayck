@@ -20,6 +20,29 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
       - name: Publish Native AOT backend
         run: dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true -p:StripSymbols=true -o publish
+      - name: Smoke test launcher JSON and calculator
+        run: |
+          ./publish/wayck-backend --filter "1 + 1" > launcher.json
+          python3 - <<'PY'
+          import json
+          data = json.load(open("launcher.json"))
+          assert isinstance(data, list) and data, data
+          assert data[0]["nome"] == "1 + 1 = 2", data[0]
+          assert data[0]["exec"] == "@copy:2", data[0]
+          assert "icone_path" in data[0], data[0]
+          print("Launcher JSON and calculator passed")
+          PY
+      - name: Smoke test monitor JSON
+        run: |
+          timeout 2s ./publish/wayck-backend --monitor > monitor.jsonl || test $? -eq 124
+          python3 - <<'PY'
+          import json
+          with open("monitor.jsonl") as f:
+              data = json.loads(next(f))
+          required = {"cpu_percent", "ram_percent", "disk_percent", "gpu_available", "network_down_kib_s", "network_up_kib_s"}
+          assert required <= data.keys(), data
+          print("Monitor JSON passed")
+          PY
       - name: Upload backend
         uses: actions/upload-artifact@v4
         with:
