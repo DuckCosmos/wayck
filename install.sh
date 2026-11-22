@@ -247,9 +247,7 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have dotnet || missing+=(dotnet-sdk)
-    have clang || missing+=(clang)
-    pacman -Q zlib >/dev/null 2>&1 || missing+=(zlib)
+    have go || missing+=(go)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -262,7 +260,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -d "$script_dir/.git" && -f "$script_dir/src/Wayck.Backend.csproj" && -d "$script_dir/qml" ]]; then
+        if [[ -d "$script_dir/.git" && -f "$script_dir/src/go.mod" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -281,7 +279,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -d "$ROOT/.git" && -f "$ROOT/src/Wayck.Backend.csproj" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/src/go.mod" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
@@ -607,8 +605,7 @@ publish_backend() {
     rid="$(backend_rid)"
     mkdir -p -- "$ROOT/.build"
     must "$(msg build_failed)" \
-        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$rid" --self-contained true \
-        -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
+        (cd "$ROOT/src" && go build -trimpath -ldflags="-s -w" -o "$ROOT/.build/publish/wayck-backend" .)
 }
 
 update_dot() {
