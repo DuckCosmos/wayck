@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel dotnet-sdk clang zlib
+    quickshell qt6-declarative qt6-wayland git base-devel go
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -592,20 +592,10 @@ install_personal_apps() {
     fi
 }
 
-backend_rid() {
-    case "$(uname -m)" in
-        x86_64) printf 'linux-x64' ;;
-        aarch64) printf 'linux-arm64' ;;
-        *) die "Arquitetura não suportada pelo Native AOT: $(uname -m)" ;;
-    esac
-}
-
 publish_backend() {
-    local rid
-    rid="$(backend_rid)"
-    mkdir -p -- "$ROOT/.build"
+    mkdir -p -- "$ROOT/.build/publish"
     must "$(msg build_failed)" \
-        (cd "$ROOT/src" && go build -trimpath -ldflags="-s -w" -o "$ROOT/.build/publish/wayck-backend" .)
+        go -C "$ROOT/src" build -trimpath -ldflags="-s -w" -o "$ROOT/.build/publish/wayck-backend" .
 }
 
 update_dot() {
