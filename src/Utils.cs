@@ -66,7 +66,7 @@ internal static class Utils
     {
         private readonly string _s = source;
         private int _pos;
-        private double Parse()
+        public double Parse()
         {
             var value = AddSub();
             Skip();
