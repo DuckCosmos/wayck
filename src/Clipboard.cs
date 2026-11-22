@@ -23,7 +23,8 @@ internal static class Clipboard
             proc.StartInfo.ArgumentList.Add("decode"); proc.StartInfo.ArgumentList.Add(id);
             proc.Start();
             using (var output = File.Create(temporary)) proc.StandardOutput.BaseStream.CopyTo(output);
-            if (!proc.WaitForExit() || proc.ExitCode != 0) { File.Delete(temporary); return null; }
+            proc.WaitForExit();
+            if (proc.ExitCode != 0) { File.Delete(temporary); return null; }
             File.Move(temporary, path, true);
             File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite);
             return path;
