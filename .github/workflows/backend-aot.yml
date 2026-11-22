@@ -1,11 +1,12 @@
 name: Backend AOT build
 
 on:
-  push:
-    branches:
-      - main
-      - csharp-native-aot-migration
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: backend-aot-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish:
