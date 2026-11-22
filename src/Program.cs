@@ -50,7 +50,7 @@ int Run()
     string? query;
     while ((query = Console.ReadLine()) is not null)
     {
-        try { EmitApps(Launcher.FilterApps(query); }
+        try { EmitApps(Launcher.FilterApps(query)); }
         catch (Exception ex) { Console.Error.WriteLine($"Erro no launcher: {ex.Message}"); }
     }
     return 0;
