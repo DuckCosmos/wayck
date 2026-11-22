@@ -31,9 +31,9 @@ internal static class Clipboard
         catch { try { File.Delete(temporary); } catch {} return null; }
     }
 
-    public static List<object> ListItems(string term)
+    public static List<ClipboardItem> ListItems(string term)
     {
-        var items = new List<object>();
+        var items = new List<ClipboardItem>();
         try
         {
             using var process = Process.Start(new ProcessStartInfo("cliphist", "list") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true });
@@ -50,7 +50,7 @@ internal static class Clipboard
                 var isImage = content.StartsWith("[[ binary data", StringComparison.Ordinal) && content.Contains("png", StringComparison.OrdinalIgnoreCase);
                 var path = isImage ? DecodeImage(id) : null;
                 if (isImage && path is null) continue;
-                items.Add(new { id, content = isImage ? content : content.Replace('\n', ' '), is_image = isImage, path });
+                items.Add(new ClipboardItem(id, isImage ? content : content.Replace('\n', ' '), isImage, path));
                 if (items.Count >= 50) break;
             }
         } catch { }
