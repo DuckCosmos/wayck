@@ -267,9 +267,12 @@ wayck/
 │   ├── Launcher.cs
 │   ├── Monitor.cs
 │   ├── Clipboard.cs
+│   ├── ClipboardItem.cs
+│   ├── MonitorData.cs
+│   ├── JsonContext.cs
 │   ├── Update.cs
-│   └── Utils.cs
-├── src/Wayck.Backend.csproj
+│   ├── Utils.cs
+│   └── Wayck.Backend.csproj
 ├── CHANGELOG.md
 ├── .gitignore
 ├── install.sh
