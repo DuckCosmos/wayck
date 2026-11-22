@@ -686,7 +686,6 @@ update_dot() {
 build_and_install() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg build_msg)" "$RESET"
 
-    must "$(msg build_failed)" \
     publish_backend
 
     local parent stage backup=""
