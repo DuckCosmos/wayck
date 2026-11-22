@@ -322,7 +322,7 @@ cd wayck
 **2. Build the C# Native AOT backend**
 
 ```bash
-dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true
+mkdir -p .build && dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true -o .build/publish
 ```
 
 **3. Create the Quickshell configuration directory**
