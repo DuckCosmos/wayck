@@ -37,9 +37,12 @@ internal static class Clipboard
         try
         {
             using var process = Process.Start(new ProcessStartInfo("cliphist", "list") { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true });
-            if (process is null || !process.WaitForExit() || process.ExitCode != 0) return items;
+            if (process is null) return items;
+            var outputText = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            if (process.ExitCode != 0) return items;
             var query = term.ToLowerInvariant();
-            foreach (var line in process.StandardOutput.ReadToEnd().Split('\n'))
+            foreach (var line in outputText.Split('\n'))
             {
                 var split = line.Split('\t', 2); if (split.Length != 2) continue;
                 var id = split[0]; var content = split[1];
