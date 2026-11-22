@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel rust cargo
+    quickshell qt6-declarative qt6-wayland git base-devel dotnet-sdk clang zlib
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -247,7 +247,9 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have cargo || missing+=(rust cargo)
+    have dotnet || missing+=(dotnet-sdk)
+    have clang || missing+=(clang)
+    have zlib || missing+=(zlib)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -260,7 +262,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -d "$script_dir/.git" && -f "$script_dir/Cargo.toml" && -d "$script_dir/qml" ]]; then
+        if [[ -d "$script_dir/.git" && -f "$script_dir/src/Wayck.Backend.csproj" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -279,7 +281,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -d "$ROOT/.git" && -f "$ROOT/Cargo.toml" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/src/Wayck.Backend.csproj" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
@@ -592,6 +594,23 @@ install_personal_apps() {
     fi
 }
 
+backend_rid() {
+    case "$(uname -m)" in
+        x86_64) printf 'linux-x64' ;;
+        aarch64) printf 'linux-arm64' ;;
+        *) die "Arquitetura não suportada pelo Native AOT: $(uname -m)" ;;
+    esac
+}
+
+publish_backend() {
+    local rid
+    rid="$(backend_rid)"
+    mkdir -p -- "$ROOT/.build"
+    must "$(msg build_failed)" \
+        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$rid" --self-contained true \
+        -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
+}
+
 update_dot() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg update.pulling)" "$RESET"
 
@@ -601,7 +620,7 @@ update_dot() {
     printf '%b%s%b\n' "$BLUE" "$(msg update.compiling)" "$RESET"
 
     must "$(msg update.compile_failed)" \
-        cargo build --manifest-path "$ROOT/Cargo.toml" --release
+        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$(backend_rid)" --self-contained true -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
 
     local parent
     parent="$(dirname "$DEST")"
@@ -616,7 +635,7 @@ update_dot() {
         die "$(msg update.copy_failed)"
     fi
 
-    install -m 755 "$ROOT/target/release/wayck-backend" "$UPDATE_STAGE/wayck-backend"
+    install -m 755 "$ROOT/.build/publish/wayck-backend" "$UPDATE_STAGE/wayck-backend"
     install -m 644 "$ROOT/version.txt" "$UPDATE_STAGE/version.txt"
 
     install -m 755 \
@@ -669,7 +688,7 @@ build_and_install() {
     printf '\n%b%s%b\n' "$BLUE" "$(msg build_msg)" "$RESET"
 
     must "$(msg build_failed)" \
-        cargo build --manifest-path "$ROOT/Cargo.toml" --release
+        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$(backend_rid)" --self-contained true -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
 
     local parent stage backup=""
     parent="$(dirname "$DEST")"
@@ -682,7 +701,7 @@ build_and_install() {
         die "$(msg fail_copy)"
     fi
 
-    install -m 755 "$ROOT/target/release/wayck-backend" "$stage/wayck-backend"
+    install -m 755 "$ROOT/.build/publish/wayck-backend" "$stage/wayck-backend"
     install -m 644 "$ROOT/version.txt" "$stage/version.txt"
     install -m 755 "$ROOT/scripts/wayck-wallpaper.sh" "$stage/wayck-wallpaper"
     install -m 755 "$ROOT/install.sh" "$stage/install.sh"
