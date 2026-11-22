@@ -100,8 +100,8 @@ internal static class Monitor
             var values = line.Split(',').Select(s => s.Trim().Equals("N/A", StringComparison.OrdinalIgnoreCase) ? (double?)null : double.TryParse(s.Trim(), CultureInfo.InvariantCulture, out var v) ? v : null).ToArray();
             if (values.Length < 4) return (false, null, null, null, null, null);
             var (u, t, used, total) = (values[0], values[1], values[2], values[3]);
-            var vram = used.HasValue && total is > 0 ? Round(used.Value / total.Value * 100) : null;
-            return (true, u.HasValue ? Round(Math.Clamp(u.Value, 0, 100)) : null, t.HasValue ? Round(t.Value) : null, vram, used.HasValue ? Round(used.Value) : null, total.HasValue ? Round(total.Value) : null);
+            double? vram = used.HasValue && total is > 0 ? Round(used.Value / total.Value * 100) : null;
+            return (true, u.HasValue ? Round(Math.Clamp(u.Value, 0, 100)) : (double?)null, t.HasValue ? Round(t.Value) : (double?)null, vram, used.HasValue ? Round(used.Value) : (double?)null, total.HasValue ? Round(total.Value) : (double?)null);
         } catch { return (false, null, null, null, null, null); }
     }
     public static void Run()
@@ -139,7 +139,7 @@ internal static class Monitor
                 vramPercent, vramUsed, vramTotal,
                 down, up, CpuTemperature()
             );
-            Console.WriteLine(JsonSerializer.Serialize(data)); Console.Out.Flush();
+            Console.WriteLine(JsonSerializer.Serialize(data, WayckJsonContext.Default.MonitorData)); Console.Out.Flush();
             var delay = Math.Max(0, 1000 - timer.ElapsedMilliseconds);
             Thread.Sleep((int)delay);
         }
