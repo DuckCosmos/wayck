@@ -86,15 +86,25 @@ func calculate(input string) string {
 
 	p := expression{input: expr}
 	value, err := p.addSub()
-	if err != nil || !math.IsInf(value, 0) && !math.IsNaN(value) {
-		if p.skip(); p.pos == len(p.input) && err == nil && !math.IsInf(value, 0) && !math.IsNaN(value) {
-			if value == math.Trunc(value) && value >= math.MinInt64 && value < math.MaxInt64 {
-				return strconv.FormatInt(int64(value), 10)
-			}
-			return strconv.FormatFloat(value, 'f', 12, 64)
-		}
+	if err != nil {
+		return ""
 	}
-	return ""
+
+	p.skip()
+	if p.pos != len(p.input) || math.IsInf(value, 0) || math.IsNaN(value) {
+		return ""
+	}
+
+	if value == math.Trunc(value) && value >= math.MinInt64 && value < math.MaxInt64 {
+		return strconv.FormatInt(int64(value), 10)
+	}
+
+	result := strconv.FormatFloat(value, 'f', 12, 64)
+	result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
+	if strings.Contains(input, ",") {
+		result = strings.ReplaceAll(result, ".", ",")
+	}
+	return result
 }
 
 type expression struct {
