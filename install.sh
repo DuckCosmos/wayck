@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel dotnet-sdk clang zlib
+    quickshell qt6-declarative qt6-wayland git base-devel go
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -247,9 +247,7 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have dotnet || missing+=(dotnet-sdk)
-    have clang || missing+=(clang)
-    pacman -Q zlib >/dev/null 2>&1 || missing+=(zlib)
+    have go || missing+=(go)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -262,7 +260,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -d "$script_dir/.git" && -f "$script_dir/src/Wayck.Backend.csproj" && -d "$script_dir/qml" ]]; then
+        if [[ -d "$script_dir/.git" && -f "$script_dir/src/go.mod" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -281,7 +279,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -d "$ROOT/.git" && -f "$ROOT/src/Wayck.Backend.csproj" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/src/go.mod" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
@@ -594,21 +592,10 @@ install_personal_apps() {
     fi
 }
 
-backend_rid() {
-    case "$(uname -m)" in
-        x86_64) printf 'linux-x64' ;;
-        aarch64) printf 'linux-arm64' ;;
-        *) die "Arquitetura não suportada pelo Native AOT: $(uname -m)" ;;
-    esac
-}
-
 publish_backend() {
-    local rid
-    rid="$(backend_rid)"
-    mkdir -p -- "$ROOT/.build"
+    mkdir -p -- "$ROOT/.build/publish"
     must "$(msg build_failed)" \
-        dotnet publish "$ROOT/src/Wayck.Backend.csproj" -c Release -r "$rid" --self-contained true \
-        -p:PublishAot=true -p:StripSymbols=true -o "$ROOT/.build/publish"
+        go -C "$ROOT/src" build -trimpath -ldflags="-s -w" -o "$ROOT/.build/publish/wayck-backend" .
 }
 
 update_dot() {

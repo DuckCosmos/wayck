@@ -2,7 +2,7 @@
 
 **A modern, modular and customizable desktop shell for Linux.**
 
-Wayck is a Linux desktop shell built with **.NET Native AOT, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
+Wayck is a Linux desktop shell built with **Go, Quickshell and QML**, designed to provide a cohesive desktop experience through a modular, efficient and maintainable architecture.
 
 It combines desktop controls, system monitoring and productivity tools in a unified interface.
 
@@ -49,11 +49,11 @@ An integrated application launcher designed to provide quick access to installed
 
 | Technology | Purpose |
 |:---|:---|
-| [.NET Native AOT](https://learn.microsoft.com/dotnet/core/deploying/native-aot/) | Backend and system operations |
+| [Go](https://go.dev/) | Backend and system operations |
 | [Quickshell](https://quickshell.org/) | Desktop shell framework |
 | [QML](https://doc.qt.io/qt-6/qmlapplications.html) | Interface composition and interaction |
 | [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) | UI components and rendering |
-| .NET SDK | Backend build system |
+| [Go](https://go.dev/) | Backend build system |
 
 ## Shortcuts
 
@@ -285,7 +285,7 @@ wayck/
 - **Feature isolation:** each interface has its own dedicated directory.
 - **Centralized state:** shared functionality lives in `singletons/`, with one controller per widget.
 - **Modularity:** each bar module is a self-contained face in `bar/faces/`.
-- **Separation of concerns:** QML handles presentation and interaction, while C# Native AOT handles backend operations.
+- **Separation of concerns:** QML handles presentation and interaction, while Go handles backend operations.
 - **Single source of truth:** colors live in `Theme`, settings in `Config`, texts in `qml/assets/languages/*.json` (via `I18n`), and the list of bar modules in `BarModuleRegistry`.
 - **Maintainability:** a consistent structure avoids unnecessary directory fragmentation.
 
@@ -294,7 +294,7 @@ wayck/
 ## Requirements
 
 - Linux
-- .NET SDK, Clang and zlib (build time)
+- Go toolchain (build time)
 - Quickshell
 - Qt dependencies required by Quickshell
 - Hyprland for Hyprland-specific integrations
@@ -322,10 +322,10 @@ git clone https://github.com/DuckCosmos/wayck.git
 cd wayck
 ```
 
-**2. Build the C# Native AOT backend**
+**2. Build the Go backend**
 
 ```bash
-mkdir -p .build && dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true -o .build/publish
+mkdir -p .build/publish && go -C src build -trimpath -ldflags="-s -w" -o ../.build/publish/wayck-backend .
 ```
 
 **3. Create the Quickshell configuration directory**
@@ -340,7 +340,7 @@ mkdir -p ~/.config/quickshell/wayck
 cp -r qml/* ~/.config/quickshell/wayck/
 ```
 
-**5. Install the C# Native AOT backend**
+**5. Install the Go backend**
 
 ```bash
 install -m 755 .build/publish/wayck-backend ~/.config/quickshell/wayck/wayck-backend
@@ -357,10 +357,10 @@ quickshell -c wayck
 
 ## Backend Validation
 
-Validate and compile the C# Native AOT backend:
+Validate and compile the Go backend:
 
 ```bash
-dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true
+go -C src build -trimpath -ldflags="-s -w" -o .build/wayck-backend .
 ```
 
 ## Running
@@ -414,7 +414,7 @@ All settings live in a single file, `~/.config/wayck/config.json`. It is created
 
 | Directory | Responsibility |
 |:---|:---|
-| `src/` | C# source code |
+| `src/` | Go source code |
 | `qml/` | QML application |
 | `qml/bar/` | Desktop bar (`Bar`, `BarModule`, `BarSection`, module registry) |
 | `qml/bar/faces/` | One folder per bar module |
@@ -445,7 +445,7 @@ Wayck is organized to allow independent development of its interface features an
 | Clipboard | `qml/clipboard/` |
 | Launcher | `qml/launcher/` |
 | Widget controllers (IPC) | `qml/singletons/widgetcontrols/` |
-| C# Native AOT backend | `src/` |
+| Go backend | `src/` |
 
 ### Adding a Bar Module
 
@@ -500,7 +500,7 @@ When `--lang` (or `WAYCK_LANG`) is given, the choice is also saved as `language`
 ### Development Commands
 
 ```bash
-dotnet publish src/Wayck.Backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishAot=true
+go -C src build -trimpath -ldflags="-s -w" -o .build/wayck-backend .
 
 
 ./scripts/i18n-check.sh
@@ -526,4 +526,4 @@ See the repository for licensing information.
 
 ---
 
-**Wayck** — Built with .NET Native AOT, Quickshell and QML.
+**Wayck** — Built with Go, Quickshell and QML.
