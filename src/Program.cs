@@ -113,7 +113,7 @@ static class Program
         if(name.Contains('/'))return File.Exists(name)&&(File.GetUnixFileMode(name)&UnixFileMode.UserExecute)!=0;
         foreach(var d in (Environment.GetEnvironmentVariable("PATH")??"").Split(':')){string p=Path.Combine(d,name);if(File.Exists(p)&&(File.GetUnixFileMode(p)&UnixFileMode.UserExecute)!=0)return true;}return false;
     }
-    static void Detached(string[] args){if(args.Length==0)return;try{var p=new ProcessStartInfo(args[0]){UseShellExecute=false};foreach(var a in args.Skip(1))p.ArgumentList.Add(a);Process.Start(p);}catch{}}
+    static void Detached(string[] args){if(args.Length==0)return;try{var p=new ProcessStartInfo(args[0]){UseShellExecute=true};foreach(var a in args.Skip(1))p.ArgumentList.Add(a);Process.Start(p);}catch{}}
     static void RunApp(string cmd,string app)
     {
         if(cmd.StartsWith("@term:")){string[] terms=Split(Environment.GetEnvironmentVariable("TERMINAL")??"");if(terms.Length==0||!ProgramExists(terms[0]))terms=new[]{"kitty","alacritty","foot","wezterm","konsole","gnome-terminal","kgx","xterm"}.Where(ProgramExists).Take(1).ToArray();if(terms.Length==0)return;string shell=Environment.GetEnvironmentVariable("SHELL")??"/bin/sh";string script=cmd[6..]+"; exec '"+shell.Replace("'","'\\''")+"'";string name=Path.GetFileName(terms[0]);var a=terms.ToList();a.AddRange(name is "gnome-terminal" or "kgx"?new[]{"--","sh","-lc",script}:name=="wezterm"?new[]{"start","--","sh","-lc",script}:new[]{"-e","sh","-lc",script});Detached(a.ToArray());return;}
