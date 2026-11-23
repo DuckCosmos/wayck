@@ -11,7 +11,7 @@ internal static class Launcher
     static string Icon(string icon)
     {
         if(icon=="")return ""; icon=icon.Replace("~",Home);
-        if(Path.IsPathRooted(icon))return Exists(icon)?icon:"";
+        if(Path.IsPathRooted(icon))return File.Exists(icon)?icon:"";
         if(icon.Contains('/')||icon.Contains('\\')||icon=="."||icon=="..")return "";
         string[] roots={"/usr/share/icons/Papirus/48x48/apps","/usr/share/icons/Papirus-Dark/48x48/apps","/usr/share/icons/hicolor/scalable/apps","/usr/share/icons/hicolor/256x256/apps","/usr/share/icons/hicolor/128x128/apps","/usr/share/icons/hicolor/48x48/apps","/usr/share/pixmaps",Home+"/.local/share/icons/hicolor/scalable/apps",Home+"/.local/share/icons/hicolor/256x256/apps",Home+"/.local/share/icons/hicolor/128x128/apps",Home+"/.local/share/icons/hicolor/48x48/apps",Home+"/.local/share/icons/Papirus/48x48/apps","/var/lib/flatpak/exports/share/icons/hicolor/128x128/apps","/var/lib/flatpak/exports/share/icons/hicolor/64x64/apps","/var/lib/flatpak/exports/share/icons/hicolor/scalable/apps",Home+"/.local/share/flatpak/exports/share/icons/hicolor/128x128/apps",Home+"/.local/share/flatpak/exports/share/icons/hicolor/64x64/apps",Home+"/.local/share/flatpak/exports/share/icons/hicolor/scalable/apps"};
         foreach(var root in roots)foreach(var ext in new[]{"svg","png","xpm"}){var p=Path.Combine(root,icon+"."+ext);if(Exists(p))return p;}
@@ -40,13 +40,13 @@ internal static class Launcher
         foreach(var l in File.ReadAllLines(UsageFile)){int i=l.LastIndexOf('\t');if(i>0&&int.TryParse(l[(i+1)..],out int n))r[l[..i]]=n;}return r;
     }
 
-    static void Usage(string name)
+    internal static void Usage(string name)
     {
         if(name==""||name.Length>512)return;var u=ReadUsage();u[name]=Math.Min(int.MaxValue,u.GetValueOrDefault(name)+1);
         Directory.CreateDirectory(Path.GetDirectoryName(UsageFile)!);File.WriteAllLines(UsageFile+".tmp",u.OrderBy(x=>x.Key).Select(x=>x.Key+"\t"+x.Value));File.Move(UsageFile+".tmp",UsageFile,true);
     }
 
-    static List<App> Filter(string text)
+    internal static List<App> Filter(string text)
     {
         var u=ReadUsage();var apps=LoadApps().Where(a=>a.Nome.Contains(text,StringComparison.OrdinalIgnoreCase)).OrderByDescending(a=>u.GetValueOrDefault(a.Nome)).Take(15).ToList();
         string n=Calc(text);if(n!="")apps.Insert(0,new App(text.Trim()+" = "+n,Icon("accessories-calculator"),"@copy:"+n));else if(apps.Count==0&&text.Trim()!="")apps.Add(new App(text,Icon("kitty"),"@term:"+text));return apps;
@@ -74,10 +74,10 @@ internal static class Launcher
         var list=new List<string>();string part="";char quote='\0';bool esc=false;foreach(char c in s){if(esc){part+=c;esc=false;continue;}if(quote!='\''&&c=='\\'){esc=true;continue;}if(quote=='\0'&&(c=='\''||c=='"')){quote=c;continue;}if(quote!='\0'&&c==quote){quote='\0';continue;}if(quote=='\0'&&char.IsWhiteSpace(c)){if(part!=""){list.Add(part);part="";}continue;}part+=c;}if(esc||quote!='\0')return Array.Empty<string>();if(part!="")list.Add(part);return list.ToArray();
     }
 
-    static void RunApp(string cmd,string app)
+    internal static void RunApp(string cmd,string app)
     {
-        if(cmd.StartsWith("@term:")){string[] terms=Split(Environment.GetEnvironmentVariable("TERMINAL")??"");if(terms.Length==0||!BackendProcess.ProgramExists(terms[0]))terms=new[]{"kitty","alacritty","foot","wezterm","konsole","gnome-terminal","kgx","xterm"}.Where(ProgramExists).Take(1).ToArray();if(terms.Length==0)return;string shell=Environment.GetEnvironmentVariable("SHELL")??"/bin/sh";string script=cmd[6..]+"; exec '"+shell.Replace("'","'\\''")+"'";string name=Path.GetFileName(terms[0]);var a=terms.ToList();a.AddRange(name is "gnome-terminal" or "kgx"?new[]{"--","sh","-lc",script}:name=="wezterm"?new[]{"start","--","sh","-lc",script}:new[]{"-e","sh","-lc",script});BackendProcess.Detached(a.ToArray());return;}
-        if(cmd.StartsWith("@copy:")){BackendProcess.Start("wl-copy",Array.Empty<string>(),cmd[6..]);return;}
+        if(cmd.StartsWith("@term:")){string[] terms=Split(Environment.GetEnvironmentVariable("TERMINAL")??"");if(terms.Length==0||!BackendProcess.BackendProcess.ProgramExists(terms[0]))terms=new[]{"kitty","alacritty","foot","wezterm","konsole","gnome-terminal","kgx","xterm"}.Where(ProgramExists).Take(1).ToArray();if(terms.Length==0)return;string shell=Environment.GetEnvironmentVariable("SHELL")??"/bin/sh";string script=cmd[6..]+"; exec '"+shell.Replace("'","'\\''")+"'";string name=Path.GetFileName(terms[0]);var a=terms.ToList();a.AddRange(name is "gnome-terminal" or "kgx"?new[]{"--","sh","-lc",script}:name=="wezterm"?new[]{"start","--","sh","-lc",script}:new[]{"-e","sh","-lc",script});BackendProcess.BackendProcess.Detached(a.ToArray());return;}
+        if(cmd.StartsWith("@copy:")){BackendProcess.BackendProcess.Start("wl-copy",Array.Empty<string>(),cmd[6..]);return;}
         var parts=Split(cmd);var clean=new List<string>();foreach(var p in parts){if(new[]{"%f","%F","%u","%U","%i","%d","%D","%n","%N","%v","%m"}.Contains(p))continue;string v=Regex.Replace(p.Replace("%c",app),@"%(?:[fFuUdDnNickvm])","");if(v!="")clean.Add(v);}if(clean.Count>0&&BackendProcess.ProgramExists(clean[0]))BackendProcess.Detached(clean.ToArray());
     }
 }
