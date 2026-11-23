@@ -10,22 +10,21 @@ internal static class Program
     {
         try
         {
-            if (args.Length == 0) { string? line; while ((line = Console.ReadLine()) != null) Print(Filter(line)); return 0; }
+            if (args.Length == 0) { string? line; while ((line = Console.ReadLine()) != null) Print(Launcher.Filter(line)); return 0; }
             string A(int i) => args.Length > i ? args[i] : "";
             switch (args[0])
             {
-                case "--monitor": Monitor(); break;
-                case "--filter": Print(Filter(A(1))); break;
-                case "--exec": if (args.Length > 2) { Usage(A(1)); RunApp(A(2), A(1)); } break;
-                case "--clipboard-list": Print(ClipboardList(A(1))); break;
-                case "--clipboard-copy": ClipboardCopy(A(1)); break;
-                case "--clipboard-delete": if (ValidId(A(1))) Start("cliphist", new[]{"delete"}, A(1)+"\n"); break;
+                case "--monitor": SystemMonitor.Run(); break;
+                case "--filter": Print(Launcher.Filter(A(1))); break;
+                case "--exec": if (args.Length > 2) { Launcher.Usage(A(1)); Launcher.RunApp(A(2), A(1)); } break;
+                case "--clipboard-list": Print(Clipboard.List(A(1))); break;
+                case "--clipboard-copy": Clipboard.Copy(A(1)); break;
+                case "--clipboard-delete": Clipboard.Delete(A(1)); break;
                 case "--clipboard-clear":
-                    Start("wl-copy", new[]{"--clear"}); Start("cliphist", new[]{"wipe"});
-                    foreach (var f in Directory.GetFiles(Path.GetTempPath(), Prefix+"*.png")) try { File.Delete(f); } catch {}
+                    Clipboard.Clear();
                     break;
-                case "--check_version": Console.WriteLine(CheckVersion().Available.ToString().ToLowerInvariant()); break;
-                case "--version_info": Print(CheckVersion()); break;
+                case "--check_version": Console.WriteLine(Update.CheckVersion().Available.ToString().ToLowerInvariant()); break;
+                case "--version_info": Print(Update.CheckVersion()); break;
             }
             return 0;
         }
