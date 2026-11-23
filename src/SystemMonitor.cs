@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Wayck.Backend;
 
@@ -15,10 +16,10 @@ internal static class SystemMonitor
 
     static (bool,double?,double?,double?,double?,double?) Gpu()
     {
-        string s=BackendProcess.Output("nvidia-smi","--query-gpu=utilization.gpu,temperature.gpu,memory.used,memory.total","--format=csv,noheader,nounits").Split('\n').FirstOrDefault()??"";var p=s.Split(',');if(p.Length<4)return(false,null,null,null,null,null);double?[] n=p.Select(x=>double.TryParse(x.Trim(),NumberStyles.Any,CultureInfo.InvariantCulture,out double v)?v:null).ToArray();double? vram=n[2]!=null&&n[3]>0?Round(n[2]!.Value/n[3]!.Value*100):null;return(true,n[0]==null?null:Round(Math.Clamp(n[0]!.Value,0,100)),n[1]==null?null:Round(n[1]!.Value),vram,n[2],n[3]);
+        string s=BackendProcess.BackendProcess.Output("nvidia-smi","--query-gpu=utilization.gpu,temperature.gpu,memory.used,memory.total","--format=csv,noheader,nounits").Split('\n').FirstOrDefault()??"";var p=s.Split(',');if(p.Length<4)return(false,null,null,null,null,null);double?[] n=p.Select(x=>double.TryParse(x.Trim(),NumberStyles.Any,CultureInfo.InvariantCulture,out double v)?v:null).ToArray();double? vram=n[2]!=null&&n[3]>0?Round(n[2]!.Value/n[3]!.Value*100):null;return(true,n[0]==null?null:Round(Math.Clamp(n[0]!.Value,0,100)),n[1]==null?null:Round(n[1]!.Value),vram,n[2],n[3]);
     }
 
-    static void Monitor()
+    internal static void Run()
     {
         long ot=0,oi=0,od=0,ou=0;DateTime last=DateTime.UtcNow;bool first=true;
         while(true){var start=DateTime.UtcNow;var c=File.ReadLines("/proc/stat").First().Split(' ',StringSplitOptions.RemoveEmptyEntries).Skip(1).Take(8).Select(x=>long.TryParse(x,out long v)?v:0).ToArray();long total=c.Sum(),idle=c[3]+c[4];double cpu=!first&&total>ot?Round((1-(double)(idle-oi)/(total-ot))*100):0;ot=total;oi=idle;
@@ -29,5 +30,4 @@ internal static class SystemMonitor
             int wait=1000-(int)(DateTime.UtcNow-start).TotalMilliseconds;if(wait>0)Thread.Sleep(wait);
         }
     }
-}
 }
