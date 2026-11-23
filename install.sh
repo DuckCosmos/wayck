@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel go
+    quickshell qt6-declarative qt6-wayland git base-devel dotnet-sdk
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -279,7 +279,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -d "$ROOT/.git" && -f "$ROOT/src/go.mod" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/src/wayck-backend.csproj" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
