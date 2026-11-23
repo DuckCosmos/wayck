@@ -16,7 +16,7 @@ readonly MAGENTA='\033[35m'
 readonly RESET='\033[0m'
 
 readonly REQUIRED_PKGS=(
-    quickshell qt6-declarative qt6-wayland git base-devel go
+    quickshell qt6-declarative qt6-wayland git base-devel dotnet-sdk
     kitty papirus-icon-theme wl-clipboard cliphist micro
     jq matugen hyprpaper qt6-shadertools pipewire-audio
 )
@@ -247,7 +247,7 @@ bootstrap() {
     local -a missing=()
 
     have git || missing+=(git)
-    have go || missing+=(go)
+    have dotnet || missing+=(dotnet-sdk)
     have cc || missing+=(base-devel)
     have jq || missing+=(jq)
 
@@ -260,7 +260,7 @@ bootstrap() {
         local script_dir
         script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-        if [[ -d "$script_dir/.git" && -f "$script_dir/src/go.mod" && -d "$script_dir/qml" ]]; then
+        if [[ -d "$script_dir/.git" && -f "$script_dir/src/wayck-backend.csproj" && -d "$script_dir/qml" ]]; then
             ROOT="$script_dir"
         fi
     fi
@@ -279,7 +279,7 @@ bootstrap() {
         ROOT="$SRC_DIR"
     fi
 
-    [[ -d "$ROOT/.git" && -f "$ROOT/src/go.mod" && -d "$ROOT/qml" ]] ||
+    [[ -d "$ROOT/.git" && -f "$ROOT/src/wayck-backend.csproj" && -d "$ROOT/qml" ]] ||
         die "$(early_msg prepare_failed)"
 
     load_messages
@@ -595,7 +595,7 @@ install_personal_apps() {
 publish_backend() {
     mkdir -p -- "$ROOT/.build/publish"
     must "$(msg build_failed)" \
-        go -C "$ROOT/src" build -trimpath -ldflags="-s -w" -o "$ROOT/.build/publish/wayck-backend" .
+        dotnet publish "$ROOT/src/wayck-backend.csproj" -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o "$ROOT/.build/publish"
 }
 
 update_dot() {

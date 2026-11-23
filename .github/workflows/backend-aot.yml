@@ -1,11 +1,11 @@
-name: Go backend build
+name: C# backend build
 
 on:
   pull_request:
   workflow_dispatch:
 
 concurrency:
-  group: backend-go-${{ github.ref }}
+  group: backend-csharp-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-dotnet@v4
         with:
-          go-version: '1.22'
-      - name: Build Go backend
-        run: mkdir -p publish && go -C src build -trimpath -ldflags='-s -w' -o ../publish/wayck-backend .
+          dotnet-version: '10.0.x'
+      - name: Build C# backend
+        run: dotnet publish src/wayck-backend.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o publish
       - name: Smoke test launcher JSON and calculator
         run: |
           ./publish/wayck-backend --filter "1 + 1" > launcher.json
