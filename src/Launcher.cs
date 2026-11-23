@@ -30,7 +30,7 @@ internal static class Launcher
     {
         string[] dirs={"/usr/share/applications","/usr/local/share/applications","/var/lib/flatpak/exports/share/applications",Home+"/.local/share/applications",Home+"/.local/share/flatpak/exports/share/applications"};
         var result=new List<App>();var seen=new HashSet<string>();
-        foreach(var d in dirs)if(Directory.File.Exists(d))foreach(var f in Directory.GetFiles(d,"*.desktop").Order()){var a=ReadDesktop(f);if(a!=null&&seen.Add(a.Nome))result.Add(a);}
+        foreach(var d in dirs)if(Directory.Exists(d))foreach(var f in Directory.GetFiles(d,"*.desktop").Order()){var a=ReadDesktop(f);if(a!=null&&seen.Add(a.Nome))result.Add(a);}
         return result.OrderBy(a=>a.Nome,StringComparer.OrdinalIgnoreCase).ToList();
     }
 
